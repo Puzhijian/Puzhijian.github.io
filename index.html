@@ -64,6 +64,270 @@
       <div class="outer">
         <section id="main">
   
+    <article id="java-设计模式：实战工厂方法模式" class="article article-type-java" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%AE%9E%E6%88%98%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/" class="article-date">
+  <time datetime="2020-05-25T10:51:02.000Z" itemprop="datePublished">2020-05-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%AE%9E%E6%88%98%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/">设计模式：实战工厂方法模式</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Java-设计模式：实战工厂方法模式"><a href="#Java-设计模式：实战工厂方法模式" class="headerlink" title="Java 设计模式：实战工厂方法模式"></a>Java 设计模式：实战工厂方法模式</h2><p>工厂模式又称工厂方法模式，是一种创建型设计模式，其在父类中提供一个创建对象的方法， 允许子类决定实例化对象的类型。</p>
+<p>这种设计模式也是 Java 开发中最常见的一种模式，它的主要意图是定义一个创建对象的接口，让其子类自己决定实例化哪一个工厂类，工厂模式使其创建过程延迟到子类进行。</p>
+<p>简单说就是为了提供代码结构的扩展性，屏蔽每一个功能类中的具体实现逻辑。让外部可以更加简单的只是知道调用即可，同时，这也是去掉众多<code>ifeslse</code>的方式。</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf4w79vmacj30ka0b0gpk.jpg" alt="image-20200525185358605"></p>
+<p>在营销场景中经常会有某个用户做了一些操作；打卡、分享、留言、邀请注册等等，进行返利积分，最后通过积分在兑换商品，从而促活和拉新。</p>
+<p>那么在这里我们模拟积分兑换中的发放多种类型商品，假如现在我们有如下三种类型的商品接口；</p>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>类型</th>
+<th>接口</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>优惠券</td>
+<td><code>CouponResult sendCoupon(String uId, String couponNumber, String uuid)</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>实物商品</td>
+<td><code>Boolean deliverGoods(DeliverReq req)</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>第三方爱奇艺兑换卡</td>
+<td><code>void grantToken(String bindMobileNumber, String cardId)</code></td>
+</tr>
+</tbody></table>
+<p><strong>从以上接口来看有如下信息：</strong></p>
+<ul>
+<li>三个接口返回类型不同，有对象类型、布尔类型、还有一个空类型。</li>
+<li>入参不同，发放优惠券需要仿重、兑换卡需要卡ID、实物商品需要发货位置(对象中含有)。</li>
+<li>另外可能会随着后续的业务的发展，会新增其他种商品类型。因为你所有的开发需求都是随着业务对市场的拓展而带来的。</li>
+</ul>
+<h3 id="1-工程结构"><a href="#1-工程结构" class="headerlink" title="1. 工程结构"></a>1. 工程结构</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">itstack-demo-design-1-02</span><br><span class="line">└── src</span><br><span class="line">    ├── main</span><br><span class="line">    │   └── java</span><br><span class="line">    │       └── org.itstack.demo.design</span><br><span class="line">    │           ├── store    </span><br><span class="line">    │           │   ├── impl</span><br><span class="line">    │           │   │   ├── CardCommodityService.java</span><br><span class="line">    │           │   │   ├── CouponCommodityService.java </span><br><span class="line">    │           │   │   └── GoodsCommodityService.java  </span><br><span class="line">    │           │   └── ICommodity.java</span><br><span class="line">    │           └── StoreFactory.java </span><br><span class="line">    └── test</span><br><span class="line">         └── java</span><br><span class="line">             └── org.itstack.demo.design.test</span><br><span class="line">                 └── ApiTest.java</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-代码实现"><a href="#2-代码实现" class="headerlink" title="2. 代码实现"></a>2. 代码实现</h3><h4 id="2-1-定义发奖接口"><a href="#2-1-定义发奖接口" class="headerlink" title="2.1 定义发奖接口"></a>2.1 定义发奖接口</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ICommodity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sendCommodity</span><span class="params">(String uId, String commodityId, String bizId, Map&lt;String, String&gt; extMap)</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>所有的奖品无论是实物、虚拟还是第三方，都需要通过我们的程序实现此接口进行处理，以保证最终入参出参的统一性。</li>
+<li>接口的入参包括；<code>用户ID</code>、<code>奖品ID</code>、<code>业务ID</code>以及<code>扩展字段</code>用于处理发放实物商品时的收获地址。</li>
+</ul>
+<h4 id="2-2-实现奖品发放接口"><a href="#2-2-实现奖品发放接口" class="headerlink" title="2.2 实现奖品发放接口"></a>2.2 实现奖品发放接口</h4><p><strong>优惠券</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CouponCommodityService</span> <span class="keyword">implements</span> <span class="title">ICommodity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Logger logger = LoggerFactory.getLogger(CouponCommodityService<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> CouponService couponService = <span class="keyword">new</span> CouponService();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendCommodity</span><span class="params">(String uId, String commodityId, String bizId, Map&lt;String, String&gt; extMap)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        CouponResult couponResult = couponService.sendCoupon(uId, commodityId, bizId);</span><br><span class="line">        logger.info(<span class="string">"请求参数[优惠券] =&gt; uId：&#123;&#125; commodityId：&#123;&#125; bizId：&#123;&#125; extMap：&#123;&#125;"</span>, uId, commodityId, bizId, JSON.toJSON(extMap));</span><br><span class="line">        logger.info(<span class="string">"测试结果[优惠券]：&#123;&#125;"</span>, JSON.toJSON(couponResult));</span><br><span class="line">        <span class="keyword">if</span> (!<span class="string">"0000"</span>.equals(couponResult.getCode())) <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(couponResult.getInfo());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>实物商品</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GoodsCommodityService</span> <span class="keyword">implements</span> <span class="title">ICommodity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Logger logger = LoggerFactory.getLogger(GoodsCommodityService<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> GoodsService goodsService = <span class="keyword">new</span> GoodsService();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendCommodity</span><span class="params">(String uId, String commodityId, String bizId, Map&lt;String, String&gt; extMap)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        DeliverReq deliverReq = <span class="keyword">new</span> DeliverReq();</span><br><span class="line">        deliverReq.setUserName(queryUserName(uId));</span><br><span class="line">        deliverReq.setUserPhone(queryUserPhoneNumber(uId));</span><br><span class="line">        deliverReq.setSku(commodityId);</span><br><span class="line">        deliverReq.setOrderId(bizId);</span><br><span class="line">        deliverReq.setConsigneeUserName(extMap.get(<span class="string">"consigneeUserName"</span>));</span><br><span class="line">        deliverReq.setConsigneeUserPhone(extMap.get(<span class="string">"consigneeUserPhone"</span>));</span><br><span class="line">        deliverReq.setConsigneeUserAddress(extMap.get(<span class="string">"consigneeUserAddress"</span>));</span><br><span class="line"></span><br><span class="line">        Boolean isSuccess = goodsService.deliverGoods(deliverReq);</span><br><span class="line"></span><br><span class="line">        logger.info(<span class="string">"请求参数[优惠券] =&gt; uId：&#123;&#125; commodityId：&#123;&#125; bizId：&#123;&#125; extMap：&#123;&#125;"</span>, uId, commodityId, bizId, JSON.toJSON(extMap));</span><br><span class="line">        logger.info(<span class="string">"测试结果[优惠券]：&#123;&#125;"</span>, isSuccess);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!isSuccess) <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"实物商品发放失败"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">queryUserName</span><span class="params">(String uId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"花花"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">queryUserPhoneNumber</span><span class="params">(String uId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"15200101232"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>第三方兑换卡</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CardCommodityService</span> <span class="keyword">implements</span> <span class="title">ICommodity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Logger logger = LoggerFactory.getLogger(CardCommodityService<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 模拟注入</span></span><br><span class="line">    <span class="keyword">private</span> IQiYiCardService iQiYiCardService = <span class="keyword">new</span> IQiYiCardService();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendCommodity</span><span class="params">(String uId, String commodityId, String bizId, Map&lt;String, String&gt; extMap)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        String mobile = queryUserMobile(uId);</span><br><span class="line">        iQiYiCardService.grantToken(mobile, bizId);</span><br><span class="line">        logger.info(<span class="string">"请求参数[爱奇艺兑换卡] =&gt; uId：&#123;&#125; commodityId：&#123;&#125; bizId：&#123;&#125; extMap：&#123;&#125;"</span>, uId, commodityId, bizId, JSON.toJSON(extMap));</span><br><span class="line">        logger.info(<span class="string">"测试结果[爱奇艺兑换卡]：success"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">queryUserMobile</span><span class="params">(String uId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"15200101232"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>从上面可以看到每一种奖品的实现都包括在自己的类中，新增、修改或者删除都不会影响其他奖品功能的测试，降低回归测试的可能。</li>
+<li>后续在新增的奖品只需要按照此结构进行填充即可，非常易于维护和扩展。</li>
+<li>在统一了入参以及出参后，调用方不在需要关心奖品发放的内部逻辑，按照统一的方式即可处理。</li>
+</ul>
+<h4 id="2-3-创建商店工厂"><a href="#2-3-创建商店工厂" class="headerlink" title="2.3 创建商店工厂"></a>2.3 创建商店工厂</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StoreFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ICommodity <span class="title">getCommodityService</span><span class="params">(Integer commodityType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == commodityType) <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="number">1</span> == commodityType) <span class="keyword">return</span> <span class="keyword">new</span> CouponCommodityService();</span><br><span class="line">        <span class="keyword">if</span> (<span class="number">2</span> == commodityType) <span class="keyword">return</span> <span class="keyword">new</span> GoodsCommodityService();</span><br><span class="line">        <span class="keyword">if</span> (<span class="number">3</span> == commodityType) <span class="keyword">return</span> <span class="keyword">new</span> CardCommodityService();</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"不存在的商品服务类型"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这里我们定义了一个商店的工厂类，在里面按照类型实现各种商品的服务。可以非常干净整洁的处理你的代码，后续新增的商品在这里扩展即可。如果你不喜欢<code>if</code>判断，也可以使用<code>switch</code>或者<code>map</code>配置结构，会让代码更加干净。</li>
+<li>另外很多代码检查软件和编码要求，不喜欢if语句后面不写扩展，这里是为了更加干净的向你体现逻辑。在实际的业务编码中可以添加括号。</li>
+</ul>
+<h3 id="3-测试验证"><a href="#3-测试验证" class="headerlink" title="3. 测试验证"></a>3. 测试验证</h3><p><strong>编写测试类：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test_commodity</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    StoreFactory storeFactory = <span class="keyword">new</span> StoreFactory();</span><br><span class="line">    <span class="comment">// 1. 优惠券</span></span><br><span class="line">    ICommodity commodityService_1 = storeFactory.getCommodityService(<span class="number">1</span>);</span><br><span class="line">    commodityService_1.sendCommodity(<span class="string">"10001"</span>, <span class="string">"EGM1023938910232121323432"</span>, <span class="string">"791098764902132"</span>, <span class="keyword">null</span>);</span><br><span class="line">    <span class="comment">// 2. 实物商品</span></span><br><span class="line">    ICommodity commodityService_2 = storeFactory.getCommodityService(<span class="number">2</span>);</span><br><span class="line">    </span><br><span class="line">    Map&lt;String,String&gt; extMap = <span class="keyword">new</span> HashMap&lt;String,String&gt;();</span><br><span class="line">    extMap.put(<span class="string">"consigneeUserName"</span>, <span class="string">"谢飞机"</span>);</span><br><span class="line">    extMap.put(<span class="string">"consigneeUserPhone"</span>, <span class="string">"15200292123"</span>);</span><br><span class="line">    extMap.put(<span class="string">"consigneeUserAddress"</span>, <span class="string">"吉林省.长春市.双阳区.XX街道.檀溪苑小区.#18-2109"</span>);</span><br><span class="line"></span><br><span class="line">    commodityService_2.sendCommodity(<span class="string">"10001"</span>,<span class="string">"9820198721311"</span>,<span class="string">"1023000020112221113"</span>, extMap);</span><br><span class="line">    <span class="comment">// 3. 第三方兑换卡(爱奇艺)</span></span><br><span class="line">    ICommodity commodityService_3 = storeFactory.getCommodityService(<span class="number">3</span>);</span><br><span class="line">    commodityService_3.sendCommodity(<span class="string">"10001"</span>,<span class="string">"AQY1xjkUodl8LO975GdfrYUio"</span>,<span class="keyword">null</span>,<span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%AE%9E%E6%88%98%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/" data-id="ckamdth4g000ggb07ha1q6wcl" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">Java, 设计模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Web开发-SpringBoot-SpringMVC入门" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/25/Web%E5%BC%80%E5%8F%91-SpringBoot-SpringMVC%E5%85%A5%E9%97%A8/" class="article-date">
+  <time datetime="2020-05-25T09:22:36.000Z" itemprop="datePublished">2020-05-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/25/Web%E5%BC%80%E5%8F%91-SpringBoot-SpringMVC%E5%85%A5%E9%97%A8/">Web开发_SpringBoot_SpringMVC入门</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Spring-Mvc-入门"><a href="#Spring-Mvc-入门" class="headerlink" title="Spring Mvc 入门"></a>Spring Mvc 入门</h2><h3 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h3><ul>
+<li><code>@Controller</code></li>
+<li><code>@RestController</code></li>
+<li><code>@RequestMapping</code></li>
+<li><code>@GetMapping</code></li>
+<li><code>@PostMapping</code></li>
+<li><code>@PutMapping</code></li>
+<li><code>@RequestParam</code></li>
+<li><code>@PathVariable</code></li>
+</ul>
+<h3 id="Controller"><a href="#Controller" class="headerlink" title="@Controller"></a>@Controller</h3><p><a href="https://github.com/spring-projects/spring-framework/blob/master/spring-context/src/main/java/org/springframework/stereotype/Controller.java" target="_blank" rel="noopener"><code>@Controller</code></a> 注解，添加在类上，表示这是控制器 Controller 对象。属性如下：</p>
+<ul>
+<li><code>name</code> 属性：该 Controller 对象的 Bean 名字。允许空。</li>
+</ul>
+<p><a href="https://github.com/spring-projects/spring-framework/blob/master/spring-web/src/main/java/org/springframework/web/bind/annotation/RestController.java" target="_blank" rel="noopener"><code>@RestController</code></a> 注解，添加在类上，是 <code>@Controller</code> 和 <a href="https://github.com/ndimiduk/spring-framework/blob/master/org.springframework.web/src/main/java/org/springframework/web/bind/annotation/ResponseBody.java" target="_blank" rel="noopener"><code>@ResponseBody</code></a> 的组合注解，直接使用接口方法的返回结果，经过 JSON/XML 等序列化方式，最终返回。也就是说，无需使用 InternalResourceViewResolver 解析视图，返回 HTML 结果。</p>
+<h3 id="RequestMapping"><a href="#RequestMapping" class="headerlink" title="@RequestMapping"></a>@RequestMapping</h3><p><a href="https://github.com/spring-projects/spring-framework/blob/master/spring-web/src/main/java/org/springframework/web/bind/annotation/RequestMapping.java" target="_blank" rel="noopener"><code>@RequestMapping</code></a> 注解，添加在类或方法上，标记该类/方法对应接口的配置信息。</p>
+<p><code>@RequestMapping</code> 注解的<strong>常用属性</strong>，如下：</p>
+<ul>
+<li><code>path</code> 属性：接口路径。<code>[]</code> 数组，可以填写多个接口路径。</li>
+<li><code>values</code> 属性：和 <code>path</code> 属性相同，是它的别名。</li>
+<li><code>method</code> 属性：请求方法 <a href="https://github.com/spring-projects/spring-framework/blob/master/spring-web/src/main/java/org/springframework/web/bind/annotation/RequestMethod.java" target="_blank" rel="noopener">RequestMethod</a> ，可以填写 <code>GET</code>、<code>POST</code>、<code>POST</code>、<code>DELETE</code> 等等。<code>[]</code> 数组，可以填写多个请求方法。如果为空，表示匹配所有请求方法。</li>
+</ul>
+<p><code>@RequestMapping</code> 注解的<strong>不常用属性</strong>，如下：</p>
+<ul>
+<li><p><code>name</code> 属性：接口名。一般情况下，我们不填写。</p>
+</li>
+<li><p><code>params</code> 属性：请求参数需要包含值的<strong>参数名</strong>。可以填写多个参数名。如果为空，表示匹配所有请你求方法。</p>
+</li>
+<li><p><code>headers</code> 属性：和 <code>params</code> 类似，只是从参数名变成<strong>请求头</strong>。</p>
+</li>
+<li><p><code>consumes</code> 属性：和 <code>params</code> 类似，只是从参数名变成请求头的<strong>提交内容类型</strong>( <a href="https://juejin.im/post/5cb34fc06fb9a068a75d3555" target="_blank" rel="noopener">Content-Type</a> )</p>
+</li>
+<li><p><code>produces</code> 属性：和 <code>params</code> 类似，只是从参数名变成请求头的( <a href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Accept" target="_blank" rel="noopener">Accept</a> )<strong>可接受类型</strong>。</p>
+</li>
+<li><p><a href="https://github.com/spring-projects/spring-framework/blob/master/spring-web/src/main/java/org/springframework/web/bind/annotation/GetMapping.java" target="_blank" rel="noopener"><code>@GetMapping</code></a> 注解：对应 <code>@GET</code> 请求方法的 <code>@RequestMapping</code> 注解。</p>
+</li>
+<li><p><a href="https://github.com/spring-projects/spring-framework/blob/master/spring-web/src/main/java/org/springframework/web/bind/annotation/PostMapping.java" target="_blank" rel="noopener"><code>@PostMapping</code></a> 注解：对应 <code>@POST</code> 请求方法的 <code>@RequestMapping</code> 注解。</p>
+</li>
+<li><p><a href="https://github.com/spring-projects/spring-framework/blob/master/spring-web/src/main/java/org/springframework/web/bind/annotation/PutMapping.java" target="_blank" rel="noopener"><code>@PutMapping</code></a> 注解：对应 <code>@PUT</code> 请求方法的 <code>@RequestMapping</code> 注解。</p>
+</li>
+<li><p><a href="https://github.com/spring-projects/spring-framework/blob/master/spring-web/src/main/java/org/springframework/web/bind/annotation/DeleteMapping.java" target="_blank" rel="noopener"><code>@DeleteMapping</code></a> 注解：对应 <code>@DELETE</code> 请求方法的 <code>@RequestMapping</code> 注解。</p>
+</li>
+</ul>
+<h3 id="RequestParam"><a href="#RequestParam" class="headerlink" title="@RequestParam"></a>@RequestParam</h3><p><a href="https://github.com/spring-projects/spring-framework/blob/master/spring-web/src/main/java/org/springframework/web/bind/annotation/RequestParam.java" target="_blank" rel="noopener"><code>@RequestParam</code></a> 注解，添加在方法参数上，标记该方法参数对应的请求参数的信息。属性如下：</p>
+<ul>
+<li><code>name</code> 属性：对应的请求参数名。如果为空，则直接使用方法上的参数变量名。</li>
+<li><code>value</code> 属性：和 <code>name</code> 属性相同，是它的别名。</li>
+<li><code>required</code> 属性：参数是否必须传。默认为 <code>true</code> ，表示必传。</li>
+<li><code>defaultValue</code> 属性：参数默认值。</li>
+</ul>
+<p><a href="https://github.com/spring-projects/spring-framework/blob/master/spring-web/src/main/java/org/springframework/web/bind/annotation/PathVariable.java" target="_blank" rel="noopener"><code>@PathVariable</code></a> 注解，添加在方法参数上，标记接口路径和方法参数的映射关系。</p>
+<h2 id="Application"><a href="#Application" class="headerlink" title="Application"></a>Application</h2><p>创建 <a href="https://github.com/YunaiV/SpringBoot-Labs/blob/master/lab-23/lab-springmvc-23-01/src/main/java/cn/iocoder/springboot/lab23/springmvc/Application.java" target="_blank" rel="noopener"><code>Application.java</code></a> 类，配置 <code>@SpringBootApplication</code> 注解即可。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(Application<span class="class">.<span class="keyword">class</span>, <span class="title">args</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserController.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/users"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询用户列表</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 用户列表</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">""</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;UserVO&gt; <span class="title">list</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 查询列表</span></span><br><span class="line">        List&lt;UserVO&gt; result = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        result.add(<span class="keyword">new</span> UserVO().setId(<span class="number">1</span>).setUsername(<span class="string">"yudaoyuanma"</span>));</span><br><span class="line">        result.add(<span class="keyword">new</span> UserVO().setId(<span class="number">2</span>).setUsername(<span class="string">"woshiyutou"</span>));</span><br><span class="line">        result.add(<span class="keyword">new</span> UserVO().setId(<span class="number">3</span>).setUsername(<span class="string">"chifanshuijiao"</span>));</span><br><span class="line">        <span class="comment">// 返回列表</span></span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获得指定用户编号的用户</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id 用户编号</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 用户</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> UserVO <span class="title">get</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Integer id) </span>&#123;</span><br><span class="line">        <span class="comment">// 查询并返回用户</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> UserVO().setId(id).setUsername(<span class="string">"username:"</span> + id);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 添加用户</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> addDTO 添加用户信息 DTO</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 添加成功的用户编号</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@PostMapping</span>(<span class="string">""</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">add</span><span class="params">(UserAddDTO addDTO)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 插入用户记录，返回编号</span></span><br><span class="line">        Integer returnId = <span class="number">1</span>;</span><br><span class="line">        <span class="comment">// 返回用户编号</span></span><br><span class="line">        <span class="keyword">return</span> returnId;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 更新指定用户编号的用户</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id 用户编号</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> updateDTO 更新用户信息 DTO</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 是否修改成功</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@PutMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Boolean <span class="title">update</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Integer id, UserUpdateDTO updateDTO) </span>&#123;</span><br><span class="line">        <span class="comment">// 将 id 设置到 updateDTO 中</span></span><br><span class="line">        updateDTO.setId(id);</span><br><span class="line">        <span class="comment">// 更新用户记录</span></span><br><span class="line">        Boolean success = <span class="keyword">true</span>;</span><br><span class="line">        <span class="comment">// 返回更新是否成功</span></span><br><span class="line">        <span class="keyword">return</span> success;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 删除指定用户编号的用户</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id 用户编号</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 是否删除成功</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@DeleteMapping</span>(<span class="string">"/&#123;id&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Boolean <span class="title">delete</span><span class="params">(@PathVariable(<span class="string">"id"</span>)</span> Integer id) </span>&#123;</span><br><span class="line">        <span class="comment">// 删除用户记录</span></span><br><span class="line">        Boolean success = <span class="keyword">false</span>;</span><br><span class="line">        <span class="comment">// 返回是否更新成功</span></span><br><span class="line">        <span class="keyword">return</span> success;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在类上，添加 <code>@RestController</code> 注解，表示直接返回接口结果。默认情况下，使用 JSON 作为序列化方式。</li>
+<li>在类上，添加 <code>@RequestMapping(&quot;/users&quot;)</code> 注解，表示 UserController 所有接口路径，以 <code>/users</code> 开头。</li>
+</ul>
+<h3 id="集成测试"><a href="#集成测试" class="headerlink" title="集成测试"></a>集成测试</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserControllerTest.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@RunWith</span>(SpringRunner<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">SpringBootTest</span>(<span class="title">classes</span> </span>= Application<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">AutoConfigureMockMvc</span></span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">UserControllerTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> MockMvc mvc;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testList</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 查询用户列表</span></span><br><span class="line">        ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get(<span class="string">"/users"</span>));</span><br><span class="line">        <span class="comment">// 校验结果</span></span><br><span class="line">        resultActions.andExpect(MockMvcResultMatchers.status().isOk()); <span class="comment">// 响应状态码 200</span></span><br><span class="line">        resultActions.andExpect(MockMvcResultMatchers.content().json(<span class="string">"[\n"</span> +</span><br><span class="line">                <span class="string">"    &#123;\n"</span> +</span><br><span class="line">                <span class="string">"        \"id\": 1,\n"</span> +</span><br><span class="line">                <span class="string">"        \"username\": \"yudaoyuanma\"\n"</span> +</span><br><span class="line">                <span class="string">"    &#125;,\n"</span> +</span><br><span class="line">                <span class="string">"    &#123;\n"</span> +</span><br><span class="line">                <span class="string">"        \"id\": 2,\n"</span> +</span><br><span class="line">                <span class="string">"        \"username\": \"woshiyutou\"\n"</span> +</span><br><span class="line">                <span class="string">"    &#125;,\n"</span> +</span><br><span class="line">                <span class="string">"    &#123;\n"</span> +</span><br><span class="line">                <span class="string">"        \"id\": 3,\n"</span> +</span><br><span class="line">                <span class="string">"        \"username\": \"chifanshuijiao\"\n"</span> +</span><br><span class="line">                <span class="string">"    &#125;\n"</span> +</span><br><span class="line">                <span class="string">"]"</span>)); <span class="comment">// 响应结果</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testGet</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 获得指定用户编号的用户</span></span><br><span class="line">        ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get(<span class="string">"/users/1"</span>));</span><br><span class="line">        <span class="comment">// 校验结果</span></span><br><span class="line">        resultActions.andExpect(MockMvcResultMatchers.status().isOk()); <span class="comment">// 响应状态码 200</span></span><br><span class="line">        resultActions.andExpect(MockMvcResultMatchers.content().json(<span class="string">"&#123;\n"</span> +</span><br><span class="line">                <span class="string">"\"id\": 1,\n"</span> +</span><br><span class="line">                <span class="string">"\"username\": \"username:1\"\n"</span> +</span><br><span class="line">                <span class="string">"&#125;"</span>)); <span class="comment">// 响应结果</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAdd</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 获得指定用户编号的用户</span></span><br><span class="line">        ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.post(<span class="string">"/users"</span>)</span><br><span class="line">            .param(<span class="string">"username"</span>, <span class="string">"yudaoyuanma"</span>)</span><br><span class="line">            .param(<span class="string">"passowrd"</span>, <span class="string">"nicai"</span>));</span><br><span class="line">        <span class="comment">// 校验结果</span></span><br><span class="line">        resultActions.andExpect(MockMvcResultMatchers.status().isOk()); <span class="comment">// 响应状态码 200</span></span><br><span class="line">        resultActions.andExpect(MockMvcResultMatchers.content().string(<span class="string">"1"</span>)); <span class="comment">// 响应结果</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testUpdate</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 获得指定用户编号的用户</span></span><br><span class="line">        ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.put(<span class="string">"/users/1"</span>)</span><br><span class="line">                .param(<span class="string">"username"</span>, <span class="string">"yudaoyuanma"</span>)</span><br><span class="line">                .param(<span class="string">"passowrd"</span>, <span class="string">"nicai"</span>));</span><br><span class="line">        <span class="comment">// 校验结果</span></span><br><span class="line">        resultActions.andExpect(MockMvcResultMatchers.status().isOk()); <span class="comment">// 响应状态码 200</span></span><br><span class="line">        resultActions.andExpect(MockMvcResultMatchers.content().string(<span class="string">"true"</span>)); <span class="comment">// 响应结果</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testDelete</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 获得指定用户编号的用户</span></span><br><span class="line">        ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.delete(<span class="string">"/users/1"</span>));</span><br><span class="line">        <span class="comment">// 校验结果</span></span><br><span class="line">        resultActions.andExpect(MockMvcResultMatchers.status().isOk()); <span class="comment">// 响应状态码 200</span></span><br><span class="line">        resultActions.andExpect(MockMvcResultMatchers.content().string(<span class="string">"false"</span>)); <span class="comment">// 响应结果</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在类上，我们添加了 <code>@AutoConfigureMockMvc</code> 注解，用于自动化配置稍后注入的 MockMvc Bean 对象 <code>mvc</code> 。在后续的测试中，会看到都是通过 <code>mvc</code> 调用后端 API 接口。而每一次调用后端 API 接口，都会执行<strong>真正的后端逻辑</strong>。因此，整个逻辑，走的是<strong>集成测试</strong>，会启动一个<strong>真实</strong>的 Spring 环境。</li>
+<li>每次 API 接口的请求，都通过 <a href="https://github.com/spring-projects/spring-framework/blob/master/spring-test/src/main/java/org/springframework/test/web/servlet/request/MockMvcRequestBuilders.java" target="_blank" rel="noopener">MockMvcRequestBuilders</a> 来构建。构建完成后，通过 <code>mvc</code> 执行请求，返回 <a href="https://github.com/spring-projects/spring-framework/blob/master/spring-test/src/main/java/org/springframework/test/web/servlet/ResultActions.java" target="_blank" rel="noopener">ResultActions</a> 结果。</li>
+<li>执行完请求后，通过调用 <a href="https://github.com/spring-projects/spring-framework/blob/master/spring-test/src/main/java/org/springframework/test/web/servlet/ResultActions.java" target="_blank" rel="noopener">ResultActions</a> 的 <code>andExpect(ResultMatcher matcher)</code> 方法，添加对结果的预期，相当于做断言。如果不符合预期，则会抛出异常，测试不通过。</li>
+</ul>
+<p>另外，ResultActions 还有两个方法：</p>
+<ul>
+<li><code>#andDo(ResultHandler handler)</code> 方法，添加 ResultHandler 结果处理器，例如说调试时打印结果到控制台，看看结果是否正确。</li>
+<li><code>#andReturn()</code> 方法，最后返回相应的 <a href="https://github.com/spring-projects/spring-framework/blob/master/spring-test/src/main/java/org/springframework/test/web/servlet/MvcResult.java" target="_blank" rel="noopener">MvcResult</a> 结果。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserControllerTest.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testGet2</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="comment">// 获得指定用户编号的用户</span></span><br><span class="line">    ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get(<span class="string">"/users/1"</span>));</span><br><span class="line">    <span class="comment">// 校验结果</span></span><br><span class="line">    resultActions.andExpect(MockMvcResultMatchers.status().isOk()); <span class="comment">// 响应状态码 200</span></span><br><span class="line">    resultActions.andExpect(MockMvcResultMatchers.content().json(<span class="string">"&#123;\n"</span> +</span><br><span class="line">            <span class="string">"\"id\": 1,\n"</span> +</span><br><span class="line">            <span class="string">"\"username\": \"username:1\"\n"</span> +</span><br><span class="line">            <span class="string">"&#125;"</span>)); <span class="comment">// 响应结果</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// &lt;1&gt; 打印结果</span></span><br><span class="line">    resultActions.andDo(MockMvcResultHandlers.print());</span><br><span class="line"></span><br><span class="line">    <span class="comment">// &lt;2&gt; 获得 MvcResult ，后续执行各种自定义逻辑</span></span><br><span class="line">    MvcResult mvcResult = resultActions.andReturn();</span><br><span class="line">    System.out.println(<span class="string">"拦截器数量："</span> + mvcResult.getInterceptors().length);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>&lt;1&gt;</code> 处，打印请求和响应信息。</p>
+<p><code>&lt;2&gt;</code> 处，获得 MvcResult 后，打印下拦截器的数量</p>
+<h3 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserControllerTest2.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@RunWith</span>(SpringRunner<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">WebMvcTest</span>(<span class="title">UserController</span>.<span class="title">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">UserControllerTest2</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> MockMvc mvc;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@MockBean</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testGet2</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// Mock UserService 的 get 方法</span></span><br><span class="line">        System.out.println(<span class="string">"before mock:"</span> + userService.get(<span class="number">1</span>)); <span class="comment">// &lt;1.1&gt;</span></span><br><span class="line">        Mockito.when(userService.get(<span class="number">1</span>)).thenReturn(</span><br><span class="line">                <span class="keyword">new</span> UserVO().setId(<span class="number">1</span>).setUsername(<span class="string">"username:1"</span>)); <span class="comment">// &lt;1.2&gt;</span></span><br><span class="line">        System.out.println(<span class="string">"after mock:"</span> + userService.get(<span class="number">1</span>)); <span class="comment">// &lt;1.3&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 查询用户列表</span></span><br><span class="line">        ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.get(<span class="string">"/users/v2/1"</span>));</span><br><span class="line">        <span class="comment">// 校验结果</span></span><br><span class="line">        resultActions.andExpect(MockMvcResultMatchers.status().isOk()); <span class="comment">// 响应状态码 200</span></span><br><span class="line">        resultActions.andExpect(MockMvcResultMatchers.content().json(<span class="string">"&#123;\n"</span> +</span><br><span class="line">                <span class="string">"    \"id\": 1,\n"</span> +</span><br><span class="line">                <span class="string">"    \"username\": \"username:1\"\n"</span> +</span><br><span class="line">                <span class="string">"&#125;"</span>)); <span class="comment">// 响应结果</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在类上添加 <a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot-test-autoconfigure/src/main/java/org/springframework/boot/test/autoconfigure/web/servlet/WebMvcTest.java" target="_blank" rel="noopener"><code>@WebMvcTest</code></a> 注解，并且传入的是 UserController 类，表示我们要对 UserController 进行单元测试。</li>
+<li>同时，<code>@WebMvcTest</code> 注解，是包含了 <code>@AutoConfigureMockMvc</code> 的组合注解，所以它会自动化配置我们稍后注入的 MockMvc Bean 对象 <code>mvc</code> 。在后续的测试中，我们会看到都是通过 <code>mvc</code> 调用后端 API 接口。<strong>但是</strong>！每一次调用后端 API 接口，并<strong>不会</strong>执行<strong>真正的后端逻辑</strong>，而是走的 Mock 逻辑。也就是说，整个逻辑，走的是<strong>单元测试</strong>，<strong>只</strong>会启动一个 <strong>Mock</strong> 的 Spring 环境。</li>
+<li><code>userService</code> 属性，我们添加了 <a href="https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/mock/mockito/MockBean.html" target="_blank" rel="noopener"><code>@MockBean</code></a> 注解，实际这里注入的是一个使用 <a href="https://site.mockito.org/" target="_blank" rel="noopener">Mockito</a> 创建的 UserService Mock 代理对象。如下图所示：</li>
+</ul>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf4vtgq5hzj312q03c41y.jpg" alt="image-20200525184043440"></p>
+<ul>
+<li><p>UserController 中，也会注入一个 UserService 属性，此时注入的就是该 Mock 出来的 UserService Bean 对象。</p>
+</li>
+<li><p><code>&lt;1.1&gt;</code> 处，我们调用 <code>UserService#get(Integer id)</code> 方法，然后打印返回结果。执行结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">before mock:null</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>结果竟然返回的是 <code>null</code> 空。理论来说，此时应该返回一个 <code>id = 1</code> 的 UserVO 对象。实际上，因为此时的 <code>userService</code> 是通过 Mockito 来 Mock 出来的对象，其所有调用它的方法，返回的都是空。</p>
+</li>
+<li><p><code>&lt;1.2&gt;</code> 处，通过 Mockito 进行 Mock <code>userService</code> 的 <code>#get(Integer id)</code> 方法，当传入的 <code>id = 1</code> 方法参数时，返回 <code>id = 1</code> 并且 <code>username = &quot;username:1&quot;</code> 的 UserVO 对象。</p>
+</li>
+<li><p><code>&lt;1.3&gt;</code> 处，再次调用 <code>UserService#get(Integer id)</code> 方法，然后打印返回结果。执行结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">after mock:cn.iocoder.springboot.lab23.springmvc.vo.UserVO@23202c31</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>打印的就是 Mock 返回的 UserVO 对象。</p>
+</li>
+</ul>
+<h3 id="全局统一返回"><a href="#全局统一返回" class="headerlink" title="全局统一返回"></a>全局统一返回</h3><p>在全局统一返回里，至少需要定义三个字段：</p>
+<ul>
+<li>成功时，状态码为 0 。</li>
+<li>失败时，对应业务的错误码。</li>
+<li><code>data</code>：数据。成功时，返回该字段。</li>
+<li><code>message</code>：错误提示。失败时，返回该字段。</li>
+</ul>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 成功响应</span></span><br><span class="line">&#123;</span><br><span class="line">    code: 0,</span><br><span class="line">    data: &#123;</span><br><span class="line">        id: 1,</span><br><span class="line">        username: "yudaoyuanma"</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 失败响应</span></span><br><span class="line">&#123;</span><br><span class="line">    code: 233666,</span><br><span class="line">    message: "徐妈太丑了"</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/25/Web%E5%BC%80%E5%8F%91-SpringBoot-SpringMVC%E5%85%A5%E9%97%A8/" data-id="ckamdth4r000jgb07an6g3qvu" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot 基础-01</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-SpringBoot-MapStruct" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/05/25/SpringBoot-MapStruct/" class="article-date">
@@ -142,7 +406,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/25/SpringBoot-MapStruct/" data-id="ckam8ue1t0001df07bu6o933v" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/25/SpringBoot-MapStruct/" data-id="ckamdth3s0001gb075nu25is4" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot 基础-01</a></li></ul>
@@ -213,7 +477,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/25/SpringBoot%E4%B9%8BLombok/" data-id="ckam8ue1z0004df07fuli4ycp" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/25/SpringBoot%E4%B9%8BLombok/" data-id="ckamdth3w0003gb07bstretxf" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot 基础-01</a></li></ul>
@@ -260,7 +524,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/25/%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97%E4%B9%8B%E2%80%94%E2%80%94%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/" data-id="ckam8ue220008df07c1bi7a42" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/25/%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97%E4%B9%8B%E2%80%94%E2%80%94%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/" data-id="ckamdth400008gb07ff4zhe7f" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
@@ -366,7 +630,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/22/SpringBoot2-0%E5%9F%BA%E7%A1%80/" data-id="ckam8ue1y0003df0743x84hwk" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/22/SpringBoot2-0%E5%9F%BA%E7%A1%80/" data-id="ckamdth3x0004gb07dndh0djx" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot 基础-01</a></li></ul>
@@ -522,7 +786,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/22/Java%E5%9F%BA%E7%A1%80/" data-id="ckam8ue1k0000df072gxh3ddr" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/22/Java%E5%9F%BA%E7%A1%80/" data-id="ckamdth3c0000gb072dejd2dd" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
@@ -573,7 +837,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/21/hello-world/" data-id="ckam8ue200005df07b76xb0j2" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/21/hello-world/" data-id="ckamdth3y0005gb0753rb2uq4" class="article-share-link">Share</a>
       
       
     </footer>
@@ -596,7 +860,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot 基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">Java, 设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot 基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
     </div>
   </div>
 
@@ -606,7 +870,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 20px;">Spring Boot 基础-01</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a>
+      <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Java-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">Java, 设计模式</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 20px;">Spring Boot 基础-01</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a>
     </div>
   </div>
 
@@ -628,6 +892,14 @@
       <ul>
         
           <li>
+            <a href="/2020/05/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%AE%9E%E6%88%98%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/">设计模式：实战工厂方法模式</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/25/Web%E5%BC%80%E5%8F%91-SpringBoot-SpringMVC%E5%85%A5%E9%97%A8/">Web开发_SpringBoot_SpringMVC入门</a>
+          </li>
+        
+          <li>
             <a href="/2020/05/25/SpringBoot-MapStruct/">SpringBoot-MapStruct</a>
           </li>
         
@@ -637,14 +909,6 @@
         
           <li>
             <a href="/2020/05/25/%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97%E4%B9%8B%E2%80%94%E2%80%94%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/">常用设计模式系列之——享元模式</a>
-          </li>
-        
-          <li>
-            <a href="/2020/05/22/SpringBoot2-0%E5%9F%BA%E7%A1%80/">SpringBoot2.0基础</a>
-          </li>
-        
-          <li>
-            <a href="/2020/05/22/Java%E5%9F%BA%E7%A1%80/">Java基础</a>
           </li>
         
       </ul>

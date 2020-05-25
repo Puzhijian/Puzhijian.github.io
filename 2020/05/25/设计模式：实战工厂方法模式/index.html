@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>设计模式：实战工厂方法模式 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Java 设计模式：实战工厂方法模式工厂模式又称工厂方法模式，是一种创建型设计模式，其在父类中提供一个创建对象的方法， 允许子类决定实例化对象的类型。 这种设计模式也是 Java 开发中最常见的一种模式，它的主要意图是定义一个创建对象的接口，让其子类自己决定实例化哪一个工厂类，工厂模式使其创建过程延迟到子类进行。 简单说就是为了提供代码结构的扩展性，屏蔽每一个功能类中的具体实现逻辑。让外部可以更加">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式：实战工厂方法模式">
+<meta property="og:url" content="http://yoursite.com/2020/05/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%AE%9E%E6%88%98%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Java 设计模式：实战工厂方法模式工厂模式又称工厂方法模式，是一种创建型设计模式，其在父类中提供一个创建对象的方法， 允许子类决定实例化对象的类型。 这种设计模式也是 Java 开发中最常见的一种模式，它的主要意图是定义一个创建对象的接口，让其子类自己决定实例化哪一个工厂类，工厂模式使其创建过程延迟到子类进行。 简单说就是为了提供代码结构的扩展性，屏蔽每一个功能类中的具体实现逻辑。让外部可以更加">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf4w79vmacj30ka0b0gpk.jpg">
+<meta property="article:published_time" content="2020-05-25T10:51:02.000Z">
+<meta property="article:modified_time" content="2020-05-25T11:02:37.721Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Java, 设计模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf4w79vmacj30ka0b0gpk.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="java-设计模式：实战工厂方法模式" class="article article-type-java" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%AE%9E%E6%88%98%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/" class="article-date">
+  <time datetime="2020-05-25T10:51:02.000Z" itemprop="datePublished">2020-05-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      设计模式：实战工厂方法模式
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Java-设计模式：实战工厂方法模式"><a href="#Java-设计模式：实战工厂方法模式" class="headerlink" title="Java 设计模式：实战工厂方法模式"></a>Java 设计模式：实战工厂方法模式</h2><p>工厂模式又称工厂方法模式，是一种创建型设计模式，其在父类中提供一个创建对象的方法， 允许子类决定实例化对象的类型。</p>
+<p>这种设计模式也是 Java 开发中最常见的一种模式，它的主要意图是定义一个创建对象的接口，让其子类自己决定实例化哪一个工厂类，工厂模式使其创建过程延迟到子类进行。</p>
+<p>简单说就是为了提供代码结构的扩展性，屏蔽每一个功能类中的具体实现逻辑。让外部可以更加简单的只是知道调用即可，同时，这也是去掉众多<code>ifeslse</code>的方式。</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf4w79vmacj30ka0b0gpk.jpg" alt="image-20200525185358605"></p>
+<p>在营销场景中经常会有某个用户做了一些操作；打卡、分享、留言、邀请注册等等，进行返利积分，最后通过积分在兑换商品，从而促活和拉新。</p>
+<p>那么在这里我们模拟积分兑换中的发放多种类型商品，假如现在我们有如下三种类型的商品接口；</p>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>类型</th>
+<th>接口</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>优惠券</td>
+<td><code>CouponResult sendCoupon(String uId, String couponNumber, String uuid)</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>实物商品</td>
+<td><code>Boolean deliverGoods(DeliverReq req)</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>第三方爱奇艺兑换卡</td>
+<td><code>void grantToken(String bindMobileNumber, String cardId)</code></td>
+</tr>
+</tbody></table>
+<p><strong>从以上接口来看有如下信息：</strong></p>
+<ul>
+<li>三个接口返回类型不同，有对象类型、布尔类型、还有一个空类型。</li>
+<li>入参不同，发放优惠券需要仿重、兑换卡需要卡ID、实物商品需要发货位置(对象中含有)。</li>
+<li>另外可能会随着后续的业务的发展，会新增其他种商品类型。因为你所有的开发需求都是随着业务对市场的拓展而带来的。</li>
+</ul>
+<h3 id="1-工程结构"><a href="#1-工程结构" class="headerlink" title="1. 工程结构"></a>1. 工程结构</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">itstack-demo-design-1-02</span><br><span class="line">└── src</span><br><span class="line">    ├── main</span><br><span class="line">    │   └── java</span><br><span class="line">    │       └── org.itstack.demo.design</span><br><span class="line">    │           ├── store    </span><br><span class="line">    │           │   ├── impl</span><br><span class="line">    │           │   │   ├── CardCommodityService.java</span><br><span class="line">    │           │   │   ├── CouponCommodityService.java </span><br><span class="line">    │           │   │   └── GoodsCommodityService.java  </span><br><span class="line">    │           │   └── ICommodity.java</span><br><span class="line">    │           └── StoreFactory.java </span><br><span class="line">    └── test</span><br><span class="line">         └── java</span><br><span class="line">             └── org.itstack.demo.design.test</span><br><span class="line">                 └── ApiTest.java</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-代码实现"><a href="#2-代码实现" class="headerlink" title="2. 代码实现"></a>2. 代码实现</h3><h4 id="2-1-定义发奖接口"><a href="#2-1-定义发奖接口" class="headerlink" title="2.1 定义发奖接口"></a>2.1 定义发奖接口</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ICommodity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">sendCommodity</span><span class="params">(String uId, String commodityId, String bizId, Map&lt;String, String&gt; extMap)</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>所有的奖品无论是实物、虚拟还是第三方，都需要通过我们的程序实现此接口进行处理，以保证最终入参出参的统一性。</li>
+<li>接口的入参包括；<code>用户ID</code>、<code>奖品ID</code>、<code>业务ID</code>以及<code>扩展字段</code>用于处理发放实物商品时的收获地址。</li>
+</ul>
+<h4 id="2-2-实现奖品发放接口"><a href="#2-2-实现奖品发放接口" class="headerlink" title="2.2 实现奖品发放接口"></a>2.2 实现奖品发放接口</h4><p><strong>优惠券</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CouponCommodityService</span> <span class="keyword">implements</span> <span class="title">ICommodity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Logger logger = LoggerFactory.getLogger(CouponCommodityService<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> CouponService couponService = <span class="keyword">new</span> CouponService();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendCommodity</span><span class="params">(String uId, String commodityId, String bizId, Map&lt;String, String&gt; extMap)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        CouponResult couponResult = couponService.sendCoupon(uId, commodityId, bizId);</span><br><span class="line">        logger.info(<span class="string">"请求参数[优惠券] =&gt; uId：&#123;&#125; commodityId：&#123;&#125; bizId：&#123;&#125; extMap：&#123;&#125;"</span>, uId, commodityId, bizId, JSON.toJSON(extMap));</span><br><span class="line">        logger.info(<span class="string">"测试结果[优惠券]：&#123;&#125;"</span>, JSON.toJSON(couponResult));</span><br><span class="line">        <span class="keyword">if</span> (!<span class="string">"0000"</span>.equals(couponResult.getCode())) <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(couponResult.getInfo());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>实物商品</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GoodsCommodityService</span> <span class="keyword">implements</span> <span class="title">ICommodity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Logger logger = LoggerFactory.getLogger(GoodsCommodityService<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> GoodsService goodsService = <span class="keyword">new</span> GoodsService();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendCommodity</span><span class="params">(String uId, String commodityId, String bizId, Map&lt;String, String&gt; extMap)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        DeliverReq deliverReq = <span class="keyword">new</span> DeliverReq();</span><br><span class="line">        deliverReq.setUserName(queryUserName(uId));</span><br><span class="line">        deliverReq.setUserPhone(queryUserPhoneNumber(uId));</span><br><span class="line">        deliverReq.setSku(commodityId);</span><br><span class="line">        deliverReq.setOrderId(bizId);</span><br><span class="line">        deliverReq.setConsigneeUserName(extMap.get(<span class="string">"consigneeUserName"</span>));</span><br><span class="line">        deliverReq.setConsigneeUserPhone(extMap.get(<span class="string">"consigneeUserPhone"</span>));</span><br><span class="line">        deliverReq.setConsigneeUserAddress(extMap.get(<span class="string">"consigneeUserAddress"</span>));</span><br><span class="line"></span><br><span class="line">        Boolean isSuccess = goodsService.deliverGoods(deliverReq);</span><br><span class="line"></span><br><span class="line">        logger.info(<span class="string">"请求参数[优惠券] =&gt; uId：&#123;&#125; commodityId：&#123;&#125; bizId：&#123;&#125; extMap：&#123;&#125;"</span>, uId, commodityId, bizId, JSON.toJSON(extMap));</span><br><span class="line">        logger.info(<span class="string">"测试结果[优惠券]：&#123;&#125;"</span>, isSuccess);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!isSuccess) <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"实物商品发放失败"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">queryUserName</span><span class="params">(String uId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"花花"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">queryUserPhoneNumber</span><span class="params">(String uId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"15200101232"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>第三方兑换卡</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CardCommodityService</span> <span class="keyword">implements</span> <span class="title">ICommodity</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Logger logger = LoggerFactory.getLogger(CardCommodityService<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 模拟注入</span></span><br><span class="line">    <span class="keyword">private</span> IQiYiCardService iQiYiCardService = <span class="keyword">new</span> IQiYiCardService();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendCommodity</span><span class="params">(String uId, String commodityId, String bizId, Map&lt;String, String&gt; extMap)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        String mobile = queryUserMobile(uId);</span><br><span class="line">        iQiYiCardService.grantToken(mobile, bizId);</span><br><span class="line">        logger.info(<span class="string">"请求参数[爱奇艺兑换卡] =&gt; uId：&#123;&#125; commodityId：&#123;&#125; bizId：&#123;&#125; extMap：&#123;&#125;"</span>, uId, commodityId, bizId, JSON.toJSON(extMap));</span><br><span class="line">        logger.info(<span class="string">"测试结果[爱奇艺兑换卡]：success"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">queryUserMobile</span><span class="params">(String uId)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"15200101232"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>从上面可以看到每一种奖品的实现都包括在自己的类中，新增、修改或者删除都不会影响其他奖品功能的测试，降低回归测试的可能。</li>
+<li>后续在新增的奖品只需要按照此结构进行填充即可，非常易于维护和扩展。</li>
+<li>在统一了入参以及出参后，调用方不在需要关心奖品发放的内部逻辑，按照统一的方式即可处理。</li>
+</ul>
+<h4 id="2-3-创建商店工厂"><a href="#2-3-创建商店工厂" class="headerlink" title="2.3 创建商店工厂"></a>2.3 创建商店工厂</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StoreFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> ICommodity <span class="title">getCommodityService</span><span class="params">(Integer commodityType)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> == commodityType) <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="number">1</span> == commodityType) <span class="keyword">return</span> <span class="keyword">new</span> CouponCommodityService();</span><br><span class="line">        <span class="keyword">if</span> (<span class="number">2</span> == commodityType) <span class="keyword">return</span> <span class="keyword">new</span> GoodsCommodityService();</span><br><span class="line">        <span class="keyword">if</span> (<span class="number">3</span> == commodityType) <span class="keyword">return</span> <span class="keyword">new</span> CardCommodityService();</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"不存在的商品服务类型"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>这里我们定义了一个商店的工厂类，在里面按照类型实现各种商品的服务。可以非常干净整洁的处理你的代码，后续新增的商品在这里扩展即可。如果你不喜欢<code>if</code>判断，也可以使用<code>switch</code>或者<code>map</code>配置结构，会让代码更加干净。</li>
+<li>另外很多代码检查软件和编码要求，不喜欢if语句后面不写扩展，这里是为了更加干净的向你体现逻辑。在实际的业务编码中可以添加括号。</li>
+</ul>
+<h3 id="3-测试验证"><a href="#3-测试验证" class="headerlink" title="3. 测试验证"></a>3. 测试验证</h3><p><strong>编写测试类：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test_commodity</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    StoreFactory storeFactory = <span class="keyword">new</span> StoreFactory();</span><br><span class="line">    <span class="comment">// 1. 优惠券</span></span><br><span class="line">    ICommodity commodityService_1 = storeFactory.getCommodityService(<span class="number">1</span>);</span><br><span class="line">    commodityService_1.sendCommodity(<span class="string">"10001"</span>, <span class="string">"EGM1023938910232121323432"</span>, <span class="string">"791098764902132"</span>, <span class="keyword">null</span>);</span><br><span class="line">    <span class="comment">// 2. 实物商品</span></span><br><span class="line">    ICommodity commodityService_2 = storeFactory.getCommodityService(<span class="number">2</span>);</span><br><span class="line">    </span><br><span class="line">    Map&lt;String,String&gt; extMap = <span class="keyword">new</span> HashMap&lt;String,String&gt;();</span><br><span class="line">    extMap.put(<span class="string">"consigneeUserName"</span>, <span class="string">"谢飞机"</span>);</span><br><span class="line">    extMap.put(<span class="string">"consigneeUserPhone"</span>, <span class="string">"15200292123"</span>);</span><br><span class="line">    extMap.put(<span class="string">"consigneeUserAddress"</span>, <span class="string">"吉林省.长春市.双阳区.XX街道.檀溪苑小区.#18-2109"</span>);</span><br><span class="line"></span><br><span class="line">    commodityService_2.sendCommodity(<span class="string">"10001"</span>,<span class="string">"9820198721311"</span>,<span class="string">"1023000020112221113"</span>, extMap);</span><br><span class="line">    <span class="comment">// 3. 第三方兑换卡(爱奇艺)</span></span><br><span class="line">    ICommodity commodityService_3 = storeFactory.getCommodityService(<span class="number">3</span>);</span><br><span class="line">    commodityService_3.sendCommodity(<span class="string">"10001"</span>,<span class="string">"AQY1xjkUodl8LO975GdfrYUio"</span>,<span class="keyword">null</span>,<span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%AE%9E%E6%88%98%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/" data-id="ckamdth4g000ggb07ha1q6wcl" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">Java, 设计模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2020/05/25/Web%E5%BC%80%E5%8F%91-SpringBoot-SpringMVC%E5%85%A5%E9%97%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Web开发_SpringBoot_SpringMVC入门</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">Java, 设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot 基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Java-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">Java, 设计模式</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 20px;">Spring Boot 基础-01</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/05/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%AE%9E%E6%88%98%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/">设计模式：实战工厂方法模式</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/25/Web%E5%BC%80%E5%8F%91-SpringBoot-SpringMVC%E5%85%A5%E9%97%A8/">Web开发_SpringBoot_SpringMVC入门</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/25/SpringBoot-MapStruct/">SpringBoot-MapStruct</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/25/SpringBoot%E4%B9%8BLombok/">SpringBoot之Lombok</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/25/%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97%E4%B9%8B%E2%80%94%E2%80%94%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/">常用设计模式系列之——享元模式</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

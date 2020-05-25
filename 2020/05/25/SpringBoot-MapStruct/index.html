@@ -14,13 +14,14 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="Spring  Boot 对象转换 MapStruct 入门 DO（Data Object）：与数据库表结构一一对应，通过DAO层向上传输数据源对象。 DTO（Data Transfer Object）：数据传输对象，Service或Manager向外传输的对象。 BO（Business Object）：业务对象。由Service层输出的封装业务逻辑的对象。   通过创建一个 MapStruct">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://yoursite.com/Users/zhijianpu/Downloads/20200525162357.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf4sed5o0bj313n0f3q69.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf4sfbppw2j313x0leqmg.jpg">
 <meta property="article:published_time" content="2020-05-25T07:31:00.000Z">
-<meta property="article:modified_time" content="2020-05-25T08:33:59.049Z">
+<meta property="article:modified_time" content="2020-05-25T08:43:26.450Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="Spring Boot 基础-01">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/Users/zhijianpu/Downloads/20200525162357.jpg">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf4sed5o0bj313n0f3q69.jpg">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -138,15 +139,16 @@
 <li>其中，设置注解的 <code>source</code> 属性为 UserDO 的 <code>id</code> 属性，注解的 <code>target</code> 属性为 UserDetailBO 的 <code>userId</code> 属性。</li>
 </ul>
 <p><code>@Mapping</code> 注解还支持多个对象转换为一个对象。示例如下图：</p>
-<p><img src="/Users/zhijianpu/Downloads/20200525162357.jpg" alt=""></p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf4sed5o0bj313n0f3q69.jpg" alt=""></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDetailBOTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建 UserDO 对象</span></span><br><span class="line">        UserDO userDO = <span class="keyword">new</span> UserDO()</span><br><span class="line">                .setId(<span class="number">1</span>).setUsername(<span class="string">"yudaoyuanma"</span>).setPassword(<span class="string">"buzhidao"</span>);</span><br><span class="line">        <span class="comment">// 进行转换&lt;X&gt;</span></span><br><span class="line">        UserDetailBO userDetailBO = UserConvert.INSTANCE.convertDetail(userDO);</span><br><span class="line">        System.out.println(userDetailBO.getUserId());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>核心代码在 <code>&lt;X&gt;</code> 处，通过 UserConvert 将 UserDO 对象转换成 UserDetailBO 对象。</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf4sfbppw2j313x0leqmg.jpg" alt="image-20200525164318874"></p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/25/SpringBoot-MapStruct/" data-id="ckam8i80800015107ga85cskc" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/25/SpringBoot-MapStruct/" data-id="ckam8ue1t0001df07bu6o933v" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot 基础-01</a></li></ul>

@@ -64,6 +64,77 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-SpringBoot之Lombok" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/25/SpringBoot%E4%B9%8BLombok/" class="article-date">
+  <time datetime="2020-05-25T07:20:08.000Z" itemprop="datePublished">2020-05-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/25/SpringBoot%E4%B9%8BLombok/">SpringBoot之Lombok</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Spring-Boot-消除冗余代码-Lombok-入门"><a href="#Spring-Boot-消除冗余代码-Lombok-入门" class="headerlink" title="Spring Boot 消除冗余代码 Lombok 入门"></a>Spring Boot 消除冗余代码 Lombok 入门</h2><p>Lombok 注解:</p>
+<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Getter.java" target="_blank" rel="noopener"><code>@Getter</code></a> 注解，添加在<strong>类</strong>或<strong>属性</strong>上，生成对应的 get 方法。</p>
+<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Setting.java" target="_blank" rel="noopener"><code>@Setter</code></a> 注解，添加在<strong>类</strong>或<strong>属性</strong>上，生成对应的 set 方法。</p>
+<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/ToString.java" target="_blank" rel="noopener"><code>@ToString</code></a> 注解，添加在<strong>类</strong>上，生成 toString 方法。</p>
+<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/EqualsAndHashCode.java" target="_blank" rel="noopener"><code>@EqualsAndHashCode</code></a> 注解，添加在<strong>类</strong>上，生成 equals 和 hashCode 方法。</p>
+<p><code>@AllArgsConstructor</code>、<code>@RequiredArgsConstructor</code>、<code>@NoArgsConstructor</code> 注解，添加在<strong>类</strong>上，为类自动生成对应参数的构造方法。</p>
+<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Data.java" target="_blank" rel="noopener"><code>@Data</code></a> 注解，添加在<strong>类</strong>上，是 5 个 Lombok 注解的组合。</p>
+<ul>
+<li>为所有属性，添加 <code>@Getter</code>、<code>@ToString</code>、<code>@EqualsAndHashCode</code> 注解的效果</li>
+<li>为非 <code>final</code> 修饰的属性，添加 <code>@Setter</code> 注解的效果</li>
+<li>为 <code>final</code> 修改的属性，添加 <code>@RequiredArgsConstructor</code> 注解的效果</li>
+</ul>
+<p><code>@Value</code> 注解，添加在<strong>类</strong>上，和 <code>@Data</code> 注解类似，区别在于它会把所有属性默认定义为 <code>private final</code> 修饰，所以不会生成 set 方法。</p>
+<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/apachecommons/CommonsLog.java" target="_blank" rel="noopener"><code>@CommonsLog</code></a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/flogger/Flogger.java" target="_blank" rel="noopener"><code>@Flogger</code></a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/java/Log.java" target="_blank" rel="noopener"><code>@Log</code></a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/jbosslog/JBossLog.java" target="_blank" rel="noopener"><code>@JBossLog</code></a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/log4j/Log4j.java" target="_blank" rel="noopener">@Log4j</a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/log4j/Log4j2.java" target="_blank" rel="noopener">@Log4j2</a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Slf4j.java" target="_blank" rel="noopener">@Slf4j</a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Slf4jX.java" target="_blank" rel="noopener">@Slf4jX</a> 注解，添加在<strong>类</strong>上，自动为类添加对应的日志支持。</p>
+<p><code>@NonNull</code> 注解，添加在<strong>方法参数</strong>、<strong>类属性</strong>上，用于自动生成 <code>null</code> 参数检查。若确实是 <code>null</code> 时，抛出 NullPointerException 异常。</p>
+<p><code>@Cleanup</code> 注解，添加在方法中的<strong>局部变量</strong>上，在作用域结束时会自动调用 <code>#close()</code> 方法，来释放资源。例如说，使用在 Java IO 流操作的时候。</p>
+<p><code>@Builder</code> 注解，添加在<strong>类</strong>上，给该类加个构造者模式 Builder 内部类。</p>
+<p><code>@Synchronized</code> 注解，添加在<strong>方法</strong>上，添加同步锁。</p>
+<p><code>@SneakyThrows</code> 注解，添加在<strong>方法</strong>上，给该方法添加 <code>try catch</code> 代码块。</p>
+<p><code>@Accessors</code> 注解，添加在<strong>方法</strong>或<strong>属性</strong>上，并设置 <code>chain = true</code>，实现链式编程。</p>
+<h3 id="Data-注解"><a href="#Data-注解" class="headerlink" title="@Data 注解"></a>@Data 注解</h3><p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Data.java" target="_blank" rel="noopener"><code>@Data</code></a> 注解，添加在<strong>类</strong>上，是 5 个 Lombok 注解的组合。</p>
+<ul>
+<li>为所有属性，添加 <code>@Getter</code>、<code>@ToString</code>、<code>@EqualsAndHashCode</code> 注解的效果</li>
+<li>为非 <code>final</code> 修饰的属性，添加 <code>@Setter</code> 注解的效果</li>
+<li>为 <code>final</code> 修改的属性，添加 <code>@RequiredArgsConstructor</code> 注解的效果</li>
+</ul>
+<p>如果使用 <code>@Data</code> 注解的类，继承了其它父类的属性，最好额外添加 <code>@ToString(callSuper = true)</code> 和 <code>@EqualsAndHashCode(callSuper = true)</code> 注解。</p>
+<ul>
+<li>因为默认情况下，<code>@Data</code> 注解不会处理父类的属性。所以需要通过 <code>callSuper = true</code> 属性，声明需要调用父类对应的方法。</li>
+<li>这个情况非常常见，例如说在实体类中，可能会声明一个抽象父类 AbstractEntity，而该类里有一个 <code>id</code> 编号属性。</li>
+</ul>
+<h3 id="Slf4j-注解"><a href="#Slf4j-注解" class="headerlink" title="@Slf4j 注解"></a>@Slf4j 注解</h3><p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Slf4j.java" target="_blank" rel="noopener"><code>@Slf4j</code></a> 注解，添加在<strong>类</strong>上，给该类创建 Slf4j Logger <strong>静态</strong>属性。</p>
+<h3 id="NonNull-注解"><a href="#NonNull-注解" class="headerlink" title="@NonNull 注解"></a>@NonNull 注解</h3><p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/NonNull.java" target="_blank" rel="noopener"><code>@NonNull</code></a> 注解，添加在<strong>方法参数</strong>、<strong>类属性</strong>上，用于自动生成 <code>null</code> 参数检查。若确实是 <code>null</code> 时，抛出 NullPointerException 异常。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/25/SpringBoot%E4%B9%8BLombok/" data-id="ckam64yqw0003b4070rntfguu" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-常用设计模式系列之——享元模式" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/05/25/%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97%E4%B9%8B%E2%80%94%E2%80%94%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/" class="article-date">
@@ -99,7 +170,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/25/%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97%E4%B9%8B%E2%80%94%E2%80%94%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/" data-id="ckam4lo8y00002g07autg2tjq" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/25/%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97%E4%B9%8B%E2%80%94%E2%80%94%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/" data-id="ckam64yqx0004b407hb5zf5tc" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
@@ -205,7 +276,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/22/SpringBoot2-0%E5%9F%BA%E7%A1%80/" data-id="ckam4lo9c00032g075m75hs2s" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/22/SpringBoot2-0%E5%9F%BA%E7%A1%80/" data-id="ckam64yqt0001b407bkngfsxr" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-2-0/" rel="tag">Spring Boot 2.0</a></li></ul>
@@ -361,7 +432,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/22/Java%E5%9F%BA%E7%A1%80/" data-id="ckam4lo9800012g07h4cy5pht" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/22/Java%E5%9F%BA%E7%A1%80/" data-id="ckam64yqj0000b4071yy1bq0k" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
@@ -412,7 +483,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/21/hello-world/" data-id="ckam4lo9d00042g077zmpgj89" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/21/hello-world/" data-id="ckam64yqy0005b4078so542k1" class="article-share-link">Share</a>
       
       
     </footer>
@@ -435,7 +506,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-2-0/" rel="tag">Spring Boot 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-2-0/" rel="tag">Spring Boot 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
     </div>
   </div>
 
@@ -445,7 +516,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Spring-Boot-2-0/" style="font-size: 10px;">Spring Boot 2.0</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a>
+      <a href="/tags/Java/" style="font-size: 10px;">Java</a> <a href="/tags/Spring-Boot/" style="font-size: 10px;">Spring Boot</a> <a href="/tags/Spring-Boot-2-0/" style="font-size: 10px;">Spring Boot 2.0</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a>
     </div>
   </div>
 
@@ -465,6 +536,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/05/25/SpringBoot%E4%B9%8BLombok/">SpringBoot之Lombok</a>
+          </li>
         
           <li>
             <a href="/2020/05/25/%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97%E4%B9%8B%E2%80%94%E2%80%94%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/">常用设计模式系列之——享元模式</a>

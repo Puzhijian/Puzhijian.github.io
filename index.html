@@ -64,6 +64,169 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Web开发-SpringBoot响应式WebFlux入门" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/27/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%93%8D%E5%BA%94%E5%BC%8FWebFlux%E5%85%A5%E9%97%A8/" class="article-date">
+  <time datetime="2020-05-27T09:47:41.000Z" itemprop="datePublished">2020-05-27</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/27/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%93%8D%E5%BA%94%E5%BC%8FWebFlux%E5%85%A5%E9%97%A8/">Web开发-SpringBoot响应式WebFlux入门</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Spring-Boot-响应式-WebFlux-入门"><a href="#Spring-Boot-响应式-WebFlux-入门" class="headerlink" title="Spring Boot 响应式 WebFlux 入门"></a>Spring Boot 响应式 WebFlux 入门</h2><h3 id="1-概述"><a href="#1-概述" class="headerlink" title="1.概述"></a>1.概述</h3><h4 id="1-1-响应式编程"><a href="#1-1-响应式编程" class="headerlink" title="1.1 响应式编程"></a>1.1 响应式编程</h4><ul>
+<li>在现在主流的编程模型中，请求是被<strong>同步阻塞</strong>处理完成，返回结果给前端。</li>
+<li>在响应式的编程模型中，请求是被作为<strong>一个事件</strong>丢到线程池中执行，等到执行完毕，<strong>异步</strong>回调结果给主线程，最后返回给前端。</li>
+</ul>
+<p>通过这样的方式，主线程不断接收请求，<strong>不负责直接同步阻塞处理</strong>，从而避免自身被阻塞。</p>
+<h4 id="1-2-Reactor-框架"><a href="#1-2-Reactor-框架" class="headerlink" title="1.2 Reactor 框架"></a>1.2 Reactor 框架</h4><p>在 Java 生态中，提供响应式编程的框架主要有 <a href="https://projectreactor.io/" target="_blank" rel="noopener">Reactor</a>、<a href="https://github.com/ReactiveX/RxJava" target="_blank" rel="noopener">RxJava</a>、<a href="https://community.oracle.com/docs/DOC-1006738" target="_blank" rel="noopener">JDK9 Flow API</a> 。</p>
+<p>Reactor 有两个非常重要的基本概念：</p>
+<ul>
+<li><a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html" target="_blank" rel="noopener">Flux</a> ，表示的是包含 0 到 N 个元素的异步序列。当消息通知产生时，订阅者(<a href="https://www.reactive-streams.org/reactive-streams-1.0.3-javadoc/org/reactivestreams/Subscriber.html" target="_blank" rel="noopener">Subscriber</a>)中对应的方法 <code>#onNext(t)</code>, <code>#onComplete(t)</code> 和 <code>#onError(t)</code> 会被调用。</li>
+<li><a href="https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Mono.html" target="_blank" rel="noopener">Mono</a> 表示的是包含 0 或者 1 个元素的异步序列。该序列中同样可以包含与 Flux 相同的三种类型的消息通知。</li>
+<li>同时，Flux 和 Mono 之间可以进行转换。例如：<ul>
+<li>对一个 Flux 序列进行计数操作，得到的结果是一个 <code>Mono&lt;Long&gt;</code> 对象。</li>
+<li>把两个 Mono 序列合并在一起，得到的是一个 Flux 对象。</li>
+</ul>
+</li>
+</ul>
+<h4 id="1-3-Spring-WebFlux"><a href="#1-3-Spring-WebFlux" class="headerlink" title="1.3 Spring WebFlux"></a>1.3 Spring WebFlux</h4><p>Spring Framework 5 提供了一个新的 <a href="https://github.com/spring-projects/spring-framework/tree/master/spring-webflux" target="_blank" rel="noopener"><code>spring-webflux</code></a> 模块。该模块包含了：</p>
+<ul>
+<li>对响应式支持的 HTTP 和 WebSocket 客户端。</li>
+<li>对响应式支持的 Web 服务器，包括 Rest API、HTML 浏览器、WebSocket 等交互方式。</li>
+</ul>
+<p>在服务端方面，WebFlux 提供了 2 种编程模型（翻译成使用方式，可能更易懂）：</p>
+<ul>
+<li>方式一，<strong>基于 Annotated Controller 方式实现</strong>：基于 <code>@Controller</code> 和 SpringMVC 使用的其它注解。也就是说，我们大体上可以像使用 SpringMVC 的方式，使用 WebFlux 。</li>
+<li>方式二，<strong>基于函数式编程方式</strong>：函数式，Java 8 lambda 表达式风格的路由和处理。</li>
+</ul>
+<p>这两个编程模型，都是在同一个响应式基础（foundation）上执行的，该基础将非阻塞 HTTP 运行时（runtime）<strong>适配成</strong>响应式 API 。 简单来说，就是将原有的 API ，使用 Reactor 封装成响应式 API ，让开发者使用更加便捷。</p>
+<p>WebFlux 可以运行在：</p>
+<ul>
+<li>支持 Servlet 3.1 非阻塞 IO API 的 Servlet 容器上</li>
+<li>也可以运行在支持异步运行时的，例如说 Netty 或者 Undertow 上</li>
+</ul>
+<ul>
+<li>对于 Servlet 来说， <a href="https://github.com/javaee/servlet-spec/blob/master/src/main/java/javax/servlet/ServletRequest.java#L139-L152" target="_blank" rel="noopener"><code>ServletRequest#getInputStream()</code></a> 方法，获得请求的主体内容返回的是 InputStream 对象。</li>
+<li>对于 WebFlux 来说，<a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/http/ReactiveHttpInputMessage.html#getBody--" target="_blank" rel="noopener"><code>ServerHttpRequest#getBody()</code></a> 方法，获得请求的主体内容返回的是 <code>Flux&lt;DataBuffer&gt;</code> 对象。</li>
+</ul>
+<h3 id="2-快速入门"><a href="#2-快速入门" class="headerlink" title="2. 快速入门"></a>2. 快速入门</h3><table>
+<thead>
+<tr>
+<th align="left">请求方法</th>
+<th align="left">URL</th>
+<th align="left">功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>GET</code></td>
+<td align="left"><code>/users/list</code></td>
+<td align="left">查询用户列表</td>
+</tr>
+<tr>
+<td align="left"><code>GET</code></td>
+<td align="left"><code>/users/get</code></td>
+<td align="left">获得指定用户编号的用户</td>
+</tr>
+<tr>
+<td align="left"><code>POST</code></td>
+<td align="left"><code>/users/add</code></td>
+<td align="left">添加用户</td>
+</tr>
+<tr>
+<td align="left"><code>POST</code></td>
+<td align="left"><code>/users/update</code></td>
+<td align="left">更新指定用户编号的用户</td>
+</tr>
+<tr>
+<td align="left"><code>POST</code></td>
+<td align="left"><code>/users/delete</code></td>
+<td align="left">删除指定用户编号的用户</td>
+</tr>
+</tbody></table>
+<h4 id="2-1-引入依赖"><a href="#2-1-引入依赖" class="headerlink" title="2.1 引入依赖"></a>2.1 引入依赖</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 实现对 Spring WebFlux 的自动化配置 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-webflux<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>查看下 <code>spring-boot-starter-webflux</code> 依赖中，所引入的依赖。如下图所示：</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf760y1wdkj30ot0hbk22.jpg" alt="image-20200527180502298"></p>
+<ul>
+<li>引入 <a href="https://mvnrepository.com/artifact/io.projectreactor/reactor-core" target="_blank" rel="noopener"><code>reactor-core</code></a> 依赖，使用 Reactor 作为 WebFlux 的响应式框架的基础。</li>
+<li>引入 <a href="https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-reactor-netty" target="_blank" rel="noopener"><code>spring-boot-starter-reactor-netty</code></a> 依赖，使用 Netty 构建 WebFlux 的 Web 服务器。其中 <a href="https://github.com/ReactiveX/RxNetty" target="_blank" rel="noopener">RxNetty</a> 库，是基于 Reactor 的响应式框架的基础之上，提供出 Netty 的响应式 API </li>
+</ul>
+<ul>
+<li>在 Servlet 3.1 规范之前的版本，请求是<strong>只能</strong>被 Servlet 同步阻塞处理完成，返回结果给前端。</li>
+<li>在 Servlet 3.1 规范开始的版本，请求是<strong>允许</strong>被 Servlet 丢到线程池中处执行，等到执行完毕，异步回调结果给 Servlet ，最后返回给前端。</li>
+</ul>
+<h4 id="2-2-Application"><a href="#2-2-Application" class="headerlink" title="2.2 Application"></a>2.2 Application</h4><h4 id="2-3-基于-Annotated-Controller-方式实现"><a href="#2-3-基于-Annotated-Controller-方式实现" class="headerlink" title="2.3 基于 Annotated Controller 方式实现"></a>2.3 基于 Annotated Controller 方式实现</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserController.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/users"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询用户列表</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 用户列表</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/list"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Flux&lt;UserVO&gt; <span class="title">list</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 查询列表</span></span><br><span class="line">        List&lt;UserVO&gt; result = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        result.add(<span class="keyword">new</span> UserVO().setId(<span class="number">1</span>).setUsername(<span class="string">"yudaoyuanma"</span>));</span><br><span class="line">        result.add(<span class="keyword">new</span> UserVO().setId(<span class="number">2</span>).setUsername(<span class="string">"woshiyutou"</span>));</span><br><span class="line">        result.add(<span class="keyword">new</span> UserVO().setId(<span class="number">3</span>).setUsername(<span class="string">"chifanshuijiao"</span>));</span><br><span class="line">        <span class="comment">// 返回列表</span></span><br><span class="line">        <span class="keyword">return</span> Flux.fromIterable(result);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 获得指定用户编号的用户</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id 用户编号</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 用户</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/get"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Mono&lt;UserVO&gt; <span class="title">get</span><span class="params">(@RequestParam(<span class="string">"id"</span>)</span> Integer id) </span>&#123;</span><br><span class="line">        <span class="comment">// 查询用户</span></span><br><span class="line">        UserVO user = <span class="keyword">new</span> UserVO().setId(id).setUsername(<span class="string">"username:"</span> + id);</span><br><span class="line">        <span class="comment">// 返回</span></span><br><span class="line">        <span class="keyword">return</span> Mono.just(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 添加用户</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> addDTO 添加用户信息 DTO</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 添加成功的用户编号</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@PostMapping</span>(<span class="string">"add"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Mono&lt;Integer&gt; <span class="title">add</span><span class="params">(@RequestBody Publisher&lt;UserAddDTO&gt; addDTO)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 插入用户记录，返回编号</span></span><br><span class="line">        Integer returnId = <span class="number">1</span>;</span><br><span class="line">        <span class="comment">// 返回用户编号</span></span><br><span class="line">        <span class="keyword">return</span> Mono.just(returnId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 更新指定用户编号的用户</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> updateDTO 更新用户信息 DTO</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 是否修改成功</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@PostMapping</span>(<span class="string">"/update"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Mono&lt;Boolean&gt; <span class="title">update</span><span class="params">(@RequestBody Publisher&lt;UserUpdateDTO&gt; updateDTO)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 更新用户记录</span></span><br><span class="line">        Boolean success = <span class="keyword">true</span>;</span><br><span class="line">        <span class="comment">// 返回更新是否成功</span></span><br><span class="line">        <span class="keyword">return</span> Mono.just(success);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 删除指定用户编号的用户</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id 用户编号</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 是否删除成功</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@PostMapping</span>(<span class="string">"/delete"</span>) <span class="comment">// URL 修改成 /delete ，RequestMethod 改成 DELETE</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Mono&lt;Boolean&gt; <span class="title">delete</span><span class="params">(@RequestParam(<span class="string">"id"</span>)</span> Integer id) </span>&#123;</span><br><span class="line">        <span class="comment">// 删除用户记录</span></span><br><span class="line">        Boolean success = <span class="keyword">false</span>;</span><br><span class="line">        <span class="comment">// 返回是否更新成功</span></span><br><span class="line">        <span class="keyword">return</span> Mono.just(success);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在类和方法上，添加了 <code>@Controller</code> 和 SpringMVC 在使用的 <code>@GetMapping</code> 和 <code>PostMapping</code>等注解，提供 API 接口，这个和在使用 SpringMVC 是一模一样的。</li>
+<li>在 <code>dto</code>和 <code>vo</code> 包下，有 API 使用到的 DTO 和 VO 类。</li>
+<li><code>#list()</code> 方法，我们最终调用 <code>Flux#fromIterable(Iterable&lt;? extends T&gt; it)</code> 方法，将 List 包装成 Flux 对象返回。</li>
+<li><code>#get(Integer id)</code> 方法，我们最终调用 <code>Mono#just(T data)</code> 方法，将 UserVO 包装成 Mono 对象返回。</li>
+<li><code>#add(Publisher&lt;UserAddDTO&gt; addDTO)</code> 方法，参数为 <a href="https://www.reactive-streams.org/reactive-streams-1.0.0-javadoc/org/reactivestreams/Publisher.html" target="_blank" rel="noopener">Publisher</a> 类型，泛型为 UserAddDTO 类型，并且添加了 <code>@RequestBody</code> 注解，从 request 的 Body 中读取参数。注意，此时提交参数需要使用 <code>&quot;application/json&quot;</code> 等 Content-Type 内容类型。</li>
+<li><code>#add(...)</code> 方法，也可以使用 <code>application/x-www-form-urlencoded</code> 或 <code>multipart/form-data</code> 这两个 Content-Type 内容类型，通过 request 的 Form Data 或 Multipart Data 传递参数。代码如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserController.java</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 添加用户</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> addDTO 添加用户信息 DTO</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> 添加成功的用户编号</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"add2"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Mono&lt;Integer&gt; <span class="title">add</span><span class="params">(Mono&lt;UserAddDTO&gt; addDTO)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 插入用户记录，返回编号</span></span><br><span class="line">    Integer returnId = UUID.randomUUID().hashCode();</span><br><span class="line">    <span class="comment">// 返回用户编号</span></span><br><span class="line">    <span class="keyword">return</span> Mono.just(returnId);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>此时，参数为 Mono 类型，泛型为 UserAddDTO 类型。</li>
+</ul>
+<ul>
+<li>当然，也可以直接使用参数为 UserAddDTO 类型。如果后续需要使用到 Reactor API ，则自己主动调用 <code>Mono#just(T data)</code> 方法，封装出 Publisher 对象。注意，Flux 和 Mono 都实现了 Publisher 接口。</li>
+</ul>
+<h4 id="2-4-基于函数式编程方式"><a href="#2-4-基于函数式编程方式" class="headerlink" title="2.4 基于函数式编程方式"></a>2.4 基于函数式编程方式</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserRouter.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserRouter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RouterFunction&lt;ServerResponse&gt; <span class="title">userListRouterFunction</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> RouterFunctions.route(RequestPredicates.GET(<span class="string">"/users2/list"</span>),</span><br><span class="line">                <span class="keyword">new</span> HandlerFunction&lt;ServerResponse&gt;() &#123;</span><br><span class="line"></span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title">handle</span><span class="params">(ServerRequest request)</span> </span>&#123;</span><br><span class="line">                        <span class="comment">// 查询列表</span></span><br><span class="line">                        List&lt;UserVO&gt; result = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">                        result.add(<span class="keyword">new</span> UserVO().setId(<span class="number">1</span>).setUsername(<span class="string">"yudaoyuanma"</span>));</span><br><span class="line">                        result.add(<span class="keyword">new</span> UserVO().setId(<span class="number">2</span>).setUsername(<span class="string">"woshiyutou"</span>));</span><br><span class="line">                        result.add(<span class="keyword">new</span> UserVO().setId(<span class="number">3</span>).setUsername(<span class="string">"chifanshuijiao"</span>));</span><br><span class="line">                        <span class="comment">// 返回列表</span></span><br><span class="line">                        <span class="keyword">return</span> ServerResponse.ok().bodyValue(result);</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RouterFunction&lt;ServerResponse&gt; <span class="title">userGetRouterFunction</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> RouterFunctions.route(RequestPredicates.GET(<span class="string">"/users2/get"</span>),</span><br><span class="line">                <span class="keyword">new</span> HandlerFunction&lt;ServerResponse&gt;() &#123;</span><br><span class="line"></span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> Mono&lt;ServerResponse&gt; <span class="title">handle</span><span class="params">(ServerRequest request)</span> </span>&#123;</span><br><span class="line">                        <span class="comment">// 获得编号</span></span><br><span class="line">                        Integer id = request.queryParam(<span class="string">"id"</span>)</span><br><span class="line">                                .map(s -&gt; StringUtils.isEmpty(s) ? <span class="keyword">null</span> : Integer.valueOf(s)).get();</span><br><span class="line">                        <span class="comment">// 查询用户</span></span><br><span class="line">                        UserVO user = <span class="keyword">new</span> UserVO().setId(id).setUsername(UUID.randomUUID().toString());</span><br><span class="line">                        <span class="comment">// 返回列表</span></span><br><span class="line">                        <span class="keyword">return</span> ServerResponse.ok().bodyValue(user);</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> RouterFunction&lt;ServerResponse&gt; <span class="title">demoRouterFunction</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> route(GET(<span class="string">"/users2/demo"</span>), request -&gt; ok().bodyValue(<span class="string">"demo"</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在类上，添加 <code>@Configuration</code> 注解，保证该类中的 Bean 们，都被扫描到。</li>
+<li>在每个方法中，都通弄 <a href="https://github.com/spring-projects/spring-framework/blob/master/spring-webflux/src/main/java/org/springframework/web/reactive/function/server/RouterFunctions.java" target="_blank" rel="noopener"><code>RouterFunctions#route(RequestPredicate predicate, HandlerFunction handlerFunction)</code></a>方法，定义了一条路由。<ul>
+<li>第一个参数 <code>predicate</code> 参数，是 <a href="https://github.com/spring-projects/spring-framework/blob/master/spring-webflux/src/main/java/org/springframework/web/reactive/function/server/RequestPredicate.java" target="_blank" rel="noopener">RequestPredicate</a> 类型，请求谓语，用于匹配请求。可以通过 <a href="https://github.com/spring-projects/spring-framework/blob/master/spring-webflux/src/main/java/org/springframework/web/reactive/function/server/RequestPredicates.java" target="_blank" rel="noopener">RequestPredicates</a> 来构建各种条件。</li>
+<li>第二个参数 <code>handlerFunction</code> 参数，是 <a href="https://github.com/spring-projects/spring-framework/blob/master/spring-webflux/src/main/java/org/springframework/web/reactive/function/server/RouterFunction.java" target="_blank" rel="noopener">RouterFunction</a> 类型，处理器函数。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-测试接口"><a href="#3-测试接口" class="headerlink" title="3. 测试接口"></a>3. 测试接口</h3><p>WebFlux 提供了 Web 测试客户端 <a href="https://github.com/spring-projects/spring-framework/blob/master/spring-test/src/main/java/org/springframework/test/web/reactive/server/WebTestClient.java" target="_blank" rel="noopener">WebTestClient</a> 类</p>
+<h4 id="3-1-集成测试"><a href="#3-1-集成测试" class="headerlink" title="3.1 集成测试"></a>3.1 集成测试</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserControllerTest.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@RunWith</span>(SpringRunner<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">SpringBootTest</span>(<span class="title">classes</span> </span>= Application<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">AutoConfigureWebFlux</span></span></span><br><span class="line"><span class="class">@<span class="title">AutoConfigureWebTestClient</span></span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">UserControllerTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> WebTestClient webClient;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testList</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        webClient.get().uri(<span class="string">"/users/list"</span>)</span><br><span class="line">                .exchange() <span class="comment">// 执行请求</span></span><br><span class="line">                .expectStatus().isOk() <span class="comment">// 响应状态码 200</span></span><br><span class="line">                .expectBody().json(<span class="string">"[\n"</span> +</span><br><span class="line">                <span class="string">"    &#123;\n"</span> +</span><br><span class="line">                <span class="string">"        \"id\": 1,\n"</span> +</span><br><span class="line">                <span class="string">"        \"username\": \"yudaoyuanma\"\n"</span> +</span><br><span class="line">                <span class="string">"    &#125;,\n"</span> +</span><br><span class="line">                <span class="string">"    &#123;\n"</span> +</span><br><span class="line">                <span class="string">"        \"id\": 2,\n"</span> +</span><br><span class="line">                <span class="string">"        \"username\": \"woshiyutou\"\n"</span> +</span><br><span class="line">                <span class="string">"    &#125;,\n"</span> +</span><br><span class="line">                <span class="string">"    &#123;\n"</span> +</span><br><span class="line">                <span class="string">"        \"id\": 3,\n"</span> +</span><br><span class="line">                <span class="string">"        \"username\": \"chifanshuijiao\"\n"</span> +</span><br><span class="line">                <span class="string">"    &#125;\n"</span> +</span><br><span class="line">                <span class="string">"]"</span>); <span class="comment">// 响应结果</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testGet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 获得指定用户编号的用户</span></span><br><span class="line">        webClient.get().uri(<span class="string">"/users/get?id=1"</span>)</span><br><span class="line">                .exchange() <span class="comment">// 执行请求</span></span><br><span class="line">                .expectStatus().isOk() <span class="comment">// 响应状态码 200</span></span><br><span class="line">                .expectBody().json(<span class="string">"&#123;\n"</span> +</span><br><span class="line">                <span class="string">"    \"id\": 1,\n"</span> +</span><br><span class="line">                <span class="string">"    \"username\": \"username:1\"\n"</span> +</span><br><span class="line">                <span class="string">"&#125;"</span>); <span class="comment">// 响应结果</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testGet2</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 获得指定用户编号的用户</span></span><br><span class="line">        webClient.get().uri(<span class="string">"/users/v2/get?id=1"</span>)</span><br><span class="line">                .exchange() <span class="comment">// 执行请求</span></span><br><span class="line">                .expectStatus().isOk() <span class="comment">// 响应状态码 200</span></span><br><span class="line">                .expectBody().json(<span class="string">"&#123;\n"</span> +</span><br><span class="line">                <span class="string">"    \"id\": 1,\n"</span> +</span><br><span class="line">                <span class="string">"    \"username\": \"test\"\n"</span> +</span><br><span class="line">                <span class="string">"&#125;"</span>); <span class="comment">// 响应结果</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAdd</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Map&lt;String, Object&gt; params = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        params.put(<span class="string">"username"</span>, <span class="string">"yudaoyuanma"</span>);</span><br><span class="line">        params.put(<span class="string">"password"</span>, <span class="string">"nicai"</span>);</span><br><span class="line">        <span class="comment">// 添加用户</span></span><br><span class="line">        webClient.post().uri(<span class="string">"/users/add"</span>)</span><br><span class="line">                .bodyValue(params)</span><br><span class="line">                .exchange() <span class="comment">// 执行请求</span></span><br><span class="line">                .expectStatus().isOk() <span class="comment">// 响应状态码 200</span></span><br><span class="line">                .expectBody().json(<span class="string">"1"</span>); <span class="comment">// 响应结果。因为没有提供 content 的比较，所以只好使用 json 来比较。竟然能通过</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAdd2</span><span class="params">()</span> </span>&#123; <span class="comment">// 发送文件的测试，可以参考 https://dev.to/shavz/sending-multipart-form-data-using-spring-webtestclient-2gb7 文章</span></span><br><span class="line">        BodyInserters.FormInserter&lt;String&gt; formData = <span class="comment">// Form Data 数据，需要这么拼凑</span></span><br><span class="line">                BodyInserters.fromFormData(<span class="string">"username"</span>, <span class="string">"yudaoyuanma"</span>)</span><br><span class="line">                .with(<span class="string">"password"</span>, <span class="string">"nicai"</span>);</span><br><span class="line">        <span class="comment">// 添加用户</span></span><br><span class="line">        webClient.post().uri(<span class="string">"/users/add2"</span>)</span><br><span class="line">                .body(formData)</span><br><span class="line">                .exchange() <span class="comment">// 执行请求</span></span><br><span class="line">                .expectStatus().isOk() <span class="comment">// 响应状态码 200</span></span><br><span class="line">                .expectBody().json(<span class="string">"1"</span>); <span class="comment">// 响应结果。因为没有提供 content 的比较，所以只好使用 json 来比较。竟然能通过</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testUpdate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Map&lt;String, Object&gt; params = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">        params.put(<span class="string">"id"</span>, <span class="number">1</span>);</span><br><span class="line">        params.put(<span class="string">"username"</span>, <span class="string">"yudaoyuanma"</span>);</span><br><span class="line">        <span class="comment">// 修改用户</span></span><br><span class="line">        webClient.post().uri(<span class="string">"/users/update"</span>)</span><br><span class="line">                .bodyValue(params)</span><br><span class="line">                .exchange() <span class="comment">// 执行请求</span></span><br><span class="line">                .expectStatus().isOk() <span class="comment">// 响应状态码 200</span></span><br><span class="line">                .expectBody(Boolean<span class="class">.<span class="keyword">class</span>) // 期望返回值类型是 <span class="title">Boolean</span></span></span><br><span class="line"><span class="class">                .<span class="title">consumeWith</span>((<span class="title">Consumer</span>&lt;<span class="title">EntityExchangeResult</span>&lt;<span class="title">Boolean</span>&gt;&gt;) <span class="title">result</span> -&gt; // 通过消费结果，判断符合是 <span class="title">true</span> 。</span></span><br><span class="line">                        Assert.assertTrue("返回结果需要为 true", result.getResponseBody()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testDelete</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 删除用户</span></span><br><span class="line">        webClient.post().uri(<span class="string">"/users/delete?id=1"</span>)</span><br><span class="line">                .exchange() <span class="comment">// 执行请求</span></span><br><span class="line">                .expectStatus().isOk() <span class="comment">// 响应状态码 200</span></span><br><span class="line">                .expectBody(Boolean<span class="class">.<span class="keyword">class</span>) // 期望返回值类型是 <span class="title">Boolean</span></span></span><br><span class="line"><span class="class">                .<span class="title">isEqualTo</span>(<span class="title">true</span>)</span>; <span class="comment">// 这样更加简洁一些</span></span><br><span class="line"><span class="comment">//                .consumeWith((Consumer&lt;EntityExchangeResult&lt;Boolean&gt;&gt;) result -&gt; // 通过消费结果，判断符合是 true 。</span></span><br><span class="line"><span class="comment">//                        Assert.assertTrue("返回结果需要为 true", result.getResponseBody()));</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在类上，添加了 <code>@AutoConfigureWebTestClient</code> 注解，用于自动化配置稍后注入的 WebTestClient Bean 对象 <code>webClient</code> 。在后续的测试中，会看到都是通过 <code>webClient</code> 调用后端 API 接口。而每一次调用后端 API 接口，都会执行<strong>真正的后端逻辑</strong>。因此，整个逻辑，走的是<strong>集成测试</strong>，会启动一个<strong>真实</strong>的 Spring 环境。</li>
+</ul>
+<ul>
+<li>每次 API 接口的请求，都通过 RequestHeadersSpec来构建。构建完成后，通过 <code>RequestHeadersSpec#exchange()</code> 方法来执行请求，返回 ResponseSpec 结果。<ul>
+<li>WebTestClient 的 <code>#get()</code>、<code>#head()</code>、<code>#delete()</code>、<code>#options()</code> 方法，返回的是 <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/reactive/function/client/WebClient.RequestHeadersUriSpec.html" target="_blank" rel="noopener">RequestHeadersUriSpec</a> 对象。</li>
+<li>WebTestClient 的 <code>#post()</code>、<code>#put()</code>、<code>#delete()</code>、<code>#patch()</code> 方法，返回的是 <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/reactive/function/client/WebClient.RequestBodyUriSpec.html" target="_blank" rel="noopener">RequestBodyUriSpec</a> 对象。</li>
+<li>RequestHeadersUriSpec 和 RequestBodyUriSpec 都继承了 RequestHeadersSpec 接口。</li>
+</ul>
+</li>
+<li>执行完请求后，通过调用 <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/reactive/function/client/WebClient.RequestBodyUriSpec.html" target="_blank" rel="noopener">RequestBodyUriSpec</a> 的各种断言方法，添加对结果的预期，相当于做断言。如果不符合预期，则会抛出异常，测试不通过。</li>
+</ul>
+<h4 id="3-4-单元测试"><a href="#3-4-单元测试" class="headerlink" title="3.4 单元测试"></a>3.4 单元测试</h4>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/27/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%93%8D%E5%BA%94%E5%BC%8FWebFlux%E5%85%A5%E9%97%A8/" data-id="ckap8apd5000kjm07htio9q2r" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/" rel="tag">Web</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Java集合框架" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/05/26/Java%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/" class="article-date">
@@ -167,11 +330,158 @@
 <blockquote>
 <p>注意：TreeSet集合不是通过hashcode和equals函数来比较元素的.它是通过compare或者comparaeTo函数来判断元素是否相等.compare函数通过判断两个对象的id，相同的id判断为重复元素，不会被加入到集合中。</p>
 </blockquote>
+<h3 id="Map-接口"><a href="#Map-接口" class="headerlink" title="Map 接口"></a>Map 接口</h3><p><strong>不能存在相同的key值，当然value值可以相同</strong></p>
+<p>1.HashMap</p>
+<p>以哈希表数据结构实现，查找对象时通过哈希函数计算其位置，它是为快速查询而设计的，其内部定义了一个hash表数组（Entry[] table），元素会通过哈希转换函数将元素的哈希地址转换成数组中存放的索引，如果有冲突，则使用散列链表的形式将所有相同哈希地址的元素串起来，可能通过查看HashMap.Entry的源码它是一个单链表结构。</p>
+<p>2.LinkedHashMap</p>
+<p>LinkedHashMap是HashMap的一个子类，它保留插入的顺序，如果需要输出的顺序和输入时的相同，那么就选用LinkedHashMap。</p>
+<p><strong>LinkedHashMap是Map接口的哈希表和链接列表实现，具有可预知的迭代顺序。</strong>此实现提供所有可选的映射操作，并允许使用null值和null键。此类不保证映射的顺序，特别是它不保证该顺序恒久不变。</p>
+<p>LinkedHashMap实现与HashMap的不同之处在于，后者维护着一个运行于所有条目的双重链接列表。此链接列表定义了迭代顺序，该迭代顺序可以是插入顺序或者是访问顺序。</p>
+<p>根据链表中元素的顺序可以分为：按插入顺序的链表，和按访问顺序(调用get方法)的链表。默认是按插入顺序排序，如果指定按访问顺序排序，那么调用get方法后，会将这次访问的元素移至链表尾部，不断访问可以形成按访问顺序排序的链表。</p>
+<p><strong><em>注意，此实现不是同步的。如果多个线程同时访问链接的哈希映射，而其中至少一个线程从结构上修改了该映射，则它必须保持外部同步。由于LinkedHashMap需要维护元素的插入顺序，因此性能略低于HashMap的性能，但在迭代访问Map里的全部元素时将有很好的性能，因为它以链表来维护内部顺序。</em></strong></p>
+<p>3.TreeMap</p>
+<p><strong>TreeMap 是一个有序的key-value集合，非同步，基于红黑树（Red-Black tree）实现，每一个key-value节点作为红黑树的一个节点。</strong></p>
+<p>TreeMap存储时会进行排序的，会根据key来对key-value键值对进行排序，其中排序方式也是分为两种，一种是自然排序，一种是定制排序，具体取决于使用的构造方法</p>
+<p><strong>自然排序：</strong>TreeMap中所有的key必须实现Comparable接口，并且所有的key都应该是同一个类的对象，否则会报ClassCastException异常。</p>
+<p><strong>定制排序：</strong>定义TreeMap时，创建一个comparator对象，该对象对所有的treeMap中所有的key值进行排序，采用定制排序的时候不需要TreeMap中所有的key必须实现Comparable接口。</p>
+<p>TreeMap判断两个元素相等的标准：两个key通过<code>compareTo()</code>方法返回0，则认为这两个key相等。</p>
+<p>如果使用自定义的类来作为TreeMap中的key值，且想让TreeMap能够良好的工作，则必须重写自定义类中的<code>equals()</code>方法，TreeMap中判断相等的标准是：两个key通过<code>equals()</code>方法返回为true，并且通过<code>compareTo()</code>方法比较应该返回为0。</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf70c9zdwmj30mo0fnwjx.jpg" alt="image-20200527144817779"></p>
+<h2 id="Iterator-与-ListIterator详解"><a href="#Iterator-与-ListIterator详解" class="headerlink" title="Iterator 与 ListIterator详解"></a>Iterator 与 ListIterator详解</h2><h4 id="1-Iterator"><a href="#1-Iterator" class="headerlink" title="1.Iterator"></a>1.Iterator</h4><p>Iterator的定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Iterator</span>&lt;<span class="title">E</span>&gt; </span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Iterator是一个接口，它是集合的迭代器。集合可以通过Iterator去遍历集合中的元素。</p>
+<p>Iterator提供的API接口如下：</p>
+<ul>
+<li><p>boolean hasNext()：判断集合里是否存在下一个元素。如果有，hasNext()方法返回 true。</p>
+</li>
+<li><p>Object next()：返回集合里下一个元素。</p>
+</li>
+<li><p>void remove()：删除集合里上一次next方法返回的元素。</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IteratorExample</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ArrayList&lt;String&gt; a = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line">        a.add(<span class="string">"aaa"</span>);</span><br><span class="line">        a.add(<span class="string">"bbb"</span>);</span><br><span class="line">        a.add(<span class="string">"ccc"</span>);</span><br><span class="line">        System.out.println(<span class="string">"Before iterate : "</span> + a);</span><br><span class="line">        Iterator&lt;String&gt; it = a.iterator();</span><br><span class="line">        <span class="keyword">while</span> (it.hasNext()) &#123;</span><br><span class="line">            String t = it.next();</span><br><span class="line">            <span class="keyword">if</span> (<span class="string">"bbb"</span>.equals(t)) &#123;</span><br><span class="line">                it.remove();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"After iterate : "</span> + a);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出结果如下：</p>
+<p>Before iterate : [aaa, bbb, ccc]<br>After iterate : [aaa, ccc]</p>
+<p><strong><em>注意：</em></strong></p>
+<p><strong><em>Iterator只能单向移动。</em></strong></p>
+<p><strong><em>Iterator.remove()是唯一安全的方式来在迭代过程中修改集合；如果在迭代过程中以任何其它的方式修改了基本集合将会产生未知的行为。而且每调用一次next()方法，remove()方法只能被调用一次，如果违反这个规则将抛出一个异常。</em></strong></p>
+<h4 id="2-ListIterator"><a href="#2-ListIterator" class="headerlink" title="2. ListIterator"></a>2. ListIterator</h4><p><strong>ListIterator是一个功能更加强大的迭代器, 它继承于Iterator接口</strong>，只能用于各种List类型的访问。可以通过调用listIterator()方法产生一个指向List开始处的ListIterator, 还可以调用listIterator(n)方法创建一个一开始就指向列表索引为n的元素处的ListIterator。</p>
+<p>ListIterator接口定义如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ListIterator</span>&lt;<span class="title">E</span>&gt; <span class="keyword">extends</span> <span class="title">Iterator</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">hasNext</span><span class="params">()</span></span>;</span><br><span class="line"> </span><br><span class="line">    <span class="function">E <span class="title">next</span><span class="params">()</span></span>;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">hasPrevious</span><span class="params">()</span></span>;</span><br><span class="line"> </span><br><span class="line">    <span class="function">E <span class="title">previous</span><span class="params">()</span></span>;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">nextIndex</span><span class="params">()</span></span>;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">previousIndex</span><span class="params">()</span></span>;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span></span>;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">set</span><span class="params">(E e)</span></span>;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">add</span><span class="params">(E e)</span></span>;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由以上定义我们可以推出ListIterator可以:</p>
+<ul>
+<li><p>双向移动（向前/向后遍历）.</p>
+</li>
+<li><p>产生相对于迭代器在列表中指向的当前位置的前一个和后一个元素的索引.</p>
+</li>
+<li><p>可以使用set()方法替换它访问过的最后一个元素.</p>
+</li>
+<li><p>可以使用add()方法在next()方法返回的元素之前或previous()方法返回的元素之后插入一个元素.</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ListIteratorExample</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        ArrayList&lt;String&gt; a = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line">        a.add(<span class="string">"aaa"</span>);</span><br><span class="line">        a.add(<span class="string">"bbb"</span>);</span><br><span class="line">        a.add(<span class="string">"ccc"</span>);</span><br><span class="line">        System.out.println(<span class="string">"Before iterate : "</span> + a);</span><br><span class="line">        ListIterator&lt;String&gt; it = a.listIterator();</span><br><span class="line">        <span class="keyword">while</span> (it.hasNext()) &#123;</span><br><span class="line">            System.out.println(it.next() + <span class="string">", "</span> + it.previousIndex() + <span class="string">", "</span> + it.nextIndex());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span> (it.hasPrevious()) &#123;</span><br><span class="line">            System.out.print(it.previous() + <span class="string">" "</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println();</span><br><span class="line">        it = a.listIterator(<span class="number">1</span>);</span><br><span class="line">        <span class="keyword">while</span> (it.hasNext()) &#123;</span><br><span class="line">            String t = it.next();</span><br><span class="line">            System.out.println(t);</span><br><span class="line">            <span class="keyword">if</span> (<span class="string">"ccc"</span>.equals(t)) &#123;</span><br><span class="line">                it.set(<span class="string">"nnn"</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                it.add(<span class="string">"kkk"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"After iterate : "</span> + a);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Before iterate : [aaa, bbb, ccc]</span><br><span class="line">aaa, 0, 1</span><br><span class="line">bbb, 1, 2</span><br><span class="line">ccc, 2, 3</span><br><span class="line">ccc bbb aaa </span><br><span class="line">bbb</span><br><span class="line">ccc</span><br><span class="line">After iterate : [aaa, bbb, kkk, nnn]</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="异同点"><a href="#异同点" class="headerlink" title="异同点"></a>异同点</h3><h4 id="1-ArrayList和LinkedList"><a href="#1-ArrayList和LinkedList" class="headerlink" title="1. ArrayList和LinkedList"></a>1. ArrayList和LinkedList</h4><ul>
+<li><p>ArrayList是实现了基于动态数组的数据结构，LinkedList基于链表的数据结构。</p>
+</li>
+<li><p>对于随机访问get和set，ArrayList绝对优于LinkedList，因为LinkedList要移动指针。</p>
+</li>
+<li><p>对于新增和删除操作add和remove，LinedList比较占优势，因为ArrayList要移动数据。</p>
+</li>
+</ul>
+<p><strong>若只对单条数据插入或删除，ArrayList的速度反而优于LinkedList。</strong>但若是批量随机的插入删除数据，LinkedList的速度大大优于ArrayList. 因为ArrayList每插入一条数据，要移动插入点及之后的所有数据。</p>
+<h3 id="2-HashTable与HashMap"><a href="#2-HashTable与HashMap" class="headerlink" title="2.HashTable与HashMap"></a>2.HashTable与HashMap</h3><p>相同点：</p>
+<ul>
+<li>都实现了<code>Map、Cloneable、java.io.Serializable</code>接口。</li>
+<li>都是存储”键值对(key-value)”的散列表，而且都是采用拉链法实现的。</li>
+</ul>
+<p>不同点：</p>
+<p>（1）历史原因：HashTable是基于陈旧的Dictionary类的，HashMap是Java 1.2引进的Map接口的一个实现 。</p>
+<p>（2）同步性：HashTable是线程安全的，也就是说是同步的，而HashMap是线程序不安全的，不是同步的 。</p>
+<p>（3）对null值的处理：HashMap的key、value都可为null，HashTable的key、value都不可为null 。</p>
+<p>（4）基类不同：HashMap继承于AbstractMap，而Hashtable继承于Dictionary。</p>
+<ul>
+<li><p>Dictionary是一个抽象类，它直接继承于Object类，没有实现任何接口。Dictionary类是JDK 1.0的引入的。虽然Dictionary也支持“添加key-value键值对”、“获取value”、“获取大小”等基本操作，但它的API函数比Map少；而且Dictionary一般是通过Enumeration(枚举类)去遍历，Map则是通过Iterator(迭代M器)去遍历。然而由于Hashtable也实现了Map接口，所以，它即支持Enumeration遍历，也支持Iterator遍历。</p>
+</li>
+<li><p>AbstractMap是一个抽象类，它实现了Map接口的绝大部分API函数；为Map的具体实现类提供了极大的便利。它是JDK 1.2新增的类。</p>
+</li>
+</ul>
+<p><strong>（5）支持的遍历种类不同：</strong>HashMap只支持Iterator(迭代器)遍历。而Hashtable支持Iterator(迭代器)和Enumeration(枚举器)两种方式遍历。</p>
+<h3 id="3-HashMap、Hashtable、LinkedHashMap和TreeMap比较"><a href="#3-HashMap、Hashtable、LinkedHashMap和TreeMap比较" class="headerlink" title="3. HashMap、Hashtable、LinkedHashMap和TreeMap比较"></a>3. HashMap、Hashtable、LinkedHashMap和TreeMap比较</h3><ul>
+<li>Hashmap 是一个最常用的Map，它根据键的HashCode 值存储数据，根据键可以直接获取它的值，具有很快的访问速度。遍历时，取得数据的顺序是完全随机的。<strong>HashMap最多只允许一条记录的键为Null；允许多条记录的值为Null；HashMap不支持线程的同步，即任一时刻可以有多个线程同时写HashMap；可能会导致数据的不一致</strong>。如果需要同步，可以用Collections的synchronizedMap方法使HashMap具有同步的能力。</li>
+<li>Hashtable 与 HashMap类似，不同的是：<strong>它不允许记录的键或者值为空；它支持线程的同步</strong>，即任一时刻只有一个线程能写Hashtable，因此也导致了Hashtale在写入时会比较慢。</li>
+<li>LinkedHashMap保存了记录的插入顺序，在用Iterator遍历LinkedHashMap时，先得到的记录肯定是先插入的，也可以在构造时用带参数，按照应用次数排序。在遍历的时候会比HashMap慢，不过有种情况例外，<strong>当HashMap容量很大，实际数据较少时，遍历起来可能会比LinkedHashMap慢，因为LinkedHashMap的遍历速度只和实际数据有关，和容量无关，而HashMap的遍历速度和他的容量有关。</strong></li>
+<li>如果需要输出的顺序和输入的相同，那么用LinkedHashMap可以实现，它还可以按读取顺序来排列，像连接池中可以应用。<strong>LinkedHashMap实现与HashMap的不同之处在于，后者维护着一个运行于所有条目的双重链表</strong>。此链接列表定义了迭代顺序，该迭代顺序可以是插入顺序或者是访问顺序。对于LinkedHashMap而言，它继承与HashMap、底层使用哈希表与双向链表来保存所有元素。其基本操作与父类HashMap相似，它通过重写父类相关的方法，来实现自己的链接列表特性。</li>
+<li><strong>TreeMap实现SortMap接口，内部实现是红黑树。</strong> 能够把它保存的记录根据键排序，默认是按键值的升序排序，也可以指定排序的比较器，当用Iterator 遍历TreeMap时，得到的记录是排过序的。TreeMap不允许key的值为null。非同步的。</li>
+<li>HashMap里面存入的键值对在取出的时候是随机的，它根据键的HashCode值存储数据，根据键可以直接获取它的值，具有很快的访问速度。在Map 中插入、删除和定位元素，HashMap 是最好的选择。</li>
+<li>TreeMap取出来的是排序后的键值对。但如果要按自然顺序或自定义顺序遍历键，那么TreeMap会更好。</li>
+<li>LinkedHashMap 是HashMap的一个子类，如果需要输出的顺序和输入的相同，那么用LinkedHashMap可以实现，它还可以按读取顺序来排列，像连接池中可以应用。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Iterator;</span><br><span class="line"><span class="keyword">import</span> java.util.LinkedHashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.TreeMap;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MapTest</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">        <span class="comment">//HashMap</span></span><br><span class="line">        HashMap&lt;String,String&gt; hashMap = <span class="keyword">new</span> HashMap();</span><br><span class="line">        hashMap.put(<span class="string">"4"</span>, <span class="string">"d"</span>);</span><br><span class="line">        hashMap.put(<span class="string">"3"</span>, <span class="string">"c"</span>);</span><br><span class="line">        hashMap.put(<span class="string">"2"</span>, <span class="string">"b"</span>);</span><br><span class="line">        hashMap.put(<span class="string">"1"</span>, <span class="string">"a"</span>);</span><br><span class="line"> </span><br><span class="line">        Iterator&lt;String&gt; iteratorHashMap = hashMap.keySet().iterator();</span><br><span class="line"> </span><br><span class="line">        System.out.println(<span class="string">"HashMap--&gt;"</span>);</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">while</span> (iteratorHashMap.hasNext())&#123;</span><br><span class="line"> </span><br><span class="line">            Object key1 = iteratorHashMap.next();</span><br><span class="line">            System.out.println(key1 + <span class="string">"--"</span> + hashMap.get(key1));</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="comment">//LinkedHashMap</span></span><br><span class="line">        LinkedHashMap&lt;String,String&gt; linkedHashMap = <span class="keyword">new</span> LinkedHashMap();</span><br><span class="line">        linkedHashMap.put(<span class="string">"4"</span>, <span class="string">"d"</span>);</span><br><span class="line">        linkedHashMap.put(<span class="string">"3"</span>, <span class="string">"c"</span>);</span><br><span class="line">        linkedHashMap.put(<span class="string">"2"</span>, <span class="string">"b"</span>);</span><br><span class="line">        linkedHashMap.put(<span class="string">"1"</span>, <span class="string">"a"</span>);</span><br><span class="line"> </span><br><span class="line">        Iterator&lt;String&gt; iteratorLinkedHashMap = linkedHashMap.keySet().iterator();</span><br><span class="line"> </span><br><span class="line">        System.out.println(<span class="string">"LinkedHashMap--&gt;"</span>);</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">while</span> (iteratorLinkedHashMap.hasNext())&#123;</span><br><span class="line"> </span><br><span class="line">            Object key2 = iteratorLinkedHashMap.next();</span><br><span class="line">            System.out.println(key2 + <span class="string">"--"</span> + linkedHashMap.get(key2));</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="comment">//TreeMap</span></span><br><span class="line">        TreeMap&lt;String,String&gt; treeMap = <span class="keyword">new</span> TreeMap();</span><br><span class="line">        treeMap.put(<span class="string">"4"</span>, <span class="string">"d"</span>);</span><br><span class="line">        treeMap.put(<span class="string">"3"</span>, <span class="string">"c"</span>);</span><br><span class="line">        treeMap.put(<span class="string">"2"</span>, <span class="string">"b"</span>);</span><br><span class="line">        treeMap.put(<span class="string">"1"</span>, <span class="string">"a"</span>);</span><br><span class="line"> </span><br><span class="line">        Iterator&lt;String&gt; iteratorTreeMap = treeMap.keySet().iterator();</span><br><span class="line"> </span><br><span class="line">        System.out.println(<span class="string">"TreeMap--&gt;"</span>);</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">while</span> (iteratorTreeMap.hasNext())&#123;</span><br><span class="line"> </span><br><span class="line">            Object key3 = iteratorTreeMap.next();</span><br><span class="line">            System.out.println(key3 + <span class="string">"--"</span> + treeMap.get(key3));</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">HashMap--&gt;</span><br><span class="line"><span class="number">3</span>--c</span><br><span class="line"><span class="number">2</span>--b</span><br><span class="line"><span class="number">1</span>--a</span><br><span class="line"><span class="number">4</span>--d</span><br><span class="line">LinkedHashMap--&gt;</span><br><span class="line"><span class="number">4</span>--d</span><br><span class="line"><span class="number">3</span>--c</span><br><span class="line"><span class="number">2</span>--b</span><br><span class="line"><span class="number">1</span>--a</span><br><span class="line">TreeMap--&gt;</span><br><span class="line"><span class="number">1</span>--a</span><br><span class="line"><span class="number">2</span>--b</span><br><span class="line"><span class="number">3</span>--c</span><br><span class="line"><span class="number">4</span>--d</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="4-HashSet、LinkedHashSet、TreeSet比较"><a href="#4-HashSet、LinkedHashSet、TreeSet比较" class="headerlink" title="4.HashSet、LinkedHashSet、TreeSet比较"></a>4.HashSet、LinkedHashSet、TreeSet比较</h3><p>Set接口</p>
+<ul>
+<li><strong>Set不允许包含相同的元素</strong>，如果试图把两个相同元素加入同一个集合中，add方法返回false。</li>
+<li><strong>Set判断两个对象相同不是使用==运算符，而是根据equals方法。</strong>也就是说，只要两个对象用equals方法比较返回true，Set就不会接受这两个对象。</li>
+</ul>
+<p>HashSet</p>
+<p>HashSet有以下特点：</p>
+<ul>
+<li>不能保证元素的排列顺序，顺序有可能发生变化。</li>
+<li>不是同步的。</li>
+<li>集合元素可以是null，但只能放入一个null。</li>
+</ul>
+<p>当向HashSet集合中存入一个元素时，HashSet会调用该对象的hashCode()方法来得到该对象的hashCode值，然后根据 hashCode值来决定该对象在HashSet中存储位置。简单的说，<strong>HashSet集合判断两个元素相等的标准是两个对象通过equals方法比较相等，并且两个对象的hashCode()方法返回值也相等</strong>。</p>
+<p><strong><em>注意，如果要把一个对象放入HashSet中，重写该对象对应类的equals方法，也应该重写其hashCode()方法。其规则是如果两个对象通过equals方法比较返回true时，其hashCode也应该相同。另外，对象中用作equals比较标准的属性，都应该用来计算 hashCode的值。</em></strong></p>
+<p>LinkedHashSet</p>
+<p>LinkedHashSet集合同样是根据元素的hashCode值来决定元素的存储位置，但是它同时使用链表维护元素的次序。这样使得元素看起来像是以插入顺序保存的，也就是说，当遍历该集合时候，LinkedHashSet将会以元素的添加顺序访问集合的元素。</p>
+<p><strong>LinkedHashSet在迭代访问Set中的全部元素时，性能比HashSet好，但是插入时性能稍微逊色于HashSet。</strong></p>
+<p>TreeSet类</p>
+<p>TreeSet是SortedSet接口的唯一实现类，TreeSet可以确保集合元素处于排序状态。TreeSet支持两种排序方式，自然排序和定制排序，其中自然排序为默认的排序方式。向TreeSet中加入的应该是同一个类的对象。</p>
+<p><strong>TreeSet判断两个对象不相等的方式是两个对象通过equals方法返回false，或者通过CompareTo方法比较没有返回0。</strong></p>
+<p><strong>自然排序</strong></p>
+<p>自然排序使用要排序元素的<code>CompareTo（Object obj）</code>方法来比较元素之间大小关系，然后将元素按照升序排列。</p>
+<p><strong><em>Java提供了一个Comparable接口，该接口里定义了一个compareTo(Object obj)方法，该方法返回一个整数值，实现了该接口的对象就可以比较大小。obj1.compareTo(obj2)方法如果返回0，则说明被比较的两个对象相等，如果返回一个正数，则表明obj1大于obj2，如果是负数，则表明obj1小于obj2。如果我们将两个对象的equals方法总是返回true，则这两个对象的compareTo方法返回应该返回0。</em></strong></p>
+<p><strong>定制排序</strong></p>
+<p>自然排序是根据集合元素的大小，以升序排列，如果要定制排序，应该使用Comparator接口，实现 <code>int compare(T o1,T o2)</code>方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.test;  </span><br><span class="line"> </span><br><span class="line"><span class="keyword">import</span> java.util.HashSet;  </span><br><span class="line"><span class="keyword">import</span> java.util.LinkedHashSet;  </span><br><span class="line"><span class="keyword">import</span> java.util.TreeSet;  </span><br><span class="line"> </span><br><span class="line"><span class="comment">/**  </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@description</span> 几个set的比较  </span></span><br><span class="line"><span class="comment"> *    HashSet：哈希表是通过使用称为散列法的机制来存储信息的，元素并没有以某种特定顺序来存放；  </span></span><br><span class="line"><span class="comment"> *    LinkedHashSet：以元素插入的顺序来维护集合的链接表，允许以插入的顺序在集合中迭代；  </span></span><br><span class="line"><span class="comment"> *    TreeSet：提供一个使用树结构存储Set接口的实现，对象以升序顺序存储，访问和遍历的时间很快。  </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Zhou-Jingxian  </span></span><br><span class="line"><span class="comment"> *  </span></span><br><span class="line"><span class="comment"> */</span>  </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SetDemo</span> </span>&#123;  </span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;  </span><br><span class="line"> </span><br><span class="line">        HashSet&lt;String&gt; hs = <span class="keyword">new</span> HashSet&lt;String&gt;();  </span><br><span class="line">        hs.add(<span class="string">"B"</span>);  </span><br><span class="line">        hs.add(<span class="string">"A"</span>);  </span><br><span class="line">        hs.add(<span class="string">"D"</span>);  </span><br><span class="line">        hs.add(<span class="string">"E"</span>);  </span><br><span class="line">        hs.add(<span class="string">"C"</span>);  </span><br><span class="line">        hs.add(<span class="string">"F"</span>);  </span><br><span class="line">        System.out.println(<span class="string">"HashSet 顺序:\n"</span>+hs);  </span><br><span class="line"> </span><br><span class="line">        LinkedHashSet&lt;String&gt; lhs = <span class="keyword">new</span> LinkedHashSet&lt;String&gt;();  </span><br><span class="line">        lhs.add(<span class="string">"B"</span>);  </span><br><span class="line">        lhs.add(<span class="string">"A"</span>);  </span><br><span class="line">        lhs.add(<span class="string">"D"</span>);  </span><br><span class="line">        lhs.add(<span class="string">"E"</span>);  </span><br><span class="line">        lhs.add(<span class="string">"C"</span>);  </span><br><span class="line">        lhs.add(<span class="string">"F"</span>);  </span><br><span class="line">        System.out.println(<span class="string">"LinkedHashSet 顺序:\n"</span>+lhs);  </span><br><span class="line"> </span><br><span class="line">        TreeSet&lt;String&gt; ts = <span class="keyword">new</span> TreeSet&lt;String&gt;();  </span><br><span class="line">        ts.add(<span class="string">"B"</span>);  </span><br><span class="line">        ts.add(<span class="string">"A"</span>);  </span><br><span class="line">        ts.add(<span class="string">"D"</span>);  </span><br><span class="line">        ts.add(<span class="string">"E"</span>);  </span><br><span class="line">        ts.add(<span class="string">"C"</span>);  </span><br><span class="line">        ts.add(<span class="string">"F"</span>);  </span><br><span class="line">        System.out.println(<span class="string">"TreeSet 顺序:\n"</span>+ts);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">HashSet 顺序:[D, E, F, A, B, C]</span><br><span class="line">LinkedHashSet 顺序:[B, A, D, E, C, F]</span><br><span class="line">TreeSet 顺序:[A, B, C, D, E, F]</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="5、Iterator和ListIterator区别"><a href="#5、Iterator和ListIterator区别" class="headerlink" title="5、Iterator和ListIterator区别"></a>5、Iterator和ListIterator区别</h3><p>List和Set都有<code>iterator()</code>来取得其迭代器。对List来说，你也可以通过listIterator()取得其迭代器，两种迭代器在有些时候是不能通用的，Iterator和ListIterator主要区别在以下方面：</p>
+<ul>
+<li>ListIterator有<code>add()</code>方法，可以向List中添加对象，而Iterator不能</li>
+<li>ListIterator和Iterator都有<code>hasNext()</code>和<code>next()</code>方法，可以实现顺序向后遍历，但是ListIterator有<code>hasPrevious()</code>和<code>previous()</code>方法，可以实现逆向（顺序向前）遍历。Iterator就不可以。</li>
+<li>ListIterator可以定位当前的索引位置，<code>nextIndex()</code>和<code>previousIndex()</code>可以实现。Iterator没有此功能。</li>
+<li>都可实现删除对象，但是ListIterator可以实现对象的修改，<code>set()</code>方法可以实现。Iierator仅能遍历，不能修改。</li>
+</ul>
+<h4 id="6、Collection-和-Collections区别"><a href="#6、Collection-和-Collections区别" class="headerlink" title="6、Collection 和 Collections区别"></a>6、Collection 和 Collections区别</h4><p>（1）java.util.Collection 是一个集合接口（集合类的一个顶级接口）。它提供了对集合对象进行基本操作的通用接口方法。Collection接口在Java 类库中有很多具体的实现。Collection接口的意义是为各种具体的集合提供了最大化的统一操作方式，其直接继承接口有List与Set。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> Collection   </span><br><span class="line">├List   </span><br><span class="line">│├LinkedList   </span><br><span class="line">│├ArrayList   </span><br><span class="line">│└Vector   </span><br><span class="line">│　└Stack   </span><br><span class="line">└Set</span><br></pre></td></tr></table></figure>
+
+<p><strong>（2）java.util.Collections 是一个包装类（工具类/帮助类）。</strong>它包含有各种有关集合操作的静态多态方法。此类不能实例化，就像一个工具类，用于对集合中元素进行排序、搜索以及线程安全等各种操作，服务于Java的Collection框架。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.ArrayList; </span><br><span class="line"><span class="keyword">import</span> java.util.Collections; </span><br><span class="line"><span class="keyword">import</span> java.util.List; </span><br><span class="line"> </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestCollections</span> </span>&#123; </span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String args[])</span> </span>&#123; </span><br><span class="line">        <span class="comment">//注意List是实现Collection接口的 </span></span><br><span class="line">        List list = <span class="keyword">new</span> ArrayList(); </span><br><span class="line">        <span class="keyword">double</span> array[] = &#123; <span class="number">112</span>, <span class="number">111</span>, <span class="number">23</span>, <span class="number">456</span>, <span class="number">231</span> &#125;; </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; array.length; i++) &#123; </span><br><span class="line">            list.add(<span class="keyword">new</span> Double(array[i])); </span><br><span class="line">        &#125; </span><br><span class="line">        Collections.sort(list); </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; array.length; i++) &#123; </span><br><span class="line">            System.out.println(list.get(i)); </span><br><span class="line">        &#125; </span><br><span class="line">        <span class="comment">// 结果：23.0 111.0 112.0 231.0 456.0 </span></span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/26/Java%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/" data-id="ckansl7ih000jv9078qj0fgky" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/26/Java%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/" data-id="ckap8apdg000rjm072epxetnp" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9B%86%E5%90%88/" rel="tag">集合</a></li></ul>
@@ -255,7 +565,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/26/Java%E5%A4%84%E7%90%86Exception%E7%9A%849%E4%B8%AA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" data-id="ckansl7hv0001v9079isk0xz2" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/26/Java%E5%A4%84%E7%90%86Exception%E7%9A%849%E4%B8%AA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" data-id="ckap8apbs0000jm077i93a964" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
@@ -368,7 +678,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%AE%9E%E6%88%98%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/" data-id="ckansl7ii000kv907gimw8rre" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%AE%9E%E6%88%98%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/" data-id="ckap8apcy000hjm074ja13oxz" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
@@ -676,7 +986,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/25/Web%E5%BC%80%E5%8F%91-SpringBoot-SpringMVC%E5%85%A5%E9%97%A8/" data-id="ckansl7iu000qv9078k9ghx4x" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/25/Web%E5%BC%80%E5%8F%91-SpringBoot-SpringMVC%E5%85%A5%E9%97%A8/" data-id="ckap8apdk000vjm07e98mhjq1" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot 基础-01</a></li></ul>
@@ -766,7 +1076,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/25/SpringBoot-MapStruct/" data-id="ckansl7hz0003v907bzl33cx2" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/25/SpringBoot-MapStruct/" data-id="ckap8apc20001jm07fj1g4ug1" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot 基础-01</a></li></ul>
@@ -837,7 +1147,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/25/SpringBoot%E4%B9%8BLombok/" data-id="ckansl7i10004v907h1ba7l9o" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/25/SpringBoot%E4%B9%8BLombok/" data-id="ckap8apcd0008jm0767ojfym0" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot 基础-01</a></li></ul>
@@ -884,7 +1194,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/25/%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97%E4%B9%8B%E2%80%94%E2%80%94%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/" data-id="ckansl7i40008v9076n9qel1s" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/25/%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97%E4%B9%8B%E2%80%94%E2%80%94%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/" data-id="ckap8apce000ajm079w3mdfva" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
@@ -990,7 +1300,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/22/SpringBoot2-0%E5%9F%BA%E7%A1%80/" data-id="ckansl7i20005v9076gr1ca96" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/22/SpringBoot2-0%E5%9F%BA%E7%A1%80/" data-id="ckap8apc80003jm07bdng855n" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot 基础-01</a></li></ul>
@@ -1146,7 +1456,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/22/Java%E5%9F%BA%E7%A1%80/" data-id="ckansl7hn0000v90701xs68rj" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/22/Java%E5%9F%BA%E7%A1%80/" data-id="ckap8apca0004jm07h0imdpns" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
@@ -1158,56 +1468,12 @@
 
 
   
-    <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/05/21/hello-world/" class="article-date">
-  <time datetime="2020-05-21T10:47:47.954Z" itemprop="datePublished">2020-05-21</time>
-</a>
+
+
+  <nav id="page-nav">
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/05/21/hello-world/">Hello World</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/21/hello-world/" data-id="ckansl7i50009v907fpoh5v1g" class="article-share-link">Share</a>
-      
-      
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
+  </nav>
 
 </section>
         
@@ -1220,7 +1486,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot 基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88/" rel="tag">集合</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot 基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/" rel="tag">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88/" rel="tag">集合</a></li></ul>
     </div>
   </div>
 
@@ -1230,7 +1496,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Spring-Boot/" style="font-size: 10px;">Spring Boot</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 20px;">Spring Boot 基础-01</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 15px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 10px;">集合</a>
+      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Spring-Boot/" style="font-size: 15px;">Spring Boot</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 20px;">Spring Boot 基础-01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 10px;">Spring Boot-基础01</a> <a href="/tags/Web/" style="font-size: 10px;">Web</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 15px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 10px;">集合</a>
     </div>
   </div>
 
@@ -1252,6 +1518,10 @@
       <ul>
         
           <li>
+            <a href="/2020/05/27/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%93%8D%E5%BA%94%E5%BC%8FWebFlux%E5%85%A5%E9%97%A8/">Web开发-SpringBoot响应式WebFlux入门</a>
+          </li>
+        
+          <li>
             <a href="/2020/05/26/Java%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/">Java集合框架</a>
           </li>
         
@@ -1265,10 +1535,6 @@
         
           <li>
             <a href="/2020/05/25/Web%E5%BC%80%E5%8F%91-SpringBoot-SpringMVC%E5%85%A5%E9%97%A8/">Web开发_SpringBoot_SpringMVC入门</a>
-          </li>
-        
-          <li>
-            <a href="/2020/05/25/SpringBoot-MapStruct/">SpringBoot-MapStruct</a>
           </li>
         
       </ul>

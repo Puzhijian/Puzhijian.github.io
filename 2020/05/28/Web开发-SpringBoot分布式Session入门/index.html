@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Web开发-SpringBoot分布式Session入门 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Spring Boot 分布式 Session 入门1. 概述在考虑高性能之前，一定要做高可用 在部署生产环境下的 Tomcat 等 Web 容器的时候，一定是需要部署多个节点。此时，Session 的一致性就成为一个问题 Session 的一致性，简单来理解，就是相同 sessionid 在多个 Web 容器下，Session 的数据要一致。 先以用户使用浏览器，Web 服务器为单台 Tomca">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Web开发-SpringBoot分布式Session入门">
+<meta property="og:url" content="http://yoursite.com/2020/05/28/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%88%86%E5%B8%83%E5%BC%8FSession%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Spring Boot 分布式 Session 入门1. 概述在考虑高性能之前，一定要做高可用 在部署生产环境下的 Tomcat 等 Web 容器的时候，一定是需要部署多个节点。此时，Session 的一致性就成为一个问题 Session 的一致性，简单来理解，就是相同 sessionid 在多个 Web 容器下，Session 的数据要一致。 先以用户使用浏览器，Web 服务器为单台 Tomca">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-05-28T06:03:09.000Z">
+<meta property="article:modified_time" content="2020-06-01T03:28:04.890Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Web">
+<meta property="article:tag" content="Spring Boot-基础01">
+<meta property="article:tag" content="Spring Boot">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Web开发-SpringBoot分布式Session入门" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/28/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%88%86%E5%B8%83%E5%BC%8FSession%E5%85%A5%E9%97%A8/" class="article-date">
+  <time datetime="2020-05-28T06:03:09.000Z" itemprop="datePublished">2020-05-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Web开发-SpringBoot分布式Session入门
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Spring-Boot-分布式-Session-入门"><a href="#Spring-Boot-分布式-Session-入门" class="headerlink" title="Spring Boot 分布式 Session 入门"></a>Spring Boot 分布式 Session 入门</h1><h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h2><p><strong>在考虑高性能之前，一定要做高可用</strong></p>
+<p>在部署生产环境下的 Tomcat 等 Web 容器的时候，<strong>一定是需要部署多个节点</strong>。此时，Session 的<strong>一致性</strong>就成为一个问题</p>
+<p><em>Session 的一致性，简单来理解，就是相同 sessionid 在多个 Web 容器下，Session 的数据要一致。</em></p>
+<p>先以用户使用浏览器，Web 服务器为<strong>单台</strong> TomcatA 举例子。</p>
+<ul>
+<li>浏览器在第一次访问 Web 服务器 TomcatA 时，TomcatA 会发现请求的 Cookie 中<strong>不</strong>存在 sessionid ，所以创建一个 sessionid 为 X 的 Session ，同时将该 sessionid 写回给浏览器的 Cookie 中。</li>
+<li>浏览器在下一次访问 Web 服务器 TomcatA 时，TomcatA 会发现请求的 Cookie 中<strong>已</strong>存在 sessionid 为 X ，则直接获得 X 对应的 Session 。</li>
+</ul>
+<p><em>友情提示，Tomcat 产生的 sessionid 为 jsessionid 。</em></p>
+<p>再以用户使用浏览器，Web 服务器为<strong>两台</strong> TomcatA、TomcatB 举例子。</p>
+<ul>
+<li>接上述例子，浏览器已经访问 TomcatA ，获得 sessionid 为 X 。同时，在多台 Tomcat 的情况下，我们需要采用 Nginx 做负载均衡。</li>
+<li>浏览器又发起一次请求访问 Web 服务器，Nginx 负载均衡转发请求到 TomcatB 上。TomcatB 会发现请求的 Cookie 中<strong>已</strong>存在 sessionid 为 X ，则直接获得 X 对应的 Session 。结果呢，找不到 X 对应的 Session ，只好创建一个 sessionid 为 X 的 Session 。</li>
+<li>此时，虽然说浏览器的 sessionid 是 X ，但是对应到两个 Tomcat 中两个 Session 。那么，如果在 TomcatA 上做的 Session 修改，TomcatB 的 Session 还是原样，这样就会出现 <strong>Session 不一致</strong>的问题。</li>
+</ul>
+<p>有三种方案保证 session 一致：</p>
+<p><strong>第一种，Session 黏连</strong>。</p>
+<p>使用 Nginx 实现会话黏连，将相同 sessionid 的浏览器所发起的请求，转发到同一台服务器。这样，就不会存在多个 Web 服务器创建多个 Session 的情况，也就不会发生 Session 不一致的问题。</p>
+<p>不过，这种方式目前基本不被采用。因为，如果一台服务器重启，那么会导致转发到这个服务器上的 Session 全部丢失。</p>
+<p><strong>第二种，Session 复制</strong>。</p>
+<p>Web 服务器之间，进行 Session 复制同步。仅仅适用于实现 Session 复制的 Web 容器，例如说 Tomcat 、Weblogic 等等。</p>
+<p>不过，这种方式目前基本也不被采用。试想一下，如果我们有 5 台 Web 服务器，所有的 Session 都要同步到每一个节点上，一个是效率低，一个是浪费内存。</p>
+<p><strong>第三种，Session 外部化存储</strong>。</p>
+<p>将 Session 存储外部化，持久化到 MySQL、Redis、MongoDB 等等数据库中</p>
+<p>实现 Session 外部化存储有两种方式：</p>
+<p>① 基于 Tomcat、Jetty 等 Web 容器<strong>自带的拓展</strong>，使用读取外部存储器的 Session 管理器。例如说：</p>
+<ul>
+<li><a href="https://github.com/redisson/redisson/wiki/14.-第三方框架整合#146-spring-session会话管理器" target="_blank" rel="noopener">《Redisson Tomcat会话管理器（Tomcat Session Manager）》</a> ，实现将 Tomcat 使用 Redis 存储 Session 。</li>
+<li><a href="https://blog.csdn.net/xiao__gui/article/details/43271509" target="_blank" rel="noopener">《Jetty 集群配置 Session 存储到 MySQL、MongoDB》</a> ，实现 Jetty 使用 MySQL、MongoDB 存储 Session 。</li>
+</ul>
+<p>② 基于应用层封装 <a href="https://github.com/javaee/servlet-spec/blob/master/src/main/java/javax/servlet/http/HttpServletRequest.java" target="_blank" rel="noopener">HttpServletRequest</a> 请求对象，包装成自己的 RequestWrapper 对象，从而让实现调用 <a href="https://github.com/javaee/servlet-spec/blob/master/src/main/java/javax/servlet/http/HttpServletRequest.java#L542-L581" target="_blank" rel="noopener"><code>HttpServletRequest#getSession()</code></a> 方法时，获得读写外部存储器的 SessionWrapper 对象</p>
+<ul>
+<li>Spring Session 提供了 <a href="https://github.com/spring-projects/spring-session/blob/master/spring-session-core/src/main/java/org/springframework/session/web/http/SessionRepositoryFilter.java" target="_blank" rel="noopener">SessionRepositoryFilter</a> 过滤器，它会过滤请求时，将请求 HttpServletRequest 对象包装成 <a href="https://github.com/spring-projects/spring-session/blob/master/spring-session-core/src/main/java/org/springframework/session/web/http/SessionRepositoryFilter.java#L192-L418" target="_blank" rel="noopener">SessionRepositoryRequestWrapper</a> 对象。代码如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SessionRepositoryFilter.java</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doFilterInternal</span><span class="params">(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">    <span class="comment">// sessionRepository 是访问外部数据源的操作类，例如说访问 Redis、MySQL 等等</span></span><br><span class="line">    request.setAttribute(SESSION_REPOSITORY_ATTR, <span class="keyword">this</span>.sessionRepository);</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 将请求和响应进行包装成 SessionRepositoryRequestWrapper 和 SessionRepositoryResponseWrapper 对象</span></span><br><span class="line">    SessionRepositoryFilter&lt;S&gt;.SessionRepositoryRequestWrapper wrappedRequest = <span class="keyword">new</span> SessionRepositoryFilter.SessionRepositoryRequestWrapper(request, response, <span class="keyword">this</span>.servletContext);</span><br><span class="line">    SessionRepositoryFilter.SessionRepositoryResponseWrapper wrappedResponse = <span class="keyword">new</span> SessionRepositoryFilter.SessionRepositoryResponseWrapper(wrappedRequest, response);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 继续执行下一个过滤器</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        filterChain.doFilter(wrappedRequest, wrappedResponse);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="comment">// 请求结束，提交 Session 到外部数据源</span></span><br><span class="line">        wrappedRequest.commitSession();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>调用 <a href="https://github.com/spring-projects/spring-session/blob/master/spring-session-core/src/main/java/org/springframework/session/web/http/SessionRepositoryFilter.java#L325-L328" target="_blank" rel="noopener"><code>SessionRepositoryRequestWrapper#getSession()</code></a> 方法时，返回的是自己封装的 <a href="https://github.com/spring-projects/spring-session/blob/master/spring-session-core/src/main/java/org/springframework/session/web/http/SessionRepositoryFilter.java#L375-L390" target="_blank" rel="noopener">HttpSessionWrapper</a> 对象。代码如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SessionRepositoryFilter#SessionRepositoryRequestWrapper.java</span></span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> HttpSessionWrapper <span class="title">getSession</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> getSession(<span class="keyword">true</span>);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>后续，调用 HttpSessionWrapper 的方法，例如说 <code>HttpSessionWrapper#setAttribute(String name, Object value)</code> 方法，访问的就是外部数据源，而不是内存中。</li>
+</ul>
+<h2 id="2-Spring-Session"><a href="#2-Spring-Session" class="headerlink" title="2. Spring Session"></a>2. Spring Session</h2><p>Spring Session 使支持集群会话变得非常简单，无需绑定到特定于应用程序容器的解决方案。它还提供了透明的集成:</p>
+<ul>
+<li><code>HttpSession</code> - 允许以中立通用的方式替换应用程序容器(即 Tomcat)中的 HttpSession ，并支持在请求头(Header)中提供 sessionid ，方便提供 RESTful API 。</li>
+<li><code>WebSocket</code> - 提供在接收 WebSocket 消息时保持 HttpSession 活跃的能力。</li>
+<li><code>WebSession</code> - 允许以与应用程序容器无关的方式替换 Spring WebFlux 的 WebSession 。</li>
+</ul>
+<ul>
+<li>可以使用 Redis、JDBC（访问 MySQL、Oracle 等数据库）、Hazelcast 作为 Session 存储的数据源。</li>
+<li>同时 Spring Session 也另外提供了 <a href="https://spring.io/projects/spring-session-data-mongodb" target="_blank" rel="noopener">Spring Session MongoDB</a> ，实现使用 MongoDB 作为 Session 存储的数据源</li>
+</ul>
+<h2 id="3-快速入门-Spring-Session-Redis"><a href="#3-快速入门-Spring-Session-Redis" class="headerlink" title="3. 快速入门 Spring Session + Redis"></a>3. 快速入门 Spring Session + Redis</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 实现对 Spring Session 使用 Redis 作为数据源的自动化配置 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.session<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-session-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">&lt;!-- 实现对 Spring Data Redis 的自动化配置 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br><span class="line">                <span class="comment">&lt;!-- 去掉对 Lettuce 的依赖，因为 Spring Boot 优先使用 Lettuce 作为 Redis 客户端 --&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.lettuce<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lettuce-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 引入 Jedis 的依赖，这样 Spring Boot 实现对 Jedis 的自动化配置 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>redis.clients<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jedis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="comment"># 对应 RedisProperties 类</span></span><br><span class="line">  <span class="attr">redis:</span></span><br><span class="line">    <span class="attr">host:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">6379</span></span><br><span class="line">    <span class="attr">password:</span> <span class="comment"># Redis 服务器密码，默认为空。生产中，一定要设置 Redis 密码！</span></span><br><span class="line">    <span class="attr">database:</span> <span class="number">0</span> <span class="comment"># Redis 数据库号，默认为 0 。</span></span><br><span class="line">    <span class="attr">timeout:</span> <span class="number">0</span> <span class="comment"># Redis 连接超时时间，单位：毫秒。</span></span><br><span class="line">    <span class="comment"># 对应 RedisProperties.Jedis 内部类</span></span><br><span class="line">    <span class="attr">jedis:</span></span><br><span class="line">      <span class="attr">pool:</span></span><br><span class="line">        <span class="attr">max-active:</span> <span class="number">8</span> <span class="comment"># 连接池最大连接数，默认为 8 。使用负数表示没有限制。</span></span><br><span class="line">        <span class="attr">max-idle:</span> <span class="number">8</span> <span class="comment"># 默认连接数最大空闲的连接数，默认为 8 。使用负数表示没有限制。</span></span><br><span class="line">        <span class="attr">min-idle:</span> <span class="number">0</span> <span class="comment"># 默认连接池最小空闲的连接数，默认为 0 。允许设置 0 和 正数。</span></span><br><span class="line">        <span class="attr">max-wait:</span> <span class="number">-1</span> <span class="comment"># 连接池最大阻塞等待时间，单位：毫秒。默认为 -1 ，表示不限制。</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SessionConfiguration.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableRedisHttpSession</span> <span class="comment">// 自动化配置 Spring Session 使用 Redis 作为数据源</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SessionConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 创建 &#123;<span class="doctag">@link</span> RedisOperationsSessionRepository&#125; 使用的 RedisSerializer Bean 。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * 具体可以看看 &#123;<span class="doctag">@link</span> RedisHttpSessionConfiguration#setDefaultRedisSerializer(RedisSerializer)&#125; 方法，</span></span><br><span class="line"><span class="comment">     * 它会引入名字为 "springSessionDefaultRedisSerializer" 的 Bean 。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> RedisSerializer Bean</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean</span>(name = <span class="string">"springSessionDefaultRedisSerializer"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> RedisSerializer <span class="title">springSessionDefaultRedisSerializer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> RedisSerializer.json();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在类上，添加 <a href="https://github.com/spring-projects/spring-session/blob/master/spring-session-data-redis/src/main/java/org/springframework/session/data/redis/config/annotation/web/http/EnableRedisHttpSession.java" target="_blank" rel="noopener"><code>@EnableRedisHttpSession</code></a> 注解，开启自动化配置 Spring Session 使用 Redis 作为数据源。该注解有如下属性：<ul>
+<li>maxInactiveIntervalInSeconds` 属性，Session 不活跃后的过期时间，默认为 1800 秒。</li>
+<li><code>redisNamespace</code> 属性，在 Redis 的 key 的统一前缀，默认为 <code>&quot;spring:session&quot;</code> 。</li>
+<li><code>redisFlushMode</code> 属性，Redis 会话刷新模式(<a href="https://github.com/spring-projects/spring-session/blob/master/spring-session-data-redis/src/main/java/org/springframework/session/data/redis/RedisFlushMode.java" target="_blank" rel="noopener">RedisFlushMode</a>)。目前有两种，默认为 <code>RedisFlushMode.ON_SAVE</code> 。<ul>
+<li><code>RedisFlushMode.ON_SAVE</code> ，在请求执行完成时，统一写入 Redis 存储。</li>
+<li><code>RedisFlushMode.IMMEDIATE</code> ，在每次修改 Session 时，立即写入 Redis 存储。</li>
+</ul>
+</li>
+<li><code>cleanupCron</code> 属性，清理 Redis Session 会话过期的任务执行 CRON 表达式，默认为 <code>&quot;0 * * * * *&quot;</code> 每分钟执行一次。虽然说，Redis 自带了 key 的过期，但是惰性删除策略，实际过期的 Session 还在 Redis 中占用内存。所以，Spring Session 通过定时任务，删除 Redis 中过期的 Session ，尽快释放 Redis 的内存。</li>
+</ul>
+</li>
+<li>在 <code>#springSessionDefaultRedisSerializer()</code> 方法，定义了一个 Bean 名字为 <code>&quot;springSessionDefaultRedisSerializer&quot;</code> 的 RedisSerializer Bean ，采用 JSON 序列化方式</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 假设，我们已经在 redis-cli 中</span><br><span class="line"></span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; scan <span class="number">0</span></span><br><span class="line"><span class="number">1</span>) <span class="string">"0"</span></span><br><span class="line"><span class="number">2</span>) <span class="number">1</span>) <span class="string">"spring:session:sessions:expires:bea153af-3b36-451e-bbc9-2637bcdc5b37"</span></span><br><span class="line">   <span class="number">2</span>) <span class="string">"spring:session:expirations:1574493180000"</span></span><br><span class="line">   <span class="number">3</span>) <span class="string">"spring:session:sessions:bea153af-3b36-451e-bbc9-2637bcdc5b37"</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>每一个 Session 对应 Redis 三个 key-value 键值对。<ul>
+<li>开头：以 <code>spring:session</code> 开头，可以通过 <code>@EnableRedisHttpSession</code> 注解的 <code>redisNamespace</code> 属性配置。</li>
+<li>结尾：以对应 Session 的 sessionid 结尾。</li>
+<li>中间：中间分别是 <code>&quot;session&quot;</code>、<code>&quot;expirations&quot;</code>、<code>sessions:expires</code> 。<strong>一般情况下，我们只需要关注中间为 <code>&quot;session&quot;</code> 的 key-value 键值对即可，它负责真正存储 Session 数据。</strong>对于中间为 <code>&quot;sessions:expires&quot;</code> 和 <code>&quot;expirations&quot;</code> 的两个来说，主要为了实现主动删除 Redis 过期的 Session 会话，解决 Redis 惰性删除的“问题”。</li>
+</ul>
+</li>
+</ul>
+<p>查看下 <code>&quot;spring:session:sessions:bea153af-3b36-451e-bbc9-2637bcdc5b37&quot;</code> 的内容。它是一个 Redis <strong>hash</strong> 数据结构。结果如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; HGETALL spring:session:sessions:bea153af<span class="number">-3</span>b36<span class="number">-451</span>e-bbc9<span class="number">-2637</span>bcdc5b37</span><br><span class="line">1) "lastAccessedTime" # 最后访问时间</span><br><span class="line"><span class="number">2</span>) <span class="string">"1574491333155"</span></span><br><span class="line">3) "maxInactiveInterval" # Session 允许最大不活跃时长，单位：秒。</span><br><span class="line"><span class="number">4</span>) <span class="string">"1800"</span></span><br><span class="line">5) "creationTime" # 创建时间</span><br><span class="line"><span class="number">6</span>) <span class="string">"1574491333107"</span></span><br><span class="line"></span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; ttl spring:session:sessions:bea153af<span class="number">-3</span>b36<span class="number">-451</span>e-bbc9<span class="number">-2637</span>bcdc5b37</span><br><span class="line">(integer) 1089 # 虽然说，Spring Session Redis 实现了主动删除，但是并不妨碍这里也使用 Redis 自动过期策略。</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-快速入门-Spring-Session-MongoDB"><a href="#4-快速入门-Spring-Session-MongoDB" class="headerlink" title="4. 快速入门 Spring Session + MongoDB"></a>4. 快速入门 Spring Session + MongoDB</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 实现对 Spring Session 使用 MongoDB 作为数据源的自动化配置 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.session<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-session-data-mongodb<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">&lt;!-- 自动化配置 Spring Data Mongodb --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-mongodb<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">data:</span></span><br><span class="line">    <span class="comment"># MongoDB 配置项，对应 MongoProperties 类</span></span><br><span class="line">    <span class="attr">mongodb:</span></span><br><span class="line">      <span class="attr">host:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">27017</span></span><br><span class="line">      <span class="attr">database:</span> <span class="string">yourdatabase</span></span><br><span class="line">      <span class="attr">username:</span> <span class="string">test01</span></span><br><span class="line">      <span class="attr">password:</span> <span class="string">password01</span></span><br><span class="line">      <span class="comment"># 上述属性，也可以只配置 uri</span></span><br><span class="line"></span><br><span class="line"><span class="attr">logging:</span></span><br><span class="line">  <span class="attr">level:</span></span><br><span class="line">    <span class="attr">org:</span></span><br><span class="line">      <span class="attr">springframework:</span></span><br><span class="line">        <span class="attr">data:</span></span><br><span class="line">          <span class="attr">mongodb:</span></span><br><span class="line">            <span class="attr">core:</span> <span class="string">DEBUG</span> <span class="comment"># 打印 mongodb 操作的具体语句。生产环境下，不建议开启。</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableMongoHttpSession</span> <span class="comment">// 自动化配置 Spring Session 使用 MongoDB 作为数据源</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SessionConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> AbstractMongoSessionConverter <span class="title">mongoSessionConverter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> JacksonMongoSessionConverter();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在类上，添加 <a href="https://github.com/spring-projects/spring-session-data-mongodb/blob/master/src/main/java/org/springframework/session/data/mongo/config/annotation/web/http/EnableMongoHttpSession.java" target="_blank" rel="noopener">@EnableMongoHttpSession</a> 注解，开启自动化配置 Spring Session 使用 MongoDB 作为数据源。该注解有如下属性：<ul>
+<li><code>maxInactiveIntervalInSeconds</code> 属性，Session 不活跃后的过期时间，默认为 1800 秒。</li>
+<li><code>collectionName</code> 属性，在 MongoDB 中，存储 Session 的集合名，默认为 <code>&quot;sessions&quot;</code> 。</li>
+</ul>
+</li>
+<li>在 <code>#mongoSessionConverter()</code> 方法，创建了 JacksonMongoSessionConverter Bean 对象，采用 JSON 序列化</li>
+</ul>
+<p>目前，Spring Session MongoDB 基于 <strong>MongoDB 自动过期删除过期数据</strong>的机制，实现 Session 的自动过期。因为 MongoDB 的自动过期机制，并不是像 Redis 是惰性删除，所以无需实现定时任务，主动删除来释放内存。</p>
+<p>查看下 <code>sessions</code> 集合的内容。结果如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123; </span><br><span class="line">    <span class="attr">"_id"</span> : <span class="string">"5a6e9b28-7740-422e-8d1c-50a4b2781d7a"</span>, </span><br><span class="line">    <span class="attr">"@class"</span> : <span class="string">"org.springframework.session.data.mongo.MongoSession"</span>, </span><br><span class="line">    <span class="attr">"createdMillis"</span> : NumberLong(<span class="number">1574501001259</span>), </span><br><span class="line">    <span class="attr">"accessedMillis"</span> : NumberLong(<span class="number">1574501010539</span>), </span><br><span class="line">    <span class="attr">"intervalSeconds"</span> : NumberInt(<span class="number">1800</span>), </span><br><span class="line">    <span class="attr">"expireAt"</span> : ISODate(<span class="string">"2019-11-23T17:53:30.539+0800"</span>), </span><br><span class="line">    <span class="attr">"attrs"</span> : &#123;</span><br><span class="line">        <span class="attr">"@class"</span> : <span class="string">"java.util.HashMap"</span>, </span><br><span class="line">        <span class="attr">"author"</span> : <span class="string">"nainai"</span>, </span><br><span class="line">        <span class="attr">"who"</span> : <span class="string">"yudaoyuanma"</span></span><br><span class="line">    &#125;, </span><br><span class="line">    <span class="attr">"principal"</span> : <span class="literal">null</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>每个 Session 对应一条 <code>sessions</code> 集合的记录。对应到实体类是 <a href="https://github.com/spring-projects/spring-session-data-mongodb/blob/master/src/main/java/org/springframework/session/data/mongo/MongoSession.java" target="_blank" rel="noopener">MongoSession</a> 。代码如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MongoSession.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MongoSession</span> <span class="keyword">implements</span> <span class="title">Session</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String id;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> createdMillis;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> accessedMillis;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> intervalSeconds;</span><br><span class="line">    <span class="keyword">private</span> Date expireAt;</span><br><span class="line">    <span class="keyword">private</span> Map&lt;String, Object&gt; attrs;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ... 省略方法</span></span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>_id</code> 字段，sessionid 。</p>
+</li>
+<li><p><code>@class</code> 字段，记录对应的实体类，就是我们提到的 MongoSession 。</p>
+</li>
+<li><p><code>createdMillis</code> 字段，Session 创建时间戳。</p>
+</li>
+<li><p><code>accessedMillis</code> 字段，Session 最后访问时间戳。</p>
+</li>
+<li><p><code>intervalSeconds</code> 字段，Session 允许最大不活跃时长，单位：秒。</p>
+</li>
+<li><p><code>expireAt</code> 字段，Session 过期时间。在该字段上，我们创建了 <code>expireAt</code> 所以， 用于实现过期 Session 记录的自动删除。索引信息如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123; </span><br><span class="line">    <span class="attr">"v"</span> : <span class="number">2</span>, </span><br><span class="line">    <span class="attr">"name"</span> : <span class="string">"expireAt"</span>, </span><br><span class="line">    <span class="attr">"ns"</span> : <span class="string">"yourdatabase.sessions"</span>, </span><br><span class="line">    <span class="attr">"expireAfterSeconds"</span> : <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>attrs</code> 字段，Session 的 attribute 属性们。</p>
+</li>
+<li><p><code>principal</code> 字段，用户主体，和用户身份认证相关。</p>
+</li>
+</ul>
+<h2 id="5-整合-Spring-Security"><a href="#5-整合-Spring-Security" class="headerlink" title="5. 整合 Spring Security"></a>5. 整合 Spring Security</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 实现对 Spring Security 的自动化配置 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-security<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="comment"># 对应 RedisProperties 类</span></span><br><span class="line">  <span class="attr">redis:</span></span><br><span class="line">    <span class="attr">host:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">6379</span></span><br><span class="line">    <span class="attr">password:</span> <span class="comment"># Redis 服务器密码，默认为空。生产中，一定要设置 Redis 密码！</span></span><br><span class="line">    <span class="attr">database:</span> <span class="number">0</span> <span class="comment"># Redis 数据库号，默认为 0 。</span></span><br><span class="line">    <span class="attr">timeout:</span> <span class="number">0</span> <span class="comment"># Redis 连接超时时间，单位：毫秒。</span></span><br><span class="line">    <span class="comment"># 对应 RedisProperties.Jedis 内部类</span></span><br><span class="line">    <span class="attr">jedis:</span></span><br><span class="line">      <span class="attr">pool:</span></span><br><span class="line">        <span class="attr">max-active:</span> <span class="number">8</span> <span class="comment"># 连接池最大连接数，默认为 8 。使用负数表示没有限制。</span></span><br><span class="line">        <span class="attr">max-idle:</span> <span class="number">8</span> <span class="comment"># 默认连接数最大空闲的连接数，默认为 8 。使用负数表示没有限制。</span></span><br><span class="line">        <span class="attr">min-idle:</span> <span class="number">0</span> <span class="comment"># 默认连接池最小空闲的连接数，默认为 0 。允许设置 0 和 正数。</span></span><br><span class="line">        <span class="attr">max-wait:</span> <span class="number">-1</span> <span class="comment"># 连接池最大阻塞等待时间，单位：毫秒。默认为 -1 ，表示不限制。</span></span><br><span class="line">  <span class="comment"># 对应 SecurityProperties 类</span></span><br><span class="line">  <span class="attr">security:</span></span><br><span class="line">    <span class="attr">user:</span> <span class="comment"># 配置内存中，可登陆的用户名和密码</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">yudaoyuanma</span></span><br><span class="line">      <span class="attr">password:</span> <span class="string">nicai</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SessionConfiguration.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableRedisHttpSession</span> <span class="comment">// 自动化配置 Spring Session 使用 Redis 作为数据源</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SessionConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>去掉了自定义的 <strong>JSON</strong> RedisSerializer Bean 的配置。原因是，HttpSession 的 attributes 属性，是 <code>Map&lt;String, Object&gt;</code> 类型。</p>
+<ul>
+<li>在序列化 Session 到 Redis 中时，不存在问题。</li>
+<li>在反序列化 Redis 的 key-value 键值对成 Session 时，如果 attributes 的 value 存在 POJO 对象的时候，因为不知道该 value 是什么 POJO 对象，导致无法反序列化错误。</li>
+</ul>
+<p><strong>因此，在使用 Spring Session 时，先老实使用 Java 序列化方式吧</strong>。</p>
+<p>访问 <code>&quot;http://127.0.0.1:8080/&quot;</code> 地址，因为 使用了 Spring Security ，所以会被自动拦截重定向到 <code>&quot;http://127.0.0.1:8080/login&quot;</code></p>
+<p>① 终端执行 <code>redis-cli</code> 命令，连接到 Redis 中，查看是否创建了一个 Session 。过程如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"># 确实创建了一个 sessionid 为 f65a475e-8550-49a4-b71d-0320c8cf887f 的 Session 。</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; scan <span class="number">0</span></span><br><span class="line"><span class="number">1</span>) <span class="string">"0"</span></span><br><span class="line"><span class="number">2</span>) <span class="number">1</span>) <span class="string">"spring:session:sessions:f65a475e-8550-49a4-b71d-0320c8cf887f"</span></span><br><span class="line">   <span class="number">2</span>) <span class="string">"spring:session:sessions:expires:f65a475e-8550-49a4-b71d-0320c8cf887f"</span></span><br><span class="line">   <span class="number">3</span>) <span class="string">"spring:session:expirations:1574437980000"</span></span><br><span class="line">   </span><br><span class="line"># 查看 spring:session:sessions:f65a475e-8550-49a4-b71d-0320c8cf887f 存储的 value 。</span><br><span class="line"># 因为使用 Java 序列化方式，所以 hash 中的每个 key 对应的 value ，都无法直接读懂。不过大概啥意思，我们应该是明白的。</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; HGETALL spring:session:sessions:f65a475e<span class="number">-8550</span><span class="number">-49</span>a4-b71d<span class="number">-0320</span>c8cf887f</span><br><span class="line"> <span class="number">1</span>) <span class="string">"lastAccessedTime"</span></span><br><span class="line"> <span class="number">2</span>) <span class="string">"\xac\xed\x00\x05sr\x00\x0ejava.lang.Long;\x8b\xe4\x90\xcc\x8f#\xdf\x02\x00\x01J\x00\x05valuexr\x00\x10java.lang.Number\x86\xac\x95\x1d\x0b\x94\xe0\x8b\x02\x00\x00xp\x00\x00\x01n\x93\xb5\x80\xf6"</span></span><br><span class="line"> <span class="number">3</span>) <span class="string">"creationTime"</span></span><br><span class="line"> <span class="number">4</span>) <span class="string">"\xac\xed\x00\x05sr\x00\x0ejava.lang.Long;\x8b\xe4\x90\xcc\x8f#\xdf\x02\x00\x01J\x00\x05valuexr\x00\x10java.lang.Number\x86\xac\x95\x1d\x0b\x94\xe0\x8b\x02\x00\x00xp\x00\x00\x01n\x93\xb5\x80x"</span></span><br><span class="line"> <span class="number">5</span>) <span class="string">"sessionAttr:SPRING_SECURITY_SAVED_REQUEST"</span></span><br><span class="line"> <span class="number">6</span>) <span class="string">"\xac\xed\x00\x05sr\x00Aorg.springframework.security.web.savedrequest.DefaultSavedRequest\x1e@HD\xf96d\x94\x02\x00\x0eI\x00\nserverPortL\x00\x0bcontextPatht\x00\x12Ljava/lang/String;L\x00\acookiest\x00\x15Ljava/util/ArrayList;L\x00\aheaderst\x00\x0fLjava/util/Map;L\x00\alocalesq\x00~\x00\x02L\x00\x06methodq\x00~\x00\x01L\x00\nparametersq\x00~\x00\x03L\x00\bpathInfoq\x00~\x00\x01L\x00\x0bqueryStringq\x00~\x00\x01L\x00\nrequestURIq\x00~\x00\x01L\x00\nrequestURLq\x00~\x00\x01L\x00\x06schemeq\x00~\x00\x01L\x00\nserverNameq\x00~\x00\x01L\x00\x0bservletPathq\x00~\x00\x01xp\x00\x00\x1f\x90t\x00\x00sr\x00\x13java.util.ArrayListx\x81\xd2\x1d\x99\xc7a\x9d\x03\x00\x01I\x00\x04sizexp\x00\x00\x00\x01w\x04\x00\x00\x00\x01sr\x009org.springframework.security.web.savedrequest.SavedCookie\x03@+\x82\x9f\xc0\xb4f\x02\x00\bI\x00\x06maxAgeZ\x00\x06secureI\x00\aversionL\x00\acommentq\x00~\x00\x01L\x00\x06domainq\x00~\x00\x01L\x00\x04nameq\x00~\x00\x01L\x00\x04pathq\x00~\x00\x01L\x00\x05valueq\x00~\x00\x01xp\xff\xff\xff\xff\x00\x00\x00\x00\x00ppt\x00\aSESSIONpt\x000MDZhYjJiYTUtYzA2Ny00YmNhLWFiNWItODUyYmRmM2QwMGE1xsr\x00\x11java.util.TreeMap\x0c\xc1\xf6&gt;-%j\xe6\x03\x00\x01L\x00\ncomparatort\x00\x16Ljava/util/Comparator;xpsr\x00*java.lang.String$CaseInsensitiveComparatorw\x03\\&#125;\\P\xe5\xce\x02\x00\x00xpw\x04\x00\x00\x00\x0bt\x00\x06acceptsq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00vtext/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3xt\x00\x0faccept-encodingsq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00\x11gzip, deflate, brxt\x00\x0faccept-languagesq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00#zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7xt\x00\nconnectionsq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00\nkeep-alivext\x00\x06cookiesq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x008SESSION=MDZhYjJiYTUtYzA2Ny00YmNhLWFiNWItODUyYmRmM2QwMGE1xt\x00\x04hostsq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00\x0e127.0.0.1:8080xt\x00\x0esec-fetch-modesq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00\bnavigatext\x00\x0esec-fetch-sitesq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00\x04nonext\x00\x0esec-fetch-usersq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00\x02?1xt\x00\x19upgrade-insecure-requestssq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00\x011xt\x00\nuser-agentsq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00xMozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36xxsq\x00~\x00\x06\x00\x00\x00\x04w\x04\x00\x00\x00\x04sr\x00\x10java.util.Locale~\xf8\x11`\x9c0\xf9\xec\x03\x00\x06I\x00\bhashcodeL\x00\acountryq\x00~\x00\x01L\x00\nextensionsq\x00~\x00\x01L\x00\blanguageq\x00~\x00\x01L\x00\x06scriptq\x00~\x00\x01L\x00\avariantq\x00~\x00\x01xp\xff\xff\xff\xfft\x00\x02CNq\x00~\x00\x05t\x00\x02zhq\x00~\x00\x05q\x00~\x00\x05xsq\x00~\x003\xff\xff\xff\xffq\x00~\x00\x05q\x00~\x00\x05q\x00~\x006q\x00~\x00\x05q\x00~\x00\x05xsq\x00~\x003\xff\xff\xff\xfft\x00\x02USq\x00~\x00\x05t\x00\x02enq\x00~\x00\x05q\x00~\x00\x05xsq\x00~\x003\xff\xff\xff\xffq\x00~\x00\x05q\x00~\x00\x05q\x00~\x00:q\x00~\x00\x05q\x00~\x00\x05xxt\x00\x03GETsq\x00~\x00\x0cpw\x04\x00\x00\x00\x00xppt\x00\x01/t\x00\x16http://127.0.0.1:8080/t\x00\x04httpt\x00\t127.0.0.1t\x00\x01/"</span></span><br><span class="line"> <span class="number">7</span>) <span class="string">"maxInactiveInterval"</span></span><br><span class="line"> <span class="number">8</span>) <span class="string">"\xac\xed\x00\x05sr\x00\x11java.lang.Integer\x12\xe2\xa0\xa4\xf7\x81\x878\x02\x00\x01I\x00\x05valuexr\x00\x10java.lang.Number\x86\xac\x95\x1d\x0b\x94\xe0\x8b\x02\x00\x00xp\x00\x00\a\b"</span></span><br><span class="line"> <span class="number">9</span>) <span class="string">"sessionAttr:org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository.CSRF_TOKEN"</span></span><br><span class="line"><span class="number">10</span>) <span class="string">"\xac\xed\x00\x05sr\x006org.springframework.security.web.csrf.DefaultCsrfTokenZ\xef\xb7\xc8/\xa2\xfb\xd5\x02\x00\x03L\x00\nheaderNamet\x00\x12Ljava/lang/String;L\x00\rparameterNameq\x00~\x00\x01L\x00\x05tokenq\x00~\x00\x01xpt\x00\x0cX-CSRF-TOKENt\x00\x05_csrft\x00$582ef040-9a9f-43be-9708-e5b94394e338"</span></span><br></pre></td></tr></table></figure>
+
+<p>② 输入账号密码，并点击「Sign in」按钮，进行登录。登录成功后，跳转回 <code>&quot;http://127.0.0.1:8080/&quot;</code> 地址</p>
+<p>在 Redis 的终端中，查看此时该 Session 的变化。过程如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 相比来说，多了一条 "spring:session:index:org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME:yudaoyuanma"</span><br><span class="line"># 它代表的，就是我们刚登陆的用户名，注意结尾是 "yudaoyuanma" 。</span><br><span class="line"></span><br><span class="line"># 并且，比较神奇的是，原 sessionid="f65a475e-8550-49a4-b71d-0320c8cf887f" 的 Session 被删除。</span><br><span class="line"># 同时，一个新的 sessionid="127c5c93-1e57-4984-9780-5530a4bf9d0b" 的 Session 被创建</span><br><span class="line"># 原因可见 https://www.jianshu.com/p/057fcf061b94 文章的「Spring Security 固定 Session 的保护」。</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; scan <span class="number">0</span></span><br><span class="line"><span class="number">1</span>) <span class="string">"0"</span></span><br><span class="line"><span class="number">2</span>) <span class="number">1</span>) <span class="string">"spring:session:sessions:expires:127c5c93-1e57-4984-9780-5530a4bf9d0b"</span></span><br><span class="line">   <span class="number">2</span>) <span class="string">"spring:session:expirations:1574438340000"</span></span><br><span class="line">   <span class="number">3</span>) <span class="string">"spring:session:index:org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME:yudaoyuanma"</span></span><br><span class="line">   <span class="number">4</span>) <span class="string">"spring:session:sessions:127c5c93-1e57-4984-9780-5530a4bf9d0b"</span></span><br><span class="line">  </span><br><span class="line"># 该 key 是 Redis Set 数据结构，存储了该用户名对应的所有 sessionid 集合。</span><br><span class="line"># 所以，通过该 key ，我们可以获取到指定用户名，登陆的所有 sessionid 集合</span><br><span class="line"># 具体怎么操作，我们在 「5.6 FindByIndexNameSessionRepository」小节来看。</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; SMEMBERS spring:session:index:org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME:yudaoyuanma</span><br><span class="line"><span class="number">1</span>) <span class="string">"\xac\xed\x00\x05t\x00$127c5c93-1e57-4984-9780-5530a4bf9d0b"</span></span><br></pre></td></tr></table></figure>
+
+<p>③ 点击「Log Out」按钮，完成用户的登出操作。完成后，自动重定向到 <code>&quot;http://127.0.0.1:8080/login&quot;</code> 登陆地址</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 用户退出后，"spring:session:index:org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME:yudaoyuanma" 被删除</span><br><span class="line"># 因为，该用户已经退出。</span><br><span class="line"></span><br><span class="line"># 用户退出后，新的 sessionid="1288372b-1ed3-417f-86ed-10c113a10783" 的 Session 被创建。</span><br><span class="line"></span><br><span class="line"># 神奇的是，老的 sessionid="127c5c93-1e57-4984-9780-5530a4bf9d0b" 的 Session 并未被删除，这是为什么呢？</span><br><span class="line"># Spring Session 在失效删除 Session 时，会保留该 sessionid 300 秒。对应源码为 RedisSessionExpirationPolicy#onExpirationUpdated(...) 方法的最后一行。</span><br><span class="line"># 具体原因，是为了实现 Session 过期的通知。</span><br><span class="line"># 详细的，可以看 《从 Spring-Session 源码看 Session 机制的实现细节》 http://www.iocoder.cn/Spring-Session/laoxu/spring-session-4/?self</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; scan <span class="number">0</span></span><br><span class="line"><span class="number">1</span>) <span class="string">"0"</span></span><br><span class="line"><span class="number">2</span>) <span class="number">1</span>) <span class="string">"spring:session:expirations:1574439000000"</span></span><br><span class="line">   <span class="number">2</span>) <span class="string">"spring:session:expirations:1574437140000"</span></span><br><span class="line">   <span class="number">3</span>) <span class="string">"spring:session:expirations:1574438340000"</span></span><br><span class="line">   <span class="number">4</span>) <span class="string">"spring:session:sessions:expires:1288372b-1ed3-417f-86ed-10c113a10783"</span></span><br><span class="line">   <span class="number">5</span>) <span class="string">"spring:session:sessions:1288372b-1ed3-417f-86ed-10c113a10783"</span></span><br><span class="line">   <span class="number">6</span>) <span class="string">"spring:session:expirations:1574438940000"</span></span><br><span class="line">   <span class="number">7</span>) <span class="string">"spring:session:sessions:127c5c93-1e57-4984-9780-5530a4bf9d0b"</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>Spring Session 定义了 <a href="https://github.com/spring-projects/spring-session/blob/master/spring-session-core/src/main/java/org/springframework/session/FindByIndexNameSessionRepository.java" target="_blank" rel="noopener"><code>org.springframework.session.FindByIndexNameSessionRepository</code></a> 接口，定义了根据用户名，查询登陆的所有 Session 信息。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// FindByIndexNameSessionRepository.java</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FindByIndexNameSessionRepository</span>&lt;<span class="title">S</span> <span class="keyword">extends</span> <span class="title">Session</span>&gt;</span></span><br><span class="line"><span class="class">		<span class="keyword">extends</span> <span class="title">SessionRepository</span>&lt;<span class="title">S</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">	String PRINCIPAL_NAME_INDEX_NAME = FindByIndexNameSessionRepository<span class="class">.<span class="keyword">class</span>.<span class="title">getName</span>()</span></span><br><span class="line">			.concat(".PRINCIPAL_NAME_INDEX_NAME");</span><br><span class="line"></span><br><span class="line">	<span class="function">Map&lt;String, S&gt; <span class="title">findByIndexNameAndIndexValue</span><span class="params">(String indexName, String indexValue)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">default</span> Map&lt;String, S&gt; <span class="title">findByPrincipalName</span><span class="params">(String principalName)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> findByIndexNameAndIndexValue(PRINCIPAL_NAME_INDEX_NAME, principalName);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>#findByPrincipalName(principalName)</code> 方法，根据用户名，查询登陆的所有 Session 信息。因为用户可以多点登陆，所以一个用户名会对应多个 Session 信息。而返回的 Map 对象，其 key 为 sessionid 。</li>
+<li><code>#findByPrincipalName(String principalName)</code> 方法的内部，会调用 <code>#findByIndexNameAndIndexValue(indexName, indexValue)</code> 方法，查询指定 <code>indexName</code> 的 value 等于 <code>indexValue</code> 的所有 Session 信息。这里，传入的是 <code>indexName</code> 为 <code>PRINCIPAL_NAME_INDEX_NAME</code> ，<code>indexValue</code> 为用户名。<code>&quot;spring:session:index:org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME:yudaoyuanma&quot;</code> 这个 Redis key 。分解如下：<ul>
+<li>第一部分，<code>&quot;spring:session:index&quot;</code> 为 index 固定前缀。</li>
+<li>第二部分，<code>&quot;org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME&quot;</code> 为 <code>indexName</code> 。</li>
+<li>第三部分，<code>&quot;yudaoyuanma&quot;</code> 为 <code>indexValue</code> 用户名。</li>
+<li>这样，在 <code>#findByIndexNameAndIndexValue(indexName, indexValue)</code> 方法的内部实现，会将三个部分拼接在一起，成为 <code>&quot;spring:session:index:org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME:yudaoyuanma&quot;</code> 字符串，最终去 Redis 查询。也就是说，<code>&quot;spring:session:index&quot;</code> 的目的，是实现<strong>索引</strong>。在这里，就是<strong>索引</strong>用户登陆的多个 sessionid ，从而最终查询到所有 Session 信息。</li>
+</ul>
+</li>
+</ul>
+<p>在两个浏览器中，登陆用户名为 <code>&quot;yudaoyuanma&quot;</code> 的用户。<br>然后，浏览器访问 <code>&quot;http://127.0.0.1:8080/session/list?username=yudaoyuanma&quot;</code> 接口，查询用户名为 <code>&quot;yudaoyuanma&quot;</code> 的所有 Session 信息。响应结果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">   <span class="string">"f8ef73b0-a911-4921-9df9-056b4e18ce09"</span>:&#123;</span><br><span class="line">      <span class="string">"lastAccessedTime"</span>:<span class="string">"2019-11-22T17:37:36.331Z"</span>,</span><br><span class="line">      <span class="string">"expired"</span>:<span class="keyword">false</span>,</span><br><span class="line">      <span class="string">"maxInactiveInterval"</span>:<span class="string">"PT30M"</span>,</span><br><span class="line">      <span class="string">"new"</span>:<span class="keyword">false</span>,</span><br><span class="line">      <span class="string">"creationTime"</span>:<span class="string">"2019-11-22T17:09:01.157Z"</span>,</span><br><span class="line">      <span class="string">"attributeNames"</span>:[</span><br><span class="line">         <span class="string">"SPRING_SECURITY_CONTEXT"</span></span><br><span class="line">      ],</span><br><span class="line">      <span class="string">"id"</span>:<span class="string">"f8ef73b0-a911-4921-9df9-056b4e18ce09"</span></span><br><span class="line">   &#125;,</span><br><span class="line">   <span class="string">"ea037f98-112a-43c2-a337-d0d3d5a74a16"</span>:&#123;</span><br><span class="line">      <span class="string">"lastAccessedTime"</span>:<span class="string">"2019-11-22T17:37:27.631Z"</span>,</span><br><span class="line">      <span class="string">"expired"</span>:<span class="keyword">false</span>,</span><br><span class="line">      <span class="string">"maxInactiveInterval"</span>:<span class="string">"PT30M"</span>,</span><br><span class="line">      <span class="string">"new"</span>:<span class="keyword">false</span>,</span><br><span class="line">      <span class="string">"creationTime"</span>:<span class="string">"2019-11-22T17:37:21.915Z"</span>,</span><br><span class="line">      <span class="string">"attributeNames"</span>:[</span><br><span class="line">         <span class="string">"SPRING_SECURITY_CONTEXT"</span></span><br><span class="line">      ],</span><br><span class="line">      <span class="string">"id"</span>:<span class="string">"ea037f98-112a-43c2-a337-d0d3d5a74a16"</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>可以看到我们在两个浏览器上，登陆的两个 Session 。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/28/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%88%86%E5%B8%83%E5%BC%8FSession%E5%85%A5%E9%97%A8/" data-id="ckawd2iym001fl3078f1sdonc" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/" rel="tag">Web</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/05/28/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-JavaGuide/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Java基础知识-JavaGuide
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/05/28/Java%E5%AE%9E%E8%B7%B5%E6%8E%A8%E8%8D%90/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Java实践推荐</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Swagger/" rel="tag">Swagger</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/" rel="tag">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" rel="tag">线程池</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88/" rel="tag">集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Spring-Boot/" style="font-size: 17.5px;">Spring Boot</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 17.5px;">Spring Boot-基础-01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 15px;">Spring Boot-基础01</a> <a href="/tags/Swagger/" style="font-size: 10px;">Swagger</a> <a href="/tags/Web/" style="font-size: 15px;">Web</a> <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 10px;">基础知识</a> <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" style="font-size: 10px;">线程池</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 12.5px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 10px;">集合</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/06/01/Web%E5%BC%80%E5%8F%91-SpringBootAPI%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3Swagger%E5%85%A5%E9%97%A8/">Web开发-SpringBootAPI接口文档Swagger入门</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/29/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/">Java线程池</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/28/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-JavaGuide/">Java基础知识-JavaGuide</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/28/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%88%86%E5%B8%83%E5%BC%8FSession%E5%85%A5%E9%97%A8/">Web开发-SpringBoot分布式Session入门</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/28/Java%E5%AE%9E%E8%B7%B5%E6%8E%A8%E8%8D%90/">Java实践推荐</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

@@ -64,6 +64,476 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-SpringBoot-MapStruct" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/25/SpringBoot-MapStruct/" class="article-date">
+  <time datetime="2020-05-25T07:31:00.000Z" itemprop="datePublished">2020-05-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/25/SpringBoot-MapStruct/">SpringBoot-MapStruct</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Spring-Boot-对象转换-MapStruct-入门"><a href="#Spring-Boot-对象转换-MapStruct-入门" class="headerlink" title="Spring  Boot 对象转换 MapStruct 入门"></a>Spring  Boot 对象转换 MapStruct 入门</h2><ul>
+<li><strong>DO</strong>（Data Object）：与数据库表结构一一对应，通过DAO层向上传输数据源对象。</li>
+<li><strong>DTO</strong>（Data Transfer Object）：数据传输对象，Service或Manager向外传输的对象。</li>
+<li><strong>BO</strong>（Business Object）：业务对象。由Service层输出的封装业务逻辑的对象。</li>
+</ul>
+<ul>
+<li>通过创建一个 MapStruct <strong>Mapper</strong> 接口，并定义一个转换接口方法，后续交给 MapStruct 自动生成对象转换的代码即可。</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mapstruct<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mapstruct<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;mapstruct.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-compiler-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.8.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">source</span>&gt;</span>$&#123;java.version&#125;<span class="tag">&lt;/<span class="name">source</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">target</span>&gt;</span>$&#123;java.version&#125;<span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">annotationProcessorPaths</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">path</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mapstruct<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mapstruct-processor<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;mapstruct.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">annotationProcessorPaths</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>注意，一定要在 <code>maven-compiler-plugin</code> 插件中，声明 <code>mapstruct-processor</code> 为 JSR 269 的 Java 注解处理器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDO</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 用户编号 **/</span></span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">    <span class="comment">/** 用户名 **/</span></span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="comment">/** 密码 **/</span></span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ... 省略 setter/getter 方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserBO</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 用户编号 **/</span></span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">    <span class="comment">/** 用户名 **/</span></span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="comment">/** 密码 **/</span></span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ... 省略 setter/getter 方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>创建 <a href="https://github.com/YunaiV/SpringBoot-Labs/blob/master/lab-55/lab-55-mapstruct-demo/src/main/java/cn/iocoder/springboot/lab55/mapstructdemo/convert/UserConvert.java" target="_blank" rel="noopener">UserConvert</a> 接口，作为 User 相关 Bean 的转换器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Mapper</span> <span class="comment">// &lt;1&gt;</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserConvert</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    UserConvert INSTANCE = Mappers.getMapper(UserConvert<span class="class">.<span class="keyword">class</span>)</span>; <span class="comment">// &lt;2&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="function">UserBO <span class="title">convert</span><span class="params">(UserDO userDO)</span></span>; <span class="comment">// &lt;3&gt;</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>&lt;1&gt;</code> 处，添加 <a href="https://github.com/mapstruct/mapstruct/blob/master/core/src/main/java/org/mapstruct/Mapper.java" target="_blank" rel="noopener"><code>@Mapper</code></a> 注解，声明它是一个 MapStruct Mapper 映射器。</p>
+<p><code>&lt;2&gt;</code> 处，通过调用 <a href="https://github.com/mapstruct/mapstruct/blob/master/core/src/main/java/org/mapstruct/factory/Mappers.java" target="_blank" rel="noopener">Mappers</a> 的 <code>#getMapper(Class clazz)</code> 方法，获得 MapStruct 帮我们<strong>自动生成的 UserConvert 实现类</strong>的对象。</p>
+<p><code>&lt;3&gt;</code> 处，定义 <code>#convert(UserDO userDO)</code> 方法，声明 UserDO 转换成 UserBO。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserBOTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建 UserDO 对象</span></span><br><span class="line">        UserDO userDO = <span class="keyword">new</span> UserDO()</span><br><span class="line">                .setId(<span class="number">1</span>).setUsername(<span class="string">"yudaoyuanma"</span>).setPassword(<span class="string">"buzhidao"</span>);</span><br><span class="line">        <span class="comment">// &lt;X&gt; 进行转换</span></span><br><span class="line">        UserBO userBO = UserConvert.INSTANCE.convert(userDO);</span><br><span class="line">        System.out.println(userBO.getId());</span><br><span class="line">        System.out.println(userBO.getUsername());</span><br><span class="line">        System.out.println(userBO.getPassword());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>核心代码在 <code>&lt;X&gt;</code> 处，通过 UserConvert 将 UserDO 对象转换成 UserBO 对象。</p>
+<h3 id="继承-Lombok"><a href="#继承-Lombok" class="headerlink" title="继承 Lombok"></a>继承 Lombok</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 引入 lombok 依赖 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;lombok.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">scope</span>&gt;</span>provided<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>maven-compiler-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.8.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">source</span>&gt;</span>$&#123;java.version&#125;<span class="tag">&lt;/<span class="name">source</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">target</span>&gt;</span>$&#123;java.version&#125;<span class="tag">&lt;/<span class="name">target</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">annotationProcessorPaths</span>&gt;</span></span><br><span class="line">                        <span class="comment">&lt;!-- 引入 mapstruct-processor --&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">path</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.mapstruct<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mapstruct-processor<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;mapstruct.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">                        <span class="comment">&lt;!-- 引入 lombok-processor --&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">path</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;lombok.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">annotationProcessorPaths</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span> <span class="comment">// 新增</span></span><br><span class="line"><span class="meta">@Accessors</span>(chain = <span class="keyword">true</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDO</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 用户编号 **/</span></span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">    <span class="comment">/** 用户名 **/</span></span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="comment">/** 密码 **/</span></span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ... 删除 setter、getter 方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span> <span class="comment">// 新增</span></span><br><span class="line"><span class="meta">@Accessors</span>(chain = <span class="keyword">true</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDO</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/** 用户编号 **/</span></span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">    <span class="comment">/** 用户名 **/</span></span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="comment">/** 密码 **/</span></span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ... 删除 setter、getter 方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Mapping"><a href="#Mapping" class="headerlink" title="@Mapping"></a>@Mapping</h3><p>在对象转换时，可能会存在属性不是完全映射的情况，例如说<strong>属性名</strong>不同。此时，我们可以使用 MapStruct 提供的 <a href="https://github.com/mapstruct/mapstruct/blob/master/core/src/main/java/org/mapstruct/Mapping.java" target="_blank" rel="noopener"><code>@Mapping</code></a> 注解，配置相应的映射关系。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDetailBO</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Integer userId;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ... 省略 setter/getter 方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserConvert.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Mappings</span>(&#123;</span><br><span class="line">        <span class="meta">@Mapping</span>(source = <span class="string">"id"</span>, target = <span class="string">"userId"</span>)</span><br><span class="line">&#125;)</span><br><span class="line"><span class="function">UserDetailBO <span class="title">convertDetail</span><span class="params">(UserDO userDO)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>其中，设置注解的 <code>source</code> 属性为 UserDO 的 <code>id</code> 属性，注解的 <code>target</code> 属性为 UserDetailBO 的 <code>userId</code> 属性。</li>
+</ul>
+<p><code>@Mapping</code> 注解还支持多个对象转换为一个对象。示例如下图：</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf4sed5o0bj313n0f3q69.jpg" alt=""></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDetailBOTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建 UserDO 对象</span></span><br><span class="line">        UserDO userDO = <span class="keyword">new</span> UserDO()</span><br><span class="line">                .setId(<span class="number">1</span>).setUsername(<span class="string">"yudaoyuanma"</span>).setPassword(<span class="string">"buzhidao"</span>);</span><br><span class="line">        <span class="comment">// 进行转换&lt;X&gt;</span></span><br><span class="line">        UserDetailBO userDetailBO = UserConvert.INSTANCE.convertDetail(userDO);</span><br><span class="line">        System.out.println(userDetailBO.getUserId());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>核心代码在 <code>&lt;X&gt;</code> 处，通过 UserConvert 将 UserDO 对象转换成 UserDetailBO 对象。</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf4sfbppw2j313x0leqmg.jpg" alt="image-20200525164318874"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/25/SpringBoot-MapStruct/" data-id="ckawd2ixi0005l30796atdlym" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-SpringBoot之Lombok" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/25/SpringBoot%E4%B9%8BLombok/" class="article-date">
+  <time datetime="2020-05-25T07:20:08.000Z" itemprop="datePublished">2020-05-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/25/SpringBoot%E4%B9%8BLombok/">SpringBoot之Lombok</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Spring-Boot-消除冗余代码-Lombok-入门"><a href="#Spring-Boot-消除冗余代码-Lombok-入门" class="headerlink" title="Spring Boot 消除冗余代码 Lombok 入门"></a>Spring Boot 消除冗余代码 Lombok 入门</h2><p>Lombok 注解:</p>
+<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Getter.java" target="_blank" rel="noopener"><code>@Getter</code></a> 注解，添加在<strong>类</strong>或<strong>属性</strong>上，生成对应的 get 方法。</p>
+<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Setting.java" target="_blank" rel="noopener"><code>@Setter</code></a> 注解，添加在<strong>类</strong>或<strong>属性</strong>上，生成对应的 set 方法。</p>
+<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/ToString.java" target="_blank" rel="noopener"><code>@ToString</code></a> 注解，添加在<strong>类</strong>上，生成 toString 方法。</p>
+<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/EqualsAndHashCode.java" target="_blank" rel="noopener"><code>@EqualsAndHashCode</code></a> 注解，添加在<strong>类</strong>上，生成 equals 和 hashCode 方法。</p>
+<p><code>@AllArgsConstructor</code>、<code>@RequiredArgsConstructor</code>、<code>@NoArgsConstructor</code> 注解，添加在<strong>类</strong>上，为类自动生成对应参数的构造方法。</p>
+<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Data.java" target="_blank" rel="noopener"><code>@Data</code></a> 注解，添加在<strong>类</strong>上，是 5 个 Lombok 注解的组合。</p>
+<ul>
+<li>为所有属性，添加 <code>@Getter</code>、<code>@ToString</code>、<code>@EqualsAndHashCode</code> 注解的效果</li>
+<li>为非 <code>final</code> 修饰的属性，添加 <code>@Setter</code> 注解的效果</li>
+<li>为 <code>final</code> 修改的属性，添加 <code>@RequiredArgsConstructor</code> 注解的效果</li>
+</ul>
+<p><code>@Value</code> 注解，添加在<strong>类</strong>上，和 <code>@Data</code> 注解类似，区别在于它会把所有属性默认定义为 <code>private final</code> 修饰，所以不会生成 set 方法。</p>
+<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/apachecommons/CommonsLog.java" target="_blank" rel="noopener"><code>@CommonsLog</code></a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/flogger/Flogger.java" target="_blank" rel="noopener"><code>@Flogger</code></a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/java/Log.java" target="_blank" rel="noopener"><code>@Log</code></a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/jbosslog/JBossLog.java" target="_blank" rel="noopener"><code>@JBossLog</code></a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/log4j/Log4j.java" target="_blank" rel="noopener">@Log4j</a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/log4j/Log4j2.java" target="_blank" rel="noopener">@Log4j2</a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Slf4j.java" target="_blank" rel="noopener">@Slf4j</a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Slf4jX.java" target="_blank" rel="noopener">@Slf4jX</a> 注解，添加在<strong>类</strong>上，自动为类添加对应的日志支持。</p>
+<p><code>@NonNull</code> 注解，添加在<strong>方法参数</strong>、<strong>类属性</strong>上，用于自动生成 <code>null</code> 参数检查。若确实是 <code>null</code> 时，抛出 NullPointerException 异常。</p>
+<p><code>@Cleanup</code> 注解，添加在方法中的<strong>局部变量</strong>上，在作用域结束时会自动调用 <code>#close()</code> 方法，来释放资源。例如说，使用在 Java IO 流操作的时候。</p>
+<p><code>@Builder</code> 注解，添加在<strong>类</strong>上，给该类加个构造者模式 Builder 内部类。</p>
+<p><code>@Synchronized</code> 注解，添加在<strong>方法</strong>上，添加同步锁。</p>
+<p><code>@SneakyThrows</code> 注解，添加在<strong>方法</strong>上，给该方法添加 <code>try catch</code> 代码块。</p>
+<p><code>@Accessors</code> 注解，添加在<strong>方法</strong>或<strong>属性</strong>上，并设置 <code>chain = true</code>，实现链式编程。</p>
+<h3 id="Data-注解"><a href="#Data-注解" class="headerlink" title="@Data 注解"></a>@Data 注解</h3><p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Data.java" target="_blank" rel="noopener"><code>@Data</code></a> 注解，添加在<strong>类</strong>上，是 5 个 Lombok 注解的组合。</p>
+<ul>
+<li>为所有属性，添加 <code>@Getter</code>、<code>@ToString</code>、<code>@EqualsAndHashCode</code> 注解的效果</li>
+<li>为非 <code>final</code> 修饰的属性，添加 <code>@Setter</code> 注解的效果</li>
+<li>为 <code>final</code> 修改的属性，添加 <code>@RequiredArgsConstructor</code> 注解的效果</li>
+</ul>
+<p>如果使用 <code>@Data</code> 注解的类，继承了其它父类的属性，最好额外添加 <code>@ToString(callSuper = true)</code> 和 <code>@EqualsAndHashCode(callSuper = true)</code> 注解。</p>
+<ul>
+<li>因为默认情况下，<code>@Data</code> 注解不会处理父类的属性。所以需要通过 <code>callSuper = true</code> 属性，声明需要调用父类对应的方法。</li>
+<li>这个情况非常常见，例如说在实体类中，可能会声明一个抽象父类 AbstractEntity，而该类里有一个 <code>id</code> 编号属性。</li>
+</ul>
+<h3 id="Slf4j-注解"><a href="#Slf4j-注解" class="headerlink" title="@Slf4j 注解"></a>@Slf4j 注解</h3><p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Slf4j.java" target="_blank" rel="noopener"><code>@Slf4j</code></a> 注解，添加在<strong>类</strong>上，给该类创建 Slf4j Logger <strong>静态</strong>属性。</p>
+<h3 id="NonNull-注解"><a href="#NonNull-注解" class="headerlink" title="@NonNull 注解"></a>@NonNull 注解</h3><p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/NonNull.java" target="_blank" rel="noopener"><code>@NonNull</code></a> 注解，添加在<strong>方法参数</strong>、<strong>类属性</strong>上，用于自动生成 <code>null</code> 参数检查。若确实是 <code>null</code> 时，抛出 NullPointerException 异常。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/25/SpringBoot%E4%B9%8BLombok/" data-id="ckawd2ixm0009l3079z3g7m2q" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-常用设计模式系列之——享元模式" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/25/%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97%E4%B9%8B%E2%80%94%E2%80%94%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/" class="article-date">
+  <time datetime="2020-05-25T05:34:49.000Z" itemprop="datePublished">2020-05-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/25/%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97%E4%B9%8B%E2%80%94%E2%80%94%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/">常用设计模式系列之——享元模式</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="常用设计模式系列之——享元模式"><a href="#常用设计模式系列之——享元模式" class="headerlink" title="常用设计模式系列之——享元模式"></a>常用设计模式系列之——享元模式</h2><h3 id="享元模式"><a href="#享元模式" class="headerlink" title="享元模式"></a>享元模式</h3><p><strong>享元模式（英语：Flyweight Pattern）是一种软件设计模式。它使用共享物件，用来尽可能减少内存使用量以及分享资讯给尽可能多的相似物件；它适合用于当大量物件只是重复因而导致无法令人接受的使用大量内存。通常物件中的部分状态是可以分享。常见做法是把它们放在外部数据结构，当需要使用时再将它们传递给享元。</strong></p>
+<p>关键字：缺少内存，共享物件，外部资源</p>
+<p>一批对象中既有相同的内容也有不同的内容，相同的内容采用共享的方式，不同的内容通过动态传递的方式，来尽量减少对象的产生。</p>
+<h3 id="享元模式使用场景"><a href="#享元模式使用场景" class="headerlink" title="享元模式使用场景"></a>享元模式使用场景</h3><p>最常见的一个场景就是 Java JDK 里面的 String 字符串类，因为 JVM 中有常量池，常量池的实现就是一种享元模式，避免多个相同对象的存在</p>
+<ol>
+<li>抽象享元类：通常是一个接口，主要对外提供修改内部数据的接口</li>
+<li>具体享元类：享元的实现类，通常存储在内存中，便于使用</li>
+<li>享元工厂类：对外创建具体享元类</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/25/%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97%E4%B9%8B%E2%80%94%E2%80%94%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/" data-id="ckawd2ixo000cl307cxpo84me" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-SpringBoot2-0基础" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/22/SpringBoot2-0%E5%9F%BA%E7%A1%80/" class="article-date">
+  <time datetime="2020-05-22T07:44:34.000Z" itemprop="datePublished">2020-05-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/22/SpringBoot2-0%E5%9F%BA%E7%A1%80/">SpringBoot2.0基础</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="1-1-自动配置入门"><a href="#1-1-自动配置入门" class="headerlink" title="1-1 自动配置入门"></a>1-1 自动配置入门</h2><h3 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h3><ul>
+<li>通过在类上加 @Configuration 注解，声明这是一个 Spring 配置类</li>
+<li>通过在方法上加 @Bean 注解，声明该方法创建一个 Spring Bean</li>
+</ul>
+<p><strong>配置类</strong></p>
+<ul>
+<li>TomcatWebServerFactoryCustomizerConfiguration 配置类，负责创建 <a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/web/embedded/TomcatWebServerFactoryCustomizer.java" target="_blank" rel="noopener">TomcatWebServerFactoryCustomizer</a> Bean，从而初始化内嵌的 Tomcat 并进行启动</li>
+<li>JettyWebServerFactoryCustomizer 配置类，负责创建 <a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/web/embedded/JettyWebServerFactoryCustomizer.java" target="_blank" rel="noopener">JettyWebServerFactoryCustomizer</a> Bean，从而初始化内嵌的 Jetty 并进行启动。</li>
+</ul>
+<p><strong>条件注解</strong></p>
+<p>在类上添加了 <a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/condition/ConditionalOnWebApplication.java" target="_blank" rel="noopener"><code>@ConditionalOnWebApplication</code></a> 条件注解，表示当前配置类需要在当前项目是 Web 项目的条件下，才能生效</p>
+<ul>
+<li>TomcatWebServerFactoryCustomizerConfiguration 配置类，需要有 <a href="https://mvnrepository.com/search?q=tomcat-embed-core" target="_blank" rel="noopener"><code>tomcat-embed-core</code></a> 依赖提供的 Tomcat、UpgradeProtocol 依赖类，才能创建内嵌的 Tomcat 服务器。</li>
+<li>JettyWebServerFactoryCustomizer 配置类，需要有 <a href="https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server" target="_blank" rel="noopener"><code>jetty-server</code></a> 依赖提供的 Server、Loader、WebAppContext 类，才能创建内嵌的 Jetty 服务器。</li>
+</ul>
+<p><strong>配置属性</strong></p>
+<p>使用 <a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/context/properties/EnableConfigurationProperties.java" target="_blank" rel="noopener"><code>@EnableConfigurationProperties</code></a> 注解，让配置类生效</p>
+<p>在 Spring Boot 定义了 <a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/context/properties/ConfigurationProperties.java" target="_blank" rel="noopener"><code>@ConfigurationProperties</code></a> 注解，用于声明配置属性类，将指定前缀的配置项批量注入到该类中</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties</span>(prefix = <span class="string">"server"</span>, ignoreUnknownFields = <span class="keyword">true</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServerProperties</span></span></span><br><span class="line"><span class="class">		<span class="keyword">implements</span> <span class="title">EmbeddedServletContainerCustomizer</span>, <span class="title">EnvironmentAware</span>, <span class="title">Ordered</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Server HTTP port.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">private</span> Integer port;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Context path of the application.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">private</span> String contextPath;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// ... 省略其它属性</span></span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>通过 <code>@ConfigurationProperties</code> 注解，声明将 <code>server</code> 前缀的配置项，设置到 ServerProperties 配置属性类中。</li>
+</ul>
+<h3 id="2-自动配置类"><a href="#2-自动配置类" class="headerlink" title="2. 自动配置类"></a>2. 自动配置类</h3><h3 id="3-条件注解"><a href="#3-条件注解" class="headerlink" title="3. 条件注解"></a>3. 条件注解</h3><p><a href="https://github.com/spring-projects/spring-framework/blob/master/spring-context/src/main/java/org/springframework/context/annotation/Profile.java" target="_blank" rel="noopener"><code>@Profile</code></a> 注解</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DataSourceConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@Profile</span>(<span class="string">"DEV"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> DataSource <span class="title">devDataSource</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ... 单机 MySQL</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@Profile</span>(<span class="string">"PROD"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> DataSource <span class="title">prodDataSource</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ... 集群 MySQL</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在测试环境下，我们注册单机 MySQL 的 DataSource Bean。</li>
+<li>在生产环境下，我们注册集群 MySQL 的 DataSource Bean。</li>
+</ul>
+<p><a href="https://github.com/spring-projects/spring-framework/blob/master/spring-context/src/main/java/org/springframework/context/annotation/Conditional.java" target="_blank" rel="noopener"><code>@Conditional</code></a> 注解，用于声明在配置类或者创建 Bean 的方法上，表示需要满足指定条件才能生效</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@Conditional</span>(XXXCondition<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    <span class="title">public</span> <span class="title">Object</span> <span class="title">xxxObject</span>() </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Object();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Spring Boot 提供了常用的条件注解：</p>
+<ul>
+<li><code>@ConditionalOnBean</code>：当容器里有指定 Bean 的条件下</li>
+<li><code>@ConditionalOnMissingBean</code>：当容器里没有指定 Bean 的情况下</li>
+<li><code>@ConditionalOnSingleCandidate</code>：当指定 Bean 在容器中只有一个，或者虽然有多个但是指定首选 Bean</li>
+<li><code>@ConditionalOnClass</code>：当类路径下有指定类的条件下</li>
+<li><code>@ConditionalOnMissingClass</code>：当类路径下没有指定类的条件下</li>
+<li><code>@ConditionalOnProperty</code>：指定的属性是否有指定的值</li>
+<li><code>@ConditionalOnResource</code>：类路径是否有指定的值</li>
+<li><code>@ConditionalOnExpression</code>：基于 SpEL 表达式作为判断条件</li>
+<li><code>@ConditionalOnJava</code>：基于 Java 版本作为判断条件</li>
+<li><code>@ConditionalOnJndi</code>：在 JNDI 存在的条件下差在指定的位置</li>
+<li><code>@ConditionalOnNotWebApplication</code>：当前项目不是 Web 项目的条件下</li>
+<li><code>@ConditionalOnWebApplication</code>：当前项目是 Web项 目的条件下</li>
+</ul>
+<h3 id="4-自定义-Starter"><a href="#4-自定义-Starter" class="headerlink" title="4. 自定义 Starter"></a>4. 自定义 Starter</h3><p> Spring Boot Starter 的<strong>命名规则</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>命名规则</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Spring Boot 内置 Starter</td>
+<td>Spring-boot-starter-{框架}</td>
+<td>spring-boot-starter-web</td>
+</tr>
+<tr>
+<td>框架 自定义 Starter</td>
+<td>{框架}-spring-boot-starter</td>
+<td>Mybatis-spring-boot-starter</td>
+</tr>
+</tbody></table>
+<h2 id="2-1-Spring-Boot-热部署入门"><a href="#2-1-Spring-Boot-热部署入门" class="headerlink" title="2-1 Spring Boot 热部署入门"></a>2-1 Spring Boot 热部署入门</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/22/SpringBoot2-0%E5%9F%BA%E7%A1%80/" data-id="ckawd2ixk0008l307dyxt8y6z" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Java基础" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/22/Java%E5%9F%BA%E7%A1%80/" class="article-date">
+  <time datetime="2020-05-22T02:08:53.000Z" itemprop="datePublished">2020-05-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/22/Java%E5%9F%BA%E7%A1%80/">Java基础</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Java-中的多态"><a href="#Java-中的多态" class="headerlink" title="Java 中的多态"></a>Java 中的多态</h2><p>多态是指相同类型的变量在调用一个方法时呈现出多种不同的行为特征：</p>
+<ul>
+<li>编译时类型，由声明变量时的类型决定</li>
+<li>运行时类型，由实际赋值给变量的对象的类型决定</li>
+</ul>
+<p>当一个变量的两个类型不一致，就会出现多态</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//BaseClass是SubClass的父类</span></span><br><span class="line">BaseClass a = <span class="keyword">new</span> BaseClass();</span><br><span class="line">BaseClass b = <span class="keyword">new</span> SubClass();</span><br><span class="line">a.baseMethod()<span class="comment">//变量a调用baseMethod()方法，实际上会调用BaseClass的baseMethod()方法,会打印111</span></span><br><span class="line">b.baseMethod()<span class="comment">//变量b调用baseMethod方法，实际上会调用SubClass的重写baseMethod()方法，会打印222</span></span><br><span class="line">Class BaseClass &#123;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">baseMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"111"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">Class SubClass &#123;</span><br><span class="line">  <span class="function"><span class="keyword">void</span> <span class="title">baseMethod</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"222"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">输出结果：</span><br><span class="line"><span class="number">111</span></span><br><span class="line"><span class="number">222</span></span><br></pre></td></tr></table></figure>
+
+<p>对于变量a：a 的编译类型是 BaseClass，实际类型也是 BaseClass，所以调用 baseMethod() 会执行 BaseClass#baseMethod() 方法</p>
+<p>对于变量b: b 的编译类型是 BaseClass，但是实际赋值时，给变量 b 赋值的是 SubClass 对象，所以 b 的实际类型是 SubClass</p>
+<h2 id="Java-中变量、代码块、构造器之间的执行顺序"><a href="#Java-中变量、代码块、构造器之间的执行顺序" class="headerlink" title="Java 中变量、代码块、构造器之间的执行顺序"></a>Java 中变量、代码块、构造器之间的执行顺序</h2><p>Java 程序中类中各元素的初始化顺序：</p>
+<ul>
+<li>先初始化静态部分，再初始化动态部分</li>
+<li>先初始化父类部分，后初始化子类部分</li>
+<li>先初始化变量，再初始化代码块和构造器</li>
+</ul>
+<p>总体顺序：</p>
+<ol>
+<li><p>父类的静态成员变量（如果是第一次加载类）</p>
+</li>
+<li><p>父类的静态代码块（如果是第一次加载类）</p>
+</li>
+<li><p>子类的静态成员变量（如果是第一次加载类）</p>
+</li>
+<li><p>子类的静态代码块（如果是第一次加载类）</p>
+</li>
+<li><p>父类的普通成员变量</p>
+</li>
+<li><p>父类的构造器方法</p>
+</li>
+<li><p>父类的构造器方法</p>
+</li>
+<li><p>子类的普通成员变量</p>
+</li>
+<li><p>子类的动态代码块</p>
+</li>
+<li><p>子类的构造器方法</p>
+</li>
+</ol>
+<p>Demo:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Base</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> Instance staticInstance = <span class="keyword">new</span> Instance(<span class="string">"1---Base类的静态成员变量staticInstance"</span>);</span><br><span class="line">    <span class="keyword">static</span>  &#123;</span><br><span class="line">        System.out.println(<span class="string">"2---Base类的静态代码块执行了"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    Instance instance = <span class="keyword">new</span> Instance(<span class="string">"5---Base类的普通成员变量instance"</span>);</span><br><span class="line">    &#123;</span><br><span class="line">        System.out.println(<span class="string">"6---Base类的动态代码块执行了"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    Base() &#123;</span><br><span class="line">        System.out.println(<span class="string">"7---Base类的构造器方法执行了"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Child</span> <span class="keyword">extends</span> <span class="title">Base</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> Instance staticInstance = <span class="keyword">new</span> Instance(<span class="string">"3---Child类的静态成员变量staticInstance"</span>);</span><br><span class="line">    <span class="keyword">static</span>  &#123;</span><br><span class="line">        System.out.println(<span class="string">"4---Child类的静态代码块执行了"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    Instance instance = <span class="keyword">new</span> Instance(<span class="string">"8---Child类的普通成员变量instance"</span>);</span><br><span class="line">    &#123;</span><br><span class="line">        System.out.println(<span class="string">"9----Child类的动态代码块执行了"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    Child() &#123;</span><br><span class="line">        System.out.println(<span class="string">"10---Child类的构造器方法执行了"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Child child = <span class="keyword">new</span> Child();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>输出结果如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">1---Base类的静态成员变量staticInstance进行了初始化</span><br><span class="line">2---Base类的静态代码块执行了</span><br><span class="line">3---Child类的静态成员变量staticInstance进行了初始化</span><br><span class="line">4---Child类的静态代码块执行了</span><br><span class="line">5---Base类的普通成员变量instance进行了初始化</span><br><span class="line">6---Base类的动态代码块执行了</span><br><span class="line">7---Base类的构造器方法执行了</span><br><span class="line">8---Child类的普通成员变量instance进行了初始化</span><br><span class="line">9----Child类的动态代码块执行了</span><br><span class="line">10---Child类的构造器方法执行了</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="final-关键字"><a href="#final-关键字" class="headerlink" title="final 关键字"></a>final 关键字</h2><h3 id="修饰符"><a href="#修饰符" class="headerlink" title="修饰符"></a>修饰符</h3><p>final 修饰符时，类不能被继承，并且类中的所有方法都被隐式地使用 final 修饰</p>
+<h3 id="修饰方法"><a href="#修饰方法" class="headerlink" title="修饰方法"></a>修饰方法</h3><p>final 修饰方法时，有两个作用：</p>
+<ul>
+<li><p>方法不能被子类重写</p>
+</li>
+<li><p>可以让方法转换为内嵌调用，提升效率</p>
+</li>
+<li><p>修饰变量</p>
+<p>final 修饰的变量一旦初始化，就不能被修改。</p>
+<p>当 final 修饰实例变量时赋初值，也可以在动态代码块，或构造器中赋初值（只能赋一次）</p>
+<p>如果 final 变量在声明时就指定了初始值，并且在编译时可以确定下来，那么编译时，final 变量本质上会变成一个宏变量，所有用到改变量的地方都直接替换成改变量的值</p>
+</li>
+</ul>
+<h3 id="Integer-类会进行缓存"><a href="#Integer-类会进行缓存" class="headerlink" title="Integer 类会进行缓存"></a>Integer 类会进行缓存</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Intger a =  <span class="keyword">new</span> Integer(<span class="number">127</span>);</span><br><span class="line">Intger b = Interger.valueOf(<span class="number">127</span>);</span><br><span class="line">Intger c = Interger.valueOf(<span class="number">127</span>);</span><br><span class="line">Intger d = Interger.valueOf(<span class="number">128</span>);</span><br><span class="line">Intger e = Interger.valueOf(<span class="number">128</span>);</span><br><span class="line">System.out.println(a == b); <span class="comment">//输出false</span></span><br><span class="line">System.out.println(b == c); <span class="comment">//输出true</span></span><br><span class="line">System.out.println(d == e); <span class="comment">//输出false</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>通过 new Integer() 创建Integer 对象，每次返回全新的 Integer 对象</li>
+<li>通过 Integer.valueOf() 创建 Integer 对象，如果值在 -128 到 127 之间，会返回缓存的对象（初始化时）</li>
+</ul>
+<p>实现原理</p>
+<p>Integer 类中有一个静态内部类 IntegerCache，在加载 Integer 类时会同时加载 IntegerCache 类，IntegeCache类的静态代码块中会创建值为 -128 到 127 的 Integer 对象，缓存到 cache 数组中，之后调用 Integer#valueOf 方法时，判断使用有缓存的 Integer 对象，有则返回，无则调用 new Integer() 创建</p>
+<h2 id="抽象类"><a href="#抽象类" class="headerlink" title="抽象类"></a>抽象类</h2><p>特点：</p>
+<ol>
+<li><p>可以包含抽象方法</p>
+<p>抽象方法不提供抽象方法的实现，由集成抽象类的子类实现抽象方法</p>
+</li>
+<li><p>不能实例化</p>
+<p>抽象类不能被实例化。抽象类的构造器不能用于创建实例，是仅提供给子类调用的。除此以外，抽象类跟普通类一样，可以拥有成员变量、普通方法、构造器、初始化块、内部类、枚举等</p>
+</li>
+<li><p>抽象类可以被继承</p>
+<p>继承抽象类的子类如果实现了所有抽象方法，那么可以作为普通类使用，否则也只能作为抽象类</p>
+</li>
+</ol>
+<h2 id="String-StringBuffer-和-StringBuilder"><a href="#String-StringBuffer-和-StringBuilder" class="headerlink" title="String, StringBuffer 和 StringBuilder"></a>String, StringBuffer 和 StringBuilder</h2><ol>
+<li><p>可变性</p>
+<p>String 是一个不可变类，任何对 String 改变都是会产生一个新的 String 对象，所以 String 类是使用 final 来进行修饰的</p>
+<p>StringBuffer 和 StringBuilder 是可变类，对应的字符串的改变不会产生新的对象</p>
+</li>
+<li><p>执行效率</p>
+<p>当频繁对字符串进行修改时，使用 String 会生成一些临时对象，对一些附加操作，执行效率较低</p>
+</li>
+<li><p>线程安全</p>
+<p>StringBuffer 的读写方法都使用了 synchronized 修饰，同一时间只有一个线程进行操作，所以是线程安全的，而 StringBuffer 不是线程安全的</p>
+</li>
+</ol>
+<h2 id="Object-类自带方法"><a href="#Object-类自带方法" class="headerlink" title="Object 类自带方法"></a>Object 类自带方法</h2><p><strong>registerNatives</strong> </p>
+<p>首先 Object 类有一个本地方法 registerNatives()，会在类加载时调用，主要是将 Object 类中的一些本地方法绑定到指定的函数中去，便于之后调用。</p>
+<p><strong>getClass</strong></p>
+<p>getClass() 方法会返回对象的运行时类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> Class&lt;?&gt; getClass();</span><br></pre></td></tr></table></figure>
+
+
+
+<p>有一个类 Son，继承于 Father 类，instance 的编译类型是 Father，实际赋值是一个 Son 对象，所以调用 instance.getClass() 获取的是 instance 对象的运行时类心，打印的类名是”com.test.Son”</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.test;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Father</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Son</span> <span class="keyword">extends</span> <span class="title">Father</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">Father instance = <span class="keyword">new</span> Son();</span><br><span class="line">Class class1 = instance.getClass();</span><br><span class="line">System.out.println(<span class="string">"class1 is"</span>class1);</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">class1 is class com.test.Son</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>Class.forName</strong></p>
+<p>与 getClass() 类似的方法还有两个，一个是 Class类中的 forName() 方法，也是在运行时，根据传入的类名去加载类，然后返回与类关联的 Class 对象。也正是因为动态加载，在编译时可以没有这个类，也不会对类名进行校验，所有可能抛出 ClassNotFoundException 异常</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Class&lt;?&gt; forName(String className)</span><br><span class="line">                <span class="keyword">throws</span> ClassNotFoundException &#123;</span><br><span class="line">        Class&lt;?&gt; caller = Reflection.getCallerClass();</span><br><span class="line">        <span class="keyword">return</span> forName0(className, <span class="keyword">true</span>, ClassLoader.getClassLoader(caller), caller);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>类名+.class</strong></p>
+<p>还有一种方式是使用 类名+.class 来获取类关联的 class 对象，与上面两种不同之处在于，它返回的是编译时类型，也就是在编译时，类加载器将类加载到 JVM 中，然后初始化一个 Class 对象返回</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/22/Java%E5%9F%BA%E7%A1%80/" data-id="ckawd2ix10000l307d0a1aruj" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/05/21/hello-world/" class="article-date">
@@ -103,7 +573,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/21/hello-world/" data-id="ckap8ij2c0005q607aopaexqe" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/21/hello-world/" data-id="ckawd2ixn000bl307h75hetgm" class="article-share-link">Share</a>
       
       
     </footer>
@@ -131,7 +601,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/" rel="tag">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88/" rel="tag">集合</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Swagger/" rel="tag">Swagger</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/" rel="tag">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" rel="tag">线程池</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88/" rel="tag">集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
     </div>
   </div>
 
@@ -141,7 +611,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Spring-Boot/" style="font-size: 15px;">Spring Boot</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 20px;">Spring Boot-基础-01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 10px;">Spring Boot-基础01</a> <a href="/tags/Web/" style="font-size: 10px;">Web</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 15px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 10px;">集合</a>
+      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Spring-Boot/" style="font-size: 17.5px;">Spring Boot</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 17.5px;">Spring Boot-基础-01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 15px;">Spring Boot-基础01</a> <a href="/tags/Swagger/" style="font-size: 10px;">Swagger</a> <a href="/tags/Web/" style="font-size: 15px;">Web</a> <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 10px;">基础知识</a> <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" style="font-size: 10px;">线程池</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 12.5px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 10px;">集合</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a>
     </div>
   </div>
 
@@ -150,7 +620,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li></ul>
     </div>
   </div>
 
@@ -163,23 +633,23 @@
       <ul>
         
           <li>
-            <a href="/2020/05/27/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%93%8D%E5%BA%94%E5%BC%8FWebFlux%E5%85%A5%E9%97%A8/">Web开发-SpringBoot响应式WebFlux入门</a>
+            <a href="/2020/06/01/Web%E5%BC%80%E5%8F%91-SpringBootAPI%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3Swagger%E5%85%A5%E9%97%A8/">Web开发-SpringBootAPI接口文档Swagger入门</a>
           </li>
         
           <li>
-            <a href="/2020/05/26/Java%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/">Java集合框架</a>
+            <a href="/2020/05/29/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/">Java线程池</a>
           </li>
         
           <li>
-            <a href="/2020/05/26/Java%E5%A4%84%E7%90%86Exception%E7%9A%849%E4%B8%AA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/">Java处理Exception的9个最佳实践</a>
+            <a href="/2020/05/28/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-JavaGuide/">Java基础知识-JavaGuide</a>
           </li>
         
           <li>
-            <a href="/2020/05/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%AE%9E%E6%88%98%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/">设计模式：实战工厂方法模式</a>
+            <a href="/2020/05/28/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%88%86%E5%B8%83%E5%BC%8FSession%E5%85%A5%E9%97%A8/">Web开发-SpringBoot分布式Session入门</a>
           </li>
         
           <li>
-            <a href="/2020/05/25/Web%E5%BC%80%E5%8F%91-SpringBoot-SpringMVC%E5%85%A5%E9%97%A8/">Web开发_SpringBoot_SpringMVC入门</a>
+            <a href="/2020/05/28/Java%E5%AE%9E%E8%B7%B5%E6%8E%A8%E8%8D%90/">Java实践推荐</a>
           </li>
         
       </ul>

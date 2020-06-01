@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Java实践推荐 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Java 实践推荐domain 包名数据库映射对象，使用报名 com.xxx.entity DTO数据传输应该使用DTO对象作为传输对象 只要是用于网络传输的对象，都认为他们可以当做是DTO对象 约定某对象如果是DTO对象，就将名称改为XXDTO,比如订单下发OMS：OMSOrderInputDTO DTO 转化12345678910111213141516@RequestMapping(&quot;&#x2F;v1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java实践推荐">
+<meta property="og:url" content="http://yoursite.com/2020/05/28/Java%E5%AE%9E%E8%B7%B5%E6%8E%A8%E8%8D%90/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Java 实践推荐domain 包名数据库映射对象，使用报名 com.xxx.entity DTO数据传输应该使用DTO对象作为传输对象 只要是用于网络传输的对象，都认为他们可以当做是DTO对象 约定某对象如果是DTO对象，就将名称改为XXDTO,比如订单下发OMS：OMSOrderInputDTO DTO 转化12345678910111213141516@RequestMapping(&quot;&#x2F;v1">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-05-28T02:03:58.000Z">
+<meta property="article:modified_time" content="2020-05-28T02:27:12.670Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Java实践推荐" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/28/Java%E5%AE%9E%E8%B7%B5%E6%8E%A8%E8%8D%90/" class="article-date">
+  <time datetime="2020-05-28T02:03:58.000Z" itemprop="datePublished">2020-05-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java实践推荐
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Java-实践推荐"><a href="#Java-实践推荐" class="headerlink" title="Java 实践推荐"></a>Java 实践推荐</h1><h2 id="domain-包名"><a href="#domain-包名" class="headerlink" title="domain 包名"></a>domain 包名</h2><p>数据库映射对象，使用报名 <strong><code>com.xxx.entity</code></strong></p>
+<h2 id="DTO"><a href="#DTO" class="headerlink" title="DTO"></a>DTO</h2><p>数据传输应该使用DTO对象作为传输对象</p>
+<p><strong>只要是用于网络传输的对象，都认为他们可以当做是DTO对象</strong></p>
+<p>约定某对象如果是DTO对象，就将名称改为XXDTO,比如订单下发OMS：OMSOrderInputDTO</p>
+<h2 id="DTO-转化"><a href="#DTO-转化" class="headerlink" title="DTO 转化"></a>DTO 转化</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/v1/api/user"</span>)</span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserApi</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">addUser</span><span class="params">(UserInputDTO userInputDTO)</span></span>&#123;</span><br><span class="line">        User user = <span class="keyword">new</span> User();</span><br><span class="line">        user.setUsername(userInputDTO.getUsername());</span><br><span class="line">        user.setAge(userInputDTO.getAge());</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> userService.addUser(user);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以使用<code>org.springframework.beans.BeanUtils#copyProperties</code>对代码进行重构和优化:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> User <span class="title">addUser</span><span class="params">(UserInputDTO userInputDTO)</span></span>&#123;</span><br><span class="line">    User user = <span class="keyword">new</span> User();</span><br><span class="line">    BeanUtils.copyProperties(userInputDTO,user);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> userService.addUser(user);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>BeanUtils.copyProperties是一个浅拷贝方法，复制属性时，只需要把DTO对象和要转化的对象两个的属性值设置为一样的名称，并且保证一样的类型就可以了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> User <span class="title">addUser</span><span class="params">(UserInputDTO userInputDTO)</span></span>&#123;</span><br><span class="line">         User user = convertFor(userInputDTO);</span><br><span class="line"></span><br><span class="line">         <span class="keyword">return</span> userService.addUser(user);</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">private</span> User <span class="title">convertFor</span><span class="params">(UserInputDTO userInputDTO)</span></span>&#123;</span><br><span class="line"></span><br><span class="line">         User user = <span class="keyword">new</span> User();</span><br><span class="line">         BeanUtils.copyProperties(userInputDTO,user);</span><br><span class="line">         <span class="keyword">return</span> user;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="抽象接口定义"><a href="#抽象接口定义" class="headerlink" title="抽象接口定义"></a>抽象接口定义</h3><p>当实际工作中，完成了几个api的DTO转化时，会发现，这样的操作有很多很多，那么应该定义好一个接口，让所有这样的操作都有规则的进行。如果接口被定义以后，那么convertFor这个方法的语义将产生变化，他将是一个实现类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">DTOConvert</span>&lt;<span class="title">S</span>,<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function">T <span class="title">convert</span><span class="params">(S s)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接口实现:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserInputDTOConvert</span> <span class="keyword">implements</span> <span class="title">DTOConvert</span> </span>&#123;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> User <span class="title">convert</span><span class="params">(UserInputDTO userInputDTO)</span> </span>&#123;</span><br><span class="line">User user = <span class="keyword">new</span> User();</span><br><span class="line">BeanUtils.copyProperties(userInputDTO,user);</span><br><span class="line"><span class="keyword">return</span> user;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>重构以后：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/v1/api/user"</span>)</span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserApi</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">addUser</span><span class="params">(UserInputDTO userInputDTO)</span></span>&#123;</span><br><span class="line">        User user = <span class="keyword">new</span> UserInputDTOConvert().convert(userInputDTO);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> userService.addUser(user);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>api中返回值是有些问题的，问题就在于不应该直接返回User实体，因为如果这样的话，就暴露了太多实体相关的信息，这样的返回值是不安全的，所以更应该返回一个DTO对象，可称它为<code>UserOutputDTO</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> UserOutputDTO <span class="title">addUser</span><span class="params">(UserInputDTO userInputDTO)</span></span>&#123;</span><br><span class="line">        User user = <span class="keyword">new</span> UserInputDTOConvert().convert(userInputDTO);</span><br><span class="line">        User saveUserResult = userService.addUser(user);</span><br><span class="line">        UserOutputDTO result = <span class="keyword">new</span> UserOutDTOConvert().convertToUser(saveUserResult);</span><br><span class="line">        <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">User user = <span class="keyword">new</span> UserInputDTOConvert().convert(userInputDTO);</span><br></pre></td></tr></table></figure>
+
+<p>发现，new这样一个DTO转化对象是没有必要的，而且每一个转化对象都是由在遇到DTO转化的时候才会出现，那应该考虑一下，是否可以将这个类和DTO进行聚合呢，看一下聚合结果:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserInputDTO</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getUsername</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUsername</span><span class="params">(String username)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.username = username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">convertToUser</span><span class="params">()</span></span>&#123;</span><br><span class="line">        UserInputDTOConvert userInputDTOConvert = <span class="keyword">new</span> UserInputDTOConvert();</span><br><span class="line">        User convert = userInputDTOConvert.convert(<span class="keyword">this</span>);</span><br><span class="line">        <span class="keyword">return</span> convert;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">UserInputDTOConvert</span> <span class="keyword">implements</span> <span class="title">DTOConvert</span>&lt;<span class="title">UserInputDTO</span>,<span class="title">User</span>&gt; </span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> User <span class="title">convert</span><span class="params">(UserInputDTO userInputDTO)</span> </span>&#123;</span><br><span class="line">            User user = <span class="keyword">new</span> User();</span><br><span class="line">            BeanUtils.copyProperties(userInputDTO,user);</span><br><span class="line">            <span class="keyword">return</span> user;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>然后api中的转化则由:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User user = <span class="keyword">new</span> UserInputDTOConvert().convert(userInputDTO);</span><br><span class="line">User saveUserResult = userService.addUser(user);</span><br></pre></td></tr></table></figure>
+
+<p>变成了</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">User user = userInputDTO.convertToUser();</span><br><span class="line">User saveUserResult = userService.addUser(user);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>发现了com.google.common.base.Convert这样的定义:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Converter</span>&lt;<span class="title">A</span>, <span class="title">B</span>&gt; <span class="keyword">implements</span> <span class="title">Function</span>&lt;<span class="title">A</span>, <span class="title">B</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> B <span class="title">doForward</span><span class="params">(A a)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> A <span class="title">doBackward</span><span class="params">(B b)</span></span>;</span><br><span class="line">    <span class="comment">//其他略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>源码可以了解到，GUAVA中的Convert可以完成正向转化和逆向转化，继续修改我们DTO中转化的这段代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">UserInputDTOConvert</span> <span class="keyword">implements</span> <span class="title">DTOConvert</span>&lt;<span class="title">UserInputDTO</span>,<span class="title">User</span>&gt; </span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> User <span class="title">convert</span><span class="params">(UserInputDTO userInputDTO)</span> </span>&#123;</span><br><span class="line">                User user = <span class="keyword">new</span> User();</span><br><span class="line">                BeanUtils.copyProperties(userInputDTO,user);</span><br><span class="line">                <span class="keyword">return</span> user;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>修改后:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">UserInputDTOConvert</span> <span class="keyword">extends</span> <span class="title">Converter</span>&lt;<span class="title">UserInputDTO</span>, <span class="title">User</span>&gt; </span>&#123;</span><br><span class="line">         <span class="meta">@Override</span></span><br><span class="line">         <span class="function"><span class="keyword">protected</span> User <span class="title">doForward</span><span class="params">(UserInputDTO userInputDTO)</span> </span>&#123;</span><br><span class="line">                 User user = <span class="keyword">new</span> User();</span><br><span class="line">                 BeanUtils.copyProperties(userInputDTO,user);</span><br><span class="line">                 <span class="keyword">return</span> user;</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         <span class="meta">@Override</span></span><br><span class="line">         <span class="function"><span class="keyword">protected</span> UserInputDTO <span class="title">doBackward</span><span class="params">(User user)</span> </span>&#123;</span><br><span class="line">                 UserInputDTO userInputDTO = <span class="keyword">new</span> UserInputDTO();</span><br><span class="line">                 BeanUtils.copyProperties(user,userInputDTO);</span><br><span class="line">                 <span class="keyword">return</span> userInputDTO;</span><br><span class="line">         &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>DTO：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDTO</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getUsername</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUsername</span><span class="params">(String username)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.username = username;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getAge</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAge</span><span class="params">(<span class="keyword">int</span> age)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> User <span class="title">convertToUser</span><span class="params">()</span></span>&#123;</span><br><span class="line">            UserDTOConvert userDTOConvert = <span class="keyword">new</span> UserDTOConvert();</span><br><span class="line">            User convert = userDTOConvert.convert(<span class="keyword">this</span>);</span><br><span class="line">            <span class="keyword">return</span> convert;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> UserDTO <span class="title">convertFor</span><span class="params">(User user)</span></span>&#123;</span><br><span class="line">            UserDTOConvert userDTOConvert = <span class="keyword">new</span> UserDTOConvert();</span><br><span class="line">            UserDTO convert = userDTOConvert.reverse().convert(user);</span><br><span class="line">            <span class="keyword">return</span> convert;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDTOConvert</span> <span class="keyword">extends</span> <span class="title">Converter</span>&lt;<span class="title">UserDTO</span>, <span class="title">User</span>&gt; </span>&#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">protected</span> User <span class="title">doForward</span><span class="params">(UserDTO userDTO)</span> </span>&#123;</span><br><span class="line">                    User user = <span class="keyword">new</span> User();</span><br><span class="line">                    BeanUtils.copyProperties(userDTO,user);</span><br><span class="line">                    <span class="keyword">return</span> user;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">protected</span> UserDTO <span class="title">doBackward</span><span class="params">(User user)</span> </span>&#123;</span><br><span class="line">                    UserDTO userDTO = <span class="keyword">new</span> UserDTO();</span><br><span class="line">                    BeanUtils.copyProperties(user,userDTO);</span><br><span class="line">                    <span class="keyword">return</span> userDTO;</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>api:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PostMapping</span></span><br><span class="line"> <span class="function"><span class="keyword">public</span> UserDTO <span class="title">addUser</span><span class="params">(UserDTO userDTO)</span></span>&#123;</span><br><span class="line">         User user =  userDTO.convertToUser();</span><br><span class="line">         User saveResultUser = userService.addUser(user);</span><br><span class="line">         UserDTO result = userDTO.convertFor(saveResultUser);</span><br><span class="line">         <span class="keyword">return</span> result;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>当然，上述只是表明了转化方向的正向或逆向，很多业务需求的出参和入参的DTO对象是不同的，那么需要更明显的告诉程序：逆向是无法调用的:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDTOConvert</span> <span class="keyword">extends</span> <span class="title">Converter</span>&lt;<span class="title">UserDTO</span>, <span class="title">User</span>&gt; </span>&#123;</span><br><span class="line">         <span class="meta">@Override</span></span><br><span class="line">         <span class="function"><span class="keyword">protected</span> User <span class="title">doForward</span><span class="params">(UserDTO userDTO)</span> </span>&#123;</span><br><span class="line">                 User user = <span class="keyword">new</span> User();</span><br><span class="line">                 BeanUtils.copyProperties(userDTO,user);</span><br><span class="line">                 <span class="keyword">return</span> user;</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">         <span class="meta">@Override</span></span><br><span class="line">         <span class="function"><span class="keyword">protected</span> UserDTO <span class="title">doBackward</span><span class="params">(User user)</span> </span>&#123;</span><br><span class="line">                 <span class="keyword">throw</span> <span class="keyword">new</span> AssertionError(<span class="string">"不支持逆向转化方法!"</span>);</span><br><span class="line">         &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="bean-的验证"><a href="#bean-的验证" class="headerlink" title="bean 的验证"></a>bean 的验证</h2><h2 id="拥抱lombok"><a href="#拥抱lombok" class="headerlink" title="拥抱lombok"></a>拥抱lombok</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/28/Java%E5%AE%9E%E8%B7%B5%E6%8E%A8%E8%8D%90/" data-id="ckawd2iy3000ul307ci3f5a6n" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/05/28/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%88%86%E5%B8%83%E5%BC%8FSession%E5%85%A5%E9%97%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Web开发-SpringBoot分布式Session入门
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/05/27/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%93%8D%E5%BA%94%E5%BC%8FWebFlux%E5%85%A5%E9%97%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Web开发-SpringBoot响应式WebFlux入门</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Swagger/" rel="tag">Swagger</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/" rel="tag">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" rel="tag">线程池</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88/" rel="tag">集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Spring-Boot/" style="font-size: 17.5px;">Spring Boot</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 17.5px;">Spring Boot-基础-01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 15px;">Spring Boot-基础01</a> <a href="/tags/Swagger/" style="font-size: 10px;">Swagger</a> <a href="/tags/Web/" style="font-size: 15px;">Web</a> <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 10px;">基础知识</a> <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" style="font-size: 10px;">线程池</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 12.5px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 10px;">集合</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/06/01/Web%E5%BC%80%E5%8F%91-SpringBootAPI%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3Swagger%E5%85%A5%E9%97%A8/">Web开发-SpringBootAPI接口文档Swagger入门</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/29/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/">Java线程池</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/28/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-JavaGuide/">Java基础知识-JavaGuide</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/28/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%88%86%E5%B8%83%E5%BC%8FSession%E5%85%A5%E9%97%A8/">Web开发-SpringBoot分布式Session入门</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/28/Java%E5%AE%9E%E8%B7%B5%E6%8E%A8%E8%8D%90/">Java实践推荐</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

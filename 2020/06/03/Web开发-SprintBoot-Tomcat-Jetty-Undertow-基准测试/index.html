@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Web开发-SprintBoot-Tomcat-Jetty-Undertow-基准测试 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="性能测试—— Tomcat、Jetty、Undertow 基准测试1. 测试环境JVM 本身有预热的过程，Tomcat、Jetty、Undertow 本也有预热的过程（例如说，线程的初始化），所以需要多次测试，取平均值。 本文，使用 wrk 如下命令进行测试： 1.&#x2F;wrk -t50 -c400 -d30s http:&#x2F;&#x2F;127.0.0.1:8080   -t50 参数，设置 50 并发线程。 -">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Web开发-SprintBoot-Tomcat-Jetty-Undertow-基准测试">
+<meta property="og:url" content="http://yoursite.com/2020/06/03/Web%E5%BC%80%E5%8F%91-SprintBoot-Tomcat-Jetty-Undertow-%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="性能测试—— Tomcat、Jetty、Undertow 基准测试1. 测试环境JVM 本身有预热的过程，Tomcat、Jetty、Undertow 本也有预热的过程（例如说，线程的初始化），所以需要多次测试，取平均值。 本文，使用 wrk 如下命令进行测试： 1.&#x2F;wrk -t50 -c400 -d30s http:&#x2F;&#x2F;127.0.0.1:8080   -t50 参数，设置 50 并发线程。 -">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-06-03T03:38:59.000Z">
+<meta property="article:modified_time" content="2020-06-03T03:57:43.557Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Web">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="Spring Boot-基础01">
+<meta property="article:tag" content="Tomcat">
+<meta property="article:tag" content="Jetty">
+<meta property="article:tag" content="Undertow">
+<meta property="article:tag" content="基准测试">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Web开发-SprintBoot-Tomcat-Jetty-Undertow-基准测试" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/06/03/Web%E5%BC%80%E5%8F%91-SprintBoot-Tomcat-Jetty-Undertow-%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" class="article-date">
+  <time datetime="2020-06-03T03:38:59.000Z" itemprop="datePublished">2020-06-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Web开发-SprintBoot-Tomcat-Jetty-Undertow-基准测试
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="性能测试——-Tomcat、Jetty、Undertow-基准测试"><a href="#性能测试——-Tomcat、Jetty、Undertow-基准测试" class="headerlink" title="性能测试—— Tomcat、Jetty、Undertow 基准测试"></a>性能测试—— Tomcat、Jetty、Undertow 基准测试</h1><h2 id="1-测试环境"><a href="#1-测试环境" class="headerlink" title="1. 测试环境"></a>1. 测试环境</h2><p>JVM 本身有<a href="https://codeday.me/bug/20180203/128666.html" target="_blank" rel="noopener">预热</a>的过程，Tomcat、Jetty、Undertow 本也有预热的过程（例如说，线程的初始化），所以需要多次测试，取平均值。</p>
+<p>本文，使用 wrk 如下命令进行测试：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./wrk -t50 -c400 -d30s http://127.0.0.1:8080</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>-t50</code> 参数，设置 50 并发线程。</li>
+<li><code>-c400</code> 参数，设置 400 连接。</li>
+<li><code>-d30s</code> 参数，设置执行 30s 的时长的 HTTP 请求。</li>
+<li><code>http://127.0.0.1:8080</code> 参数，请求本地的 Web 服务。</li>
+</ul>
+<h2 id="2-Tomcat-NIO"><a href="#2-Tomcat-NIO" class="headerlink" title="2. Tomcat NIO"></a>2. Tomcat NIO</h2><p>Tomcat 一共分成三种模式：</p>
+<ul>
+<li>BIO (blocking I/O)模式：阻塞式 I/O 操作，表示 Tomcat 使用的是传统的 Java I/O 操作（即 <code>java.io</code> 包）。在 Tomcat 7 以及以前版本，默认使用 BIO 模式运行。一般情况下，BIO 模式是三种运行模式中性能最低的。</li>
+<li>NIO (Non-blocking I/O)模式：非阻塞时 I/O 操作，表示 Tomcat 使用的是 JDK 1.4 后新提供的 I/O 操作（即 <code>java.nio</code> 包）。在 Tomcat 8 以及到目前最新版本的 Tomcat 9 ，默认使用的都是 NIO 模式运行。相比 BIO 模式来说，它能提供更好的并发性能。</li>
+<li>APR (Apache Portable Runtime/Apache 可移植运行库) 模式：APR 是 <a href="https://httpd.apache.org/" target="_blank" rel="noopener">Apache</a> HTTP 服务器的支持库。可以理解成，Tomcat 将以 <a href="https://zh.wikipedia.org/zh-hans/Java本地接口" target="_blank" rel="noopener">JNI</a> 的方式，调用 Apache HTTP 服务器的核心动态链接库来处理文件或网络传输，从而大大的提升 Tomcat 对静态文件的处理性能。Tomcat APR 模式，也是 Tomcat 上运行高并发应用的首选模式。</li>
+</ul>
+<p>启动 Tomcat 服务：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar lab-05-tomcat-1.0-SNAPSHOT.jar -Xms2g -Xmx2g -Xmn1g -XX:MaxMetaspaceSize=256m -Xss256k</span><br></pre></td></tr></table></figure>
+
+<p>执行 wrk 进行性能测试，结果如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./wrk -t50 -c400 -d30s http://127.0.0.1:8080/hello</span></span><br><span class="line"></span><br><span class="line">Running 30s test @ http://127.0.0.1:8080/hello</span><br><span class="line">  50 threads and 400 connections</span><br><span class="line">  Thread Stats   Avg      Stdev     Max   +/- Stdev</span><br><span class="line">    Latency    13.81ms    7.09ms 159.52ms   86.27%</span><br><span class="line">    Req/Sec   594.55     62.11     1.98k    78.31%</span><br><span class="line">  890078 requests in 30.09s, 100.32MB read</span><br><span class="line">Requests/sec:  29575.99</span><br><span class="line">Transfer/sec:      3.33MB</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>QPS 为 29575.99 。</li>
+<li>平均延迟为 13.81ms。</li>
+</ul>
+<h2 id="3-Tomcat-APR"><a href="#3-Tomcat-APR" class="headerlink" title="3. Tomcat APR"></a>3. Tomcat APR</h2><ol>
+<li><p>安装 APR 。</p>
+<p><em>Apache Portable Runtime/Apache 可移植运行库</em></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install apr-devel -f</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>安装 Tomcat Native 。</p>
+<p><em>Tomcat 将以 JNI 的方式调用 APR 的实现库</em></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum install tomcat-native</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置 Tomcat 使用 APR 。</p>
+</li>
+</ol>
+<p>启动 Tomcat 服务：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar lab-05-tomcat-1.0-SNAPSHOT.jar -Xms2g -Xmx2g -Xmn1g -XX:MaxMetaspaceSize=256m -Xss256k</span><br></pre></td></tr></table></figure>
+
+<p>执行 wrk 进行性能测试，结果如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./wrk -t50 -c400 -d30s http://127.0.0.1:8080</span></span><br><span class="line"></span><br><span class="line">Running 30s test @ http://127.0.0.1:8080/hello</span><br><span class="line">  50 threads and 400 connections</span><br><span class="line">  Thread Stats   Avg      Stdev     Max   +/- Stdev</span><br><span class="line">    Latency    12.15ms    5.12ms 229.46ms   87.59%</span><br><span class="line">    Req/Sec   667.77     62.65     2.01k    80.34%</span><br><span class="line">  999673 requests in 30.10s, 112.67MB read</span><br><span class="line">Requests/sec:  33213.47</span><br><span class="line">Transfer/sec:      3.74MB</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>QPS 为 33213.47 。</li>
+<li>平均延迟为 12.15ms。</li>
+</ul>
+<p>相比 Tomcat NIO 模式，大概有 3500 QPS 左右的提升，12% 左右的性能提升。</p>
+<h2 id="4-Jetty"><a href="#4-Jetty" class="headerlink" title="4. Jetty"></a>4. Jetty</h2><p>启动 Jetty 容器：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar lab-05-jetty-apr-1.0-SNAPSHOT.jar -Xms2g -Xmx2g -Xmn1g -XX:MaxMetaspaceSize=256m -Xss256k</span><br></pre></td></tr></table></figure>
+
+<p>执行 wrk 进行性能测试，结果如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./wrk -t50 -c400 -d30s http://127.0.0.1:8080</span></span><br><span class="line"></span><br><span class="line">Running 30s test @ http://127.0.0.1:8080/hello</span><br><span class="line">  50 threads and 400 connections</span><br><span class="line">  Thread Stats   Avg      Stdev     Max   +/- Stdev</span><br><span class="line">    Latency     9.61ms    4.82ms 110.04ms   73.24%</span><br><span class="line">    Req/Sec   849.00    167.82     5.16k    87.43%</span><br><span class="line">  1270290 requests in 30.11s, 145.37MB read</span><br><span class="line">Requests/sec:  42193.37</span><br><span class="line">Transfer/sec:      4.83MB</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>QPS 为 42193.37 。</li>
+<li>平均延迟为 9.61ms 毫秒。</li>
+</ul>
+<p>相比 Tomcat NIO 模式，大概有 12617.38 QPS 提升，43% 左右的性能提升。</p>
+<h2 id="5-Undertow"><a href="#5-Undertow" class="headerlink" title="5. Undertow"></a>5. Undertow</h2><p>启动 Undertow 服务器:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -jar lab-05-undertow-1.0.0.jar -Xms2g -Xmx2g -Xmn1g -XX:MaxMetaspaceSize=256m -Xss256k</span><br></pre></td></tr></table></figure>
+
+<p>执行 wrk 进行性能测试，结果如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./wrk -t50 -c400 -d30s http://127.0.0.1:8080</span></span><br><span class="line"></span><br><span class="line">Running 30s test @ http://127.0.0.1:8080/hello</span><br><span class="line">  50 threads and 400 connections</span><br><span class="line">  Thread Stats   Avg      Stdev     Max   +/- Stdev</span><br><span class="line">    Latency    10.09ms    4.36ms 207.32ms   74.34%</span><br><span class="line">    Req/Sec   802.76     99.60     2.16k    73.54%</span><br><span class="line">  1198795 requests in 30.10s, 164.63MB read</span><br><span class="line">Requests/sec:  39822.02</span><br><span class="line">Transfer/sec:      5.47MB</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>QPS 为 39822.02 。</li>
+<li>平均延迟为 18.46 毫秒。</li>
+</ul>
+<p>相比 Tomcat NIO 模式，大概有 10246.03 QPS 提升，34% 左右的性能提升。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/06/03/Web%E5%BC%80%E5%8F%91-SprintBoot-Tomcat-Jetty-Undertow-%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" data-id="ckb0ntwmk000o1q079y8m0nqw" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Jetty/" rel="tag">Jetty</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Undertow/" rel="tag">Undertow</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/" rel="tag">Web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" rel="tag">基准测试</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/06/03/%E5%BF%AB%E9%80%9F%E6%95%99%E7%A8%8B-SpringBoot-WebFlux-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          快速教程-SpringBoot-WebFlux-快速入门
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/06/03/Web%E5%BC%80%E5%8F%91-SpringBoot-WebSocket%E5%85%A5%E9%97%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Web开发-SpringBoot-WebSocket入门</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80-01/" rel="tag">Java 基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetty/" rel="tag">Jetty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SPring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">SPring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8002/" rel="tag">Spring Boot-基础02</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Swagger/" rel="tag">Swagger</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Undertow/" rel="tag">Undertow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Validation/" rel="tag">Validation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/" rel="tag">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebFlux/" rel="tag">WebFlux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebSocket/" rel="tag">WebSocket</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" rel="tag">基准测试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%B9%E5%99%A8/" rel="tag">容器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" rel="tag">线程池</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88/" rel="tag">集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 18px;">Java</a> <a href="/tags/Java-%E5%9F%BA%E7%A1%80-01/" style="font-size: 12px;">Java 基础-01</a> <a href="/tags/Jetty/" style="font-size: 10px;">Jetty</a> <a href="/tags/Redis/" style="font-size: 10px;">Redis</a> <a href="/tags/SPring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 10px;">SPring Boot-基础01</a> <a href="/tags/Spring-Boot/" style="font-size: 20px;">Spring Boot</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 14px;">Spring Boot-基础-01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 16px;">Spring Boot-基础01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8002/" style="font-size: 10px;">Spring Boot-基础02</a> <a href="/tags/Swagger/" style="font-size: 10px;">Swagger</a> <a href="/tags/Tomcat/" style="font-size: 10px;">Tomcat</a> <a href="/tags/Undertow/" style="font-size: 10px;">Undertow</a> <a href="/tags/Validation/" style="font-size: 10px;">Validation</a> <a href="/tags/Web/" style="font-size: 16px;">Web</a> <a href="/tags/WebFlux/" style="font-size: 10px;">WebFlux</a> <a href="/tags/WebSocket/" style="font-size: 10px;">WebSocket</a> <a href="/tags/%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" style="font-size: 10px;">基准测试</a> <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 10px;">基础知识</a> <a href="/tags/%E5%AE%B9%E5%99%A8/" style="font-size: 10px;">容器</a> <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" style="font-size: 10px;">线程池</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 12px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 10px;">集合</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/06/03/%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE-SpringBoot-Redis%E5%85%A5%E9%97%A8/">数据访问-SpringBoot-Redis入门</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/03/%E5%BF%AB%E9%80%9F%E6%95%99%E7%A8%8B-SpringBoot-WebFlux-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">快速教程-SpringBoot-WebFlux-快速入门</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/03/Web%E5%BC%80%E5%8F%91-SprintBoot-Tomcat-Jetty-Undertow-%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/">Web开发-SprintBoot-Tomcat-Jetty-Undertow-基准测试</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/03/Web%E5%BC%80%E5%8F%91-SpringBoot-WebSocket%E5%85%A5%E9%97%A8/">Web开发-SpringBoot-WebSocket入门</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/02/Java%E5%9F%BA%E7%A1%80%E5%AE%B9%E5%99%A8/">Java基础容器</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

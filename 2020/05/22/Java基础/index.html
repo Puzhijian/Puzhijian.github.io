@@ -7,18 +7,21 @@
   
   <title>Java基础 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Java 中的多态多态是指相同类型的变量在调用一个方法时呈现出多种不同的行为特征：  编译时类型，由声明变量时的类型决定 运行时类型，由实际赋值给变量的对象的类型决定  当一个变量的两个类型不一致，就会出现多态 123456789101112131415161718&#x2F;&#x2F;BaseClass是SubClass的父类BaseClass a &#x3D; new BaseClass();BaseClass b &#x3D;">
+  <meta name="description" content="1. Java 中的多态多态是指相同类型的变量在调用一个方法时呈现出多种不同的行为特征：  编译时类型，由声明变量时的类型决定 运行时类型，由实际赋值给变量的对象的类型决定  当一个变量的两个类型不一致，就会出现多态 123456789101112131415161718&#x2F;&#x2F;BaseClass是SubClass的父类BaseClass a &#x3D; new BaseClass();BaseClass b">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java基础">
 <meta property="og:url" content="http://yoursite.com/2020/05/22/Java%E5%9F%BA%E7%A1%80/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Java 中的多态多态是指相同类型的变量在调用一个方法时呈现出多种不同的行为特征：  编译时类型，由声明变量时的类型决定 运行时类型，由实际赋值给变量的对象的类型决定  当一个变量的两个类型不一致，就会出现多态 123456789101112131415161718&#x2F;&#x2F;BaseClass是SubClass的父类BaseClass a &#x3D; new BaseClass();BaseClass b &#x3D;">
+<meta property="og:description" content="1. Java 中的多态多态是指相同类型的变量在调用一个方法时呈现出多种不同的行为特征：  编译时类型，由声明变量时的类型决定 运行时类型，由实际赋值给变量的对象的类型决定  当一个变量的两个类型不一致，就会出现多态 123456789101112131415161718&#x2F;&#x2F;BaseClass是SubClass的父类BaseClass a &#x3D; new BaseClass();BaseClass b">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfe2zq0srtj30n90f0gom.jpg">
 <meta property="article:published_time" content="2020-05-22T02:08:53.000Z">
-<meta property="article:modified_time" content="2020-05-22T06:47:23.651Z">
+<meta property="article:modified_time" content="2020-06-02T09:40:40.305Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="Java">
+<meta property="article:tag" content="Java 基础-01">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfe2zq0srtj30n90f0gom.jpg">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -89,7 +92,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="Java-中的多态"><a href="#Java-中的多态" class="headerlink" title="Java 中的多态"></a>Java 中的多态</h2><p>多态是指相同类型的变量在调用一个方法时呈现出多种不同的行为特征：</p>
+        <h2 id="1-Java-中的多态"><a href="#1-Java-中的多态" class="headerlink" title="1. Java 中的多态"></a>1. Java 中的多态</h2><p>多态是指相同类型的变量在调用一个方法时呈现出多种不同的行为特征：</p>
 <ul>
 <li>编译时类型，由声明变量时的类型决定</li>
 <li>运行时类型，由实际赋值给变量的对象的类型决定</li>
@@ -99,7 +102,7 @@
 
 <p>对于变量a：a 的编译类型是 BaseClass，实际类型也是 BaseClass，所以调用 baseMethod() 会执行 BaseClass#baseMethod() 方法</p>
 <p>对于变量b: b 的编译类型是 BaseClass，但是实际赋值时，给变量 b 赋值的是 SubClass 对象，所以 b 的实际类型是 SubClass</p>
-<h2 id="Java-中变量、代码块、构造器之间的执行顺序"><a href="#Java-中变量、代码块、构造器之间的执行顺序" class="headerlink" title="Java 中变量、代码块、构造器之间的执行顺序"></a>Java 中变量、代码块、构造器之间的执行顺序</h2><p>Java 程序中类中各元素的初始化顺序：</p>
+<h2 id="2-Java-中变量、代码块、构造器之间的执行顺序"><a href="#2-Java-中变量、代码块、构造器之间的执行顺序" class="headerlink" title="2. Java 中变量、代码块、构造器之间的执行顺序"></a>2. Java 中变量、代码块、构造器之间的执行顺序</h2><p>Java 程序中类中各元素的初始化顺序：</p>
 <ul>
 <li>先初始化静态部分，再初始化动态部分</li>
 <li>先初始化父类部分，后初始化子类部分</li>
@@ -138,7 +141,7 @@
 
 
 
-<h2 id="final-关键字"><a href="#final-关键字" class="headerlink" title="final 关键字"></a>final 关键字</h2><h3 id="修饰符"><a href="#修饰符" class="headerlink" title="修饰符"></a>修饰符</h3><p>final 修饰符时，类不能被继承，并且类中的所有方法都被隐式地使用 final 修饰</p>
+<h2 id="3-final-关键字"><a href="#3-final-关键字" class="headerlink" title="3. final 关键字"></a>3. final 关键字</h2><h3 id="修饰符"><a href="#修饰符" class="headerlink" title="修饰符"></a>修饰符</h3><p>final 修饰符时，类不能被继承，并且类中的所有方法都被隐式地使用 final 修饰</p>
 <h3 id="修饰方法"><a href="#修饰方法" class="headerlink" title="修饰方法"></a>修饰方法</h3><p>final 修饰方法时，有两个作用：</p>
 <ul>
 <li><p>方法不能被子类重写</p>
@@ -159,7 +162,7 @@
 </ul>
 <p>实现原理</p>
 <p>Integer 类中有一个静态内部类 IntegerCache，在加载 Integer 类时会同时加载 IntegerCache 类，IntegeCache类的静态代码块中会创建值为 -128 到 127 的 Integer 对象，缓存到 cache 数组中，之后调用 Integer#valueOf 方法时，判断使用有缓存的 Integer 对象，有则返回，无则调用 new Integer() 创建</p>
-<h2 id="抽象类"><a href="#抽象类" class="headerlink" title="抽象类"></a>抽象类</h2><p>特点：</p>
+<h2 id="4-抽象类"><a href="#4-抽象类" class="headerlink" title="4. 抽象类"></a>4. 抽象类</h2><p>特点：</p>
 <ol>
 <li><p>可以包含抽象方法</p>
 <p>抽象方法不提供抽象方法的实现，由集成抽象类的子类实现抽象方法</p>
@@ -171,7 +174,7 @@
 <p>继承抽象类的子类如果实现了所有抽象方法，那么可以作为普通类使用，否则也只能作为抽象类</p>
 </li>
 </ol>
-<h2 id="String-StringBuffer-和-StringBuilder"><a href="#String-StringBuffer-和-StringBuilder" class="headerlink" title="String, StringBuffer 和 StringBuilder"></a>String, StringBuffer 和 StringBuilder</h2><ol>
+<h2 id="5-String-StringBuffer-和-StringBuilder"><a href="#5-String-StringBuffer-和-StringBuilder" class="headerlink" title="5. String, StringBuffer 和 StringBuilder"></a>5. String, StringBuffer 和 StringBuilder</h2><ol>
 <li><p>可变性</p>
 <p>String 是一个不可变类，任何对 String 改变都是会产生一个新的 String 对象，所以 String 类是使用 final 来进行修饰的</p>
 <p>StringBuffer 和 StringBuilder 是可变类，对应的字符串的改变不会产生新的对象</p>
@@ -183,7 +186,7 @@
 <p>StringBuffer 的读写方法都使用了 synchronized 修饰，同一时间只有一个线程进行操作，所以是线程安全的，而 StringBuffer 不是线程安全的</p>
 </li>
 </ol>
-<h2 id="Object-类自带方法"><a href="#Object-类自带方法" class="headerlink" title="Object 类自带方法"></a>Object 类自带方法</h2><p><strong>registerNatives</strong> </p>
+<h2 id="6-Object-类自带方法"><a href="#6-Object-类自带方法" class="headerlink" title="6. Object 类自带方法"></a>6. Object 类自带方法</h2><p><strong>registerNatives</strong> </p>
 <p>首先 Object 类有一个本地方法 registerNatives()，会在类加载时调用，主要是将 Object 类中的一些本地方法绑定到指定的函数中去，便于之后调用。</p>
 <p><strong>getClass</strong></p>
 <p>getClass() 方法会返回对象的运行时类</p>
@@ -207,14 +210,81 @@
 
 <p><strong>类名+.class</strong></p>
 <p>还有一种方式是使用 类名+.class 来获取类关联的 class 对象，与上面两种不同之处在于，它返回的是编译时类型，也就是在编译时，类加载器将类加载到 JVM 中，然后初始化一个 Class 对象返回</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Class class3 = Son<span class="class">.<span class="keyword">class</span></span>;</span><br><span class="line">System.out.println(class3);</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">class3 is <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">test</span>.<span class="title">Son</span></span></span><br></pre></td></tr></table></figure>
+
+<p>PS:无论是使用哪种方式来获取类关联的Class对象，类都是只会加载一次，如果获取Class对象时，不会重复加载类。</p>
+<p><strong><code>hashCode()</code></strong> 方法的作用</p>
+<ul>
+<li><p>对对象做散列</p>
+<p>为了将一组键值对均匀得存储在一个数组中，HashMap对key的hashCode进行计算得到一个hash值，用hash对数组长度取模，得到数组下标，将键值对存储在数组下标对应的链表下。</p>
+</li>
+<li><p>快速判断对象是否不相等</p>
+<p>因为两个对象hashCode相等，调用equal()方法的结果不一定为true，</p>
+<p>因为两个对象调用equal()方法相等，hashCode一定相等。</p>
+<p>所以hashCode不相等可以作为两个对象不相等的快速判断条件。</p>
+<p>在往HashMap中添加一个键值对时，计算得到数组下标后，会遍历数组下标下存储的链表中，拿key的hashCode与每个节点的hashCode进行比较，相等时，才调用equal()方法进行继续调用，节约时间。（在一些类的equal()方法的自定义实现中也会对hashCode进行判断）。</p>
+</li>
+</ul>
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><h2 id="7-hashCode-和-equals-方法要一起重写"><a href="#7-hashCode-和-equals-方法要一起重写" class="headerlink" title="7. hashCode() 和 equals() 方法要一起重写"></a>7. hashCode() 和 equals() 方法要一起重写</h2><p><strong>假如只重写hashCode()方法（结果：HashMap无法保证去重）</strong></p>
+<p>此时equal()方法的实现是默认实现，也就是当两个对象的内存地址相等时，equal()方法才返回true，假设两个键值对，它们的key类型都是TestObject，值都是test，但是由于是使用new String()创建而成的字符串对象，key1和key2的内存地址不相等，所以key1==key2的结果会是false，TestObject的equals()方法默认实现是判断两个对象的内存地址，所以 key1.equals(key2)也会是false， 所以两个键值对可以重复地添加到hashMap中去。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestObject</span> </span>&#123;</span><br><span class="line">    Integer a;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TestObject</span><span class="params">(Integer a)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.a = a;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> a;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        TestObject key1 = <span class="keyword">new</span> TestObject(<span class="number">1</span>);</span><br><span class="line">        TestObject key2 = <span class="keyword">new</span> TestObject(<span class="number">1</span>);</span><br><span class="line">        System.out.println(<span class="string">"key1的hashCode为"</span>+ key1 +<span class="string">"key2的hashCode为"</span> + key2);</span><br><span class="line">        System.out.println(<span class="string">"key1.equals(key2)的结果为"</span>+(key1.equals(key2)));</span><br><span class="line"></span><br><span class="line">        HashMap&lt;TestObject,String&gt; map = <span class="keyword">new</span> HashMap&lt;TestObject,String&gt;();</span><br><span class="line">        map.put(key1,<span class="string">"value1"</span>);</span><br><span class="line">        map.put(key2,<span class="string">"value2"</span>);</span><br><span class="line">        System.out.println(<span class="string">"HashMap是"</span>+map.toString());</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">key1的hashCode为com.test.TestObject@<span class="number">1</span></span><br><span class="line">key2的hashCode为com.test.TestObject@<span class="number">1</span></span><br><span class="line"></span><br><span class="line">key1.equals(key2)的结果为<span class="keyword">false</span></span><br><span class="line"></span><br><span class="line">HashMap是</span><br><span class="line">&#123;com.test.TestObject@<span class="number">1</span>=value1, </span><br><span class="line">com.test.TestObject@<span class="number">1</span>=value2&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>假如只重写equals()方法（结果：HashMap无法保证去重</strong> </p>
+<p>假设只equals()方法，hashCode方法会是默认实现，具体的计算方法取决于JVM，可能会导致两个相等的对象，它们的hashCode却不相同，从而计算得到的数组下标不相同，存储到hashMap中不同数组下标下的链表中，也会导致HashMap中存在重复元素。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestObject</span> </span>&#123;</span><br><span class="line">    Integer a;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TestObject</span><span class="params">(Integer a)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.a = a;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span> == o) <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (o == <span class="keyword">null</span> || getClass() != o.getClass()) <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        TestObject that = (TestObject) o;</span><br><span class="line">        <span class="keyword">return</span> Objects.equals(a, that.a);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        TestObject key1 = <span class="keyword">new</span> TestObject(<span class="number">1</span>);</span><br><span class="line">        TestObject key2 = <span class="keyword">new</span> TestObject(<span class="number">1</span>);</span><br><span class="line">        System.out.println(<span class="string">"key1的hashCode为"</span>+ key1 +<span class="string">"key2的hashCode为"</span> + key2);</span><br><span class="line">        System.out.println(<span class="string">"key1.equals(key2)的结果为"</span>+(key1.equals(key2)));</span><br><span class="line"></span><br><span class="line">        HashMap&lt;TestObject,String&gt; map = <span class="keyword">new</span> HashMap&lt;TestObject,String&gt;();</span><br><span class="line">        map.put(key1,<span class="string">"value1"</span>);</span><br><span class="line">        map.put(key2,<span class="string">"value2"</span>);</span><br><span class="line">        System.out.println(<span class="string">"HashMap是"</span>+map.toString());</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出结果：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">key1的hashCode为<span class="number">1288141870</span> </span><br><span class="line">key2的hashCode为<span class="number">2054881392</span></span><br><span class="line"></span><br><span class="line">key1.equals(key2)的结果为<span class="keyword">true</span></span><br><span class="line"></span><br><span class="line">HashMap是</span><br><span class="line">&#123;com.test.TestObject@<span class="number">4</span>cc77c2e=value1, com.test.TestObject@<span class="number">7</span>a7b0070=value2&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong><code>clone()</code></strong> 方法</p>
+<p>clone方法会创建并返回当前对象的副本。副本与原对象的区别在于它们相等，但是存储在不同的内存位置中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">native</span> Object <span class="title">clone</span><span class="params">()</span> <span class="keyword">throws</span> CloneNotSupportedException</span>;</span><br></pre></td></tr></table></figure>
+
+<p>要调用clone方法必须实现Cloneable接口，否则调用默认的Object类的clone方法会抛出CloneNotSupportedException异常。默认clone()方法返回的对象是浅拷贝的。</p>
+<p><strong><code>toString()</code></strong> </p>
+<p>返回类名+@+hashCode的16进制字符串</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> getClass().getName() + <span class="string">"@"</span> + Integer.toHexString(hashCode());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong><code>wait()</code> 方法和 <code>notify()</code> 方法</strong> </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//timeout是超时时间，也就是等待的最大毫秒数，如果为0，代表会一直等待下去</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">wait</span><span class="params">(<span class="keyword">long</span> timeout)</span> <span class="keyword">throws</span> InterruptedException</span>;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">notify</span><span class="params">()</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">notifyAll</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li><p><code>wait</code></p>
+<p>wait()方法可以让当前线程放弃对象的监视器(可以简单认为监视器就是一个锁)，进入等待队列，进行等待，直到其他线程调用notify()或者notifyAll()后(或者过了超时时间)，线程才会从等待队列，移动到同步队列，再次获得对象的监视器后才能继续执行。</p>
+</li>
+<li><p><code>notify</code></p>
+<p>notify()可以唤醒等待队列中的某一个线程，线程被唤醒后会从等待队列移动到同步队列，线程再次获得对象的监视器后才能继续执行。（然后调用notify()方法的线程会继续执行，在同步块中执行完毕后，会释放对象的监视器。）</p>
+</li>
+<li><p><code>notifyAll</code></p>
+<p>notifyAll()方法与notify()方法类似，只是会将等待队列中的所有线程唤醒。</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfe2zq0srtj30n90f0gom.jpg" alt="image-20200602173858656"></p>
+</li>
+<li><p><code>finalize</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//默认为空的实现，子类可以重写这个方法</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">finalize</span><span class="params">()</span> <span class="keyword">throws</span> Throwable </span>&#123; &#125;</span><br></pre></td></tr></table></figure>
+
+<p>当垃圾回收器确认某个对象不被任何其他对象引用时(即对象处于可恢复状态)，系统在回收对象时，会调用finalize()方法，可以在这个方法中清理资源，在这个方法中，也有可能让对象重新获得引用，从而变成可达状态。</p>
+</li>
+</ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/22/Java%E5%9F%BA%E7%A1%80/" data-id="ckawd2ix10000l307d0a1aruj" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/22/Java%E5%9F%BA%E7%A1%80/" data-id="ckb0ntwmb000c1q07a40e51qd" class="article-share-link">Share</a>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80-01/" rel="tag">Java 基础-01</a></li></ul>
 
     </footer>
   </div>
@@ -253,7 +323,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Swagger/" rel="tag">Swagger</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/" rel="tag">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" rel="tag">线程池</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88/" rel="tag">集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80-01/" rel="tag">Java 基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetty/" rel="tag">Jetty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SPring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">SPring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8002/" rel="tag">Spring Boot-基础02</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Swagger/" rel="tag">Swagger</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Undertow/" rel="tag">Undertow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Validation/" rel="tag">Validation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/" rel="tag">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebFlux/" rel="tag">WebFlux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebSocket/" rel="tag">WebSocket</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" rel="tag">基准测试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%B9%E5%99%A8/" rel="tag">容器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" rel="tag">线程池</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88/" rel="tag">集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
     </div>
   </div>
 
@@ -263,7 +333,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/Spring-Boot/" style="font-size: 17.5px;">Spring Boot</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 17.5px;">Spring Boot-基础-01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 15px;">Spring Boot-基础01</a> <a href="/tags/Swagger/" style="font-size: 10px;">Swagger</a> <a href="/tags/Web/" style="font-size: 15px;">Web</a> <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 10px;">基础知识</a> <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" style="font-size: 10px;">线程池</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 12.5px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 10px;">集合</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a>
+      <a href="/tags/Java/" style="font-size: 18px;">Java</a> <a href="/tags/Java-%E5%9F%BA%E7%A1%80-01/" style="font-size: 12px;">Java 基础-01</a> <a href="/tags/Jetty/" style="font-size: 10px;">Jetty</a> <a href="/tags/Redis/" style="font-size: 10px;">Redis</a> <a href="/tags/SPring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 10px;">SPring Boot-基础01</a> <a href="/tags/Spring-Boot/" style="font-size: 20px;">Spring Boot</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 14px;">Spring Boot-基础-01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 16px;">Spring Boot-基础01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8002/" style="font-size: 10px;">Spring Boot-基础02</a> <a href="/tags/Swagger/" style="font-size: 10px;">Swagger</a> <a href="/tags/Tomcat/" style="font-size: 10px;">Tomcat</a> <a href="/tags/Undertow/" style="font-size: 10px;">Undertow</a> <a href="/tags/Validation/" style="font-size: 10px;">Validation</a> <a href="/tags/Web/" style="font-size: 16px;">Web</a> <a href="/tags/WebFlux/" style="font-size: 10px;">WebFlux</a> <a href="/tags/WebSocket/" style="font-size: 10px;">WebSocket</a> <a href="/tags/%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" style="font-size: 10px;">基准测试</a> <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 10px;">基础知识</a> <a href="/tags/%E5%AE%B9%E5%99%A8/" style="font-size: 10px;">容器</a> <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" style="font-size: 10px;">线程池</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 12px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 10px;">集合</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a>
     </div>
   </div>
 
@@ -285,23 +355,23 @@
       <ul>
         
           <li>
-            <a href="/2020/06/01/Web%E5%BC%80%E5%8F%91-SpringBootAPI%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3Swagger%E5%85%A5%E9%97%A8/">Web开发-SpringBootAPI接口文档Swagger入门</a>
+            <a href="/2020/06/03/%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE-SpringBoot-Redis%E5%85%A5%E9%97%A8/">数据访问-SpringBoot-Redis入门</a>
           </li>
         
           <li>
-            <a href="/2020/05/29/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/">Java线程池</a>
+            <a href="/2020/06/03/%E5%BF%AB%E9%80%9F%E6%95%99%E7%A8%8B-SpringBoot-WebFlux-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">快速教程-SpringBoot-WebFlux-快速入门</a>
           </li>
         
           <li>
-            <a href="/2020/05/28/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-JavaGuide/">Java基础知识-JavaGuide</a>
+            <a href="/2020/06/03/Web%E5%BC%80%E5%8F%91-SprintBoot-Tomcat-Jetty-Undertow-%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/">Web开发-SprintBoot-Tomcat-Jetty-Undertow-基准测试</a>
           </li>
         
           <li>
-            <a href="/2020/05/28/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%88%86%E5%B8%83%E5%BC%8FSession%E5%85%A5%E9%97%A8/">Web开发-SpringBoot分布式Session入门</a>
+            <a href="/2020/06/03/Web%E5%BC%80%E5%8F%91-SpringBoot-WebSocket%E5%85%A5%E9%97%A8/">Web开发-SpringBoot-WebSocket入门</a>
           </li>
         
           <li>
-            <a href="/2020/05/28/Java%E5%AE%9E%E8%B7%B5%E6%8E%A8%E8%8D%90/">Java实践推荐</a>
+            <a href="/2020/06/02/Java%E5%9F%BA%E7%A1%80%E5%AE%B9%E5%99%A8/">Java基础容器</a>
           </li>
         
       </ul>

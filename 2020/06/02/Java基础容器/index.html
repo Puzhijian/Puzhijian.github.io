@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Java基础容器 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Java 容器1. ArrayList 与 LinkedList 的区别1. 底层使用的数据结果 Arraylist 底层使用的是Object数组，初始化时就会指向的会是一个static修饰的空数组，数组长度一开始为0，插入第一个元素时数组长度会初始化为10，之后每次数组空间不够进行扩容时都是增加为原来的1.5倍。ArrayList的空间浪费主要体现在在list列表的结尾会预留一定的容量空间，而L">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java基础容器">
+<meta property="og:url" content="http://yoursite.com/2020/06/02/Java%E5%9F%BA%E7%A1%80%E5%AE%B9%E5%99%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Java 容器1. ArrayList 与 LinkedList 的区别1. 底层使用的数据结果 Arraylist 底层使用的是Object数组，初始化时就会指向的会是一个static修饰的空数组，数组长度一开始为0，插入第一个元素时数组长度会初始化为10，之后每次数组空间不够进行扩容时都是增加为原来的1.5倍。ArrayList的空间浪费主要体现在在list列表的结尾会预留一定的容量空间，而L">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-06-02T09:41:19.000Z">
+<meta property="article:modified_time" content="2020-06-03T02:21:34.472Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="Java 基础-01">
+<meta property="article:tag" content="容器">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Java基础容器" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/06/02/Java%E5%9F%BA%E7%A1%80%E5%AE%B9%E5%99%A8/" class="article-date">
+  <time datetime="2020-06-02T09:41:19.000Z" itemprop="datePublished">2020-06-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Java基础容器
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Java-容器"><a href="#Java-容器" class="headerlink" title="Java 容器"></a>Java 容器</h1><h2 id="1-ArrayList-与-LinkedList-的区别"><a href="#1-ArrayList-与-LinkedList-的区别" class="headerlink" title="1. ArrayList 与 LinkedList 的区别"></a>1. ArrayList 与 LinkedList 的区别</h2><h3 id="1-底层使用的数据结果"><a href="#1-底层使用的数据结果" class="headerlink" title="1. 底层使用的数据结果"></a>1. 底层使用的数据结果</h3><ul>
+<li>Arraylist 底层使用的是Object数组，初始化时就会指向的会是一个static修饰的空数组，数组长度一开始为<strong>0</strong>，插入第一个元素时数组长度会初始化为<strong>10</strong>，之后每次数组空间不够进行扩容时都是增加为原来的<strong>1.5倍</strong>。ArrayList的空间浪费主要体现在在list列表的结尾会预留一定的容量空间，而LinkedList的空间花费则体现在它的每一个元素都需要消耗比ArrayList更多的空间（因为要存放直接后继和直接前驱以及数据）</li>
+<li>LinkedList 底层使用的是双向链表数据结构，每个节点保存了指向前驱节点和后继结点的指针。初始化时，不执行任何操作，添加第一个元素时，再去构造链表中的节点。</li>
+</ul>
+<h3 id="2-是否保证线程安全"><a href="#2-是否保证线程安全" class="headerlink" title="2. 是否保证线程安全"></a>2. 是否保证线程安全</h3><p>ArrayList 和 LinkedList 都是不同步的，也就是不保证线程安全。</p>
+<p>因为ArrayList的插入元素的方法就是裸奔的，直接将原数组index及后面的元素拷贝到index+1及后面的位置上，然后将index位置设置为插入的值，并发修改时保证不了数据安全性，所以也不允许并发修改，一旦检测到并发修改，会抛出ConcurrentModificationException异常。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//ArrayList的插入元素的方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(<span class="keyword">int</span> index, E element)</span> </span>&#123;</span><br><span class="line">        rangeCheckForAdd(index);</span><br><span class="line">        ensureCapacityInternal(size + <span class="number">1</span>);  <span class="comment">// Increments modCount!!</span></span><br><span class="line">        System.arraycopy(elementData, index, elementData, index + <span class="number">1</span>,</span><br><span class="line">                         size - index);<span class="comment">//将原数组index之后的元素拷贝到原数组index+1后面的位置上</span></span><br><span class="line">        elementData[index] = element;</span><br><span class="line">        size++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-插入和删除的复杂度"><a href="#3-插入和删除的复杂度" class="headerlink" title="3. 插入和删除的复杂度"></a>3. 插入和删除的复杂度</h3><ul>
+<li>ArrayList 采用数组存储，元素的物理存储地址是连续的，支持以O(1)的时间复杂度对元素快速访问。插入和删除元素后，需要将后面的元素进行移动，所以插入和删除元素的时间复杂度受元素位置的影响。复杂度是 O（n）</li>
+<li>LinkedList 采用链表存储，所以不能快速随机访问。所以首尾插入，删除元素时间复杂度不受元素位置的影响，都是近似 O(1)(如果是插入到中间位置还需要考虑寻找插入位置的时间复杂度)。而数组为近似 O(n)。</li>
+</ul>
+<h3 id="4-继承树"><a href="#4-继承树" class="headerlink" title="4. 继承树"></a>4. 继承树</h3><ul>
+<li>ArrayList继承于AbstractList抽象类，实现了List, RandomAccess, Cloneable, java.io.Serializable接口 。</li>
+<li>LinkedList继承自AbstractSequentialList 实现List, Deque, Cloneable, java.io.Serializable接口。</li>
+</ul>
+<p>AbstractSequentialList是AbstractList类的子类，实现了根据下标来访问元素的一些方法，主要是通过listIterator遍历获取特定元素。</p>
+<p>List接口代表的是有序结合，与Set相反，List的元素是按照移动的顺序进行排列。</p>
+<p>Cloneable接口代表类会重写父类Object的clone()方法，支持对实例对象的clone操作。</p>
+<p>java.io.Serializable接口代表类支持序列化。</p>
+<p>RandomAccess是一个标示性接口，代表ArrayList支持快速访问，而LinkedList不支持。</p>
+<p>Deque接口是双端队列的意思，代表LinkedList支持两端元素插入和移除。</p>
+<h3 id="5-使ArralyList、LinkedList-变成线程安全的"><a href="#5-使ArralyList、LinkedList-变成线程安全的" class="headerlink" title="5.  使ArralyList、LinkedList 变成线程安全的"></a>5.  使ArralyList、LinkedList 变成线程安全的</h3><h4 id="1-使用-SynchronizedList"><a href="#1-使用-SynchronizedList" class="headerlink" title="1. 使用 SynchronizedList"></a>1. 使用 SynchronizedList</h4><p>SynchronizedList是一个线程安全的包装类。继承于SynchronizedCollection，SynchronizedCollection实现了Collection接口，SynchronizedList包含一个List对象，对List的访问修改方法进行了一些封装，在封装的方法中会对list使用同步锁加锁，然后再进行存取和修改操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">LinkedList&lt;Integer&gt;    linkedList    = <span class="keyword">new</span> LinkedList&lt;Integer&gt;();</span><br><span class="line"><span class="comment">//调用Collections的synchronizedList方法，传入一个linkedList，会返回一个SynchronizedList实例对象</span></span><br><span class="line">List&lt;Integer&gt; synchronizedList =  Collections.synchronizedList(linkedList);</span><br><span class="line"></span><br><span class="line"><span class="comment">//调用Collections的synchronizedList方法，ArrayList，返回一个SynchronizedRandomAccessList实例对象</span></span><br><span class="line">ArrayList&lt;Integer&gt;    arrayList    = <span class="keyword">new</span> ArrayList&lt;Integer&gt;();</span><br><span class="line">List&lt;Integer&gt; synchronizedRandomAccessList =  Collections.synchronizedList(linkedList);</span><br></pre></td></tr></table></figure>
+
+<p><code>Collections.synchronizedList()</code>方法会判断传入的对象是否实现了 <code>RandomAccess</code>接口，是的话，会返回一个<code>SynchronizedRandomAccessList</code>对象，<code>SynchronizedRandomAccessList</code>是<code>SynchronizedList</code>的子类，只是会多一个以线程安全的方式获取子数组的方法)。</p>
+<p>SynchronizedList类的部分代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SynchronizedList</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">        <span class="keyword">extends</span> <span class="title">SynchronizedCollection</span>&lt;<span class="title">E</span>&gt;</span></span><br><span class="line"><span class="class">        <span class="keyword">implements</span> <span class="title">List</span>&lt;<span class="title">E</span>&gt; </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> List&lt;E&gt; list;<span class="comment">//源list</span></span><br><span class="line">       <span class="keyword">final</span> Object mutex; </span><br><span class="line"></span><br><span class="line">        SynchronizedCollection(Collection&lt;E&gt; c) &#123;</span><br><span class="line">            <span class="keyword">this</span>.c = Objects.requireNonNull(c);</span><br><span class="line">            mutex = <span class="keyword">this</span>;<span class="comment">//mutex就是SynchronizedList实例自己，作为同步锁使用</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">                <span class="function"><span class="keyword">public</span> E <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (mutex) &#123;</span><br><span class="line">            是父类中的成员变量，在父类中会将list赋值给mutex</span><br><span class="line">                    <span class="keyword">return</span> list.get(index);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> E <span class="title">set</span><span class="params">(<span class="keyword">int</span> index, E element)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (mutex) &#123;<span class="keyword">return</span> list.set(index, element);&#125;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="2-使用-CopyOnWriteArrayList"><a href="#2-使用-CopyOnWriteArrayList" class="headerlink" title="2. 使用 CopyOnWriteArrayList"></a>2. 使用 CopyOnWriteArrayList</h4>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/06/02/Java%E5%9F%BA%E7%A1%80%E5%AE%B9%E5%99%A8/" data-id="ckb0ntwlk00001q07cb95fy2v" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80-01/" rel="tag">Java 基础-01</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%AE%B9%E5%99%A8/" rel="tag">容器</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/06/03/Web%E5%BC%80%E5%8F%91-SpringBoot-WebSocket%E5%85%A5%E9%97%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Web开发-SpringBoot-WebSocket入门
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/06/02/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%8F%82%E6%95%B0%E6%A0%A1%E9%AA%8CValidation%E5%85%A5%E9%97%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Web开发-SpringBoot参数校验Validation入门</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80-01/" rel="tag">Java 基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetty/" rel="tag">Jetty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SPring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">SPring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8002/" rel="tag">Spring Boot-基础02</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Swagger/" rel="tag">Swagger</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Undertow/" rel="tag">Undertow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Validation/" rel="tag">Validation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/" rel="tag">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebFlux/" rel="tag">WebFlux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebSocket/" rel="tag">WebSocket</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" rel="tag">基准测试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%B9%E5%99%A8/" rel="tag">容器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" rel="tag">线程池</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88/" rel="tag">集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 18px;">Java</a> <a href="/tags/Java-%E5%9F%BA%E7%A1%80-01/" style="font-size: 12px;">Java 基础-01</a> <a href="/tags/Jetty/" style="font-size: 10px;">Jetty</a> <a href="/tags/Redis/" style="font-size: 10px;">Redis</a> <a href="/tags/SPring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 10px;">SPring Boot-基础01</a> <a href="/tags/Spring-Boot/" style="font-size: 20px;">Spring Boot</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 14px;">Spring Boot-基础-01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 16px;">Spring Boot-基础01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8002/" style="font-size: 10px;">Spring Boot-基础02</a> <a href="/tags/Swagger/" style="font-size: 10px;">Swagger</a> <a href="/tags/Tomcat/" style="font-size: 10px;">Tomcat</a> <a href="/tags/Undertow/" style="font-size: 10px;">Undertow</a> <a href="/tags/Validation/" style="font-size: 10px;">Validation</a> <a href="/tags/Web/" style="font-size: 16px;">Web</a> <a href="/tags/WebFlux/" style="font-size: 10px;">WebFlux</a> <a href="/tags/WebSocket/" style="font-size: 10px;">WebSocket</a> <a href="/tags/%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" style="font-size: 10px;">基准测试</a> <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 10px;">基础知识</a> <a href="/tags/%E5%AE%B9%E5%99%A8/" style="font-size: 10px;">容器</a> <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" style="font-size: 10px;">线程池</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 12px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 10px;">集合</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/06/03/%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE-SpringBoot-Redis%E5%85%A5%E9%97%A8/">数据访问-SpringBoot-Redis入门</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/03/%E5%BF%AB%E9%80%9F%E6%95%99%E7%A8%8B-SpringBoot-WebFlux-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">快速教程-SpringBoot-WebFlux-快速入门</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/03/Web%E5%BC%80%E5%8F%91-SprintBoot-Tomcat-Jetty-Undertow-%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/">Web开发-SprintBoot-Tomcat-Jetty-Undertow-基准测试</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/03/Web%E5%BC%80%E5%8F%91-SpringBoot-WebSocket%E5%85%A5%E9%97%A8/">Web开发-SpringBoot-WebSocket入门</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/02/Java%E5%9F%BA%E7%A1%80%E5%AE%B9%E5%99%A8/">Java基础容器</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

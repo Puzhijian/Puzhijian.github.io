@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>Web开发-SpringBoot参数校验Validation入门 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Spring Boot 参数校验 Validation 入门1. Bean Validation 定义的约束注解javax.validation.constraints 包下，定义了一系列的约束( constraint )注解。如下  空和非空检查  @NotBlank ：只能用于字符串不为 null ，并且字符串 #trim() 以后 length 要大于 0 。  @NotEmpty ：集合对">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Web开发-SpringBoot参数校验Validation入门">
+<meta property="og:url" content="http://yoursite.com/2020/06/02/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%8F%82%E6%95%B0%E6%A0%A1%E9%AA%8CValidation%E5%85%A5%E9%97%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="Spring Boot 参数校验 Validation 入门1. Bean Validation 定义的约束注解javax.validation.constraints 包下，定义了一系列的约束( constraint )注解。如下  空和非空检查  @NotBlank ：只能用于字符串不为 null ，并且字符串 #trim() 以后 length 要大于 0 。  @NotEmpty ：集合对">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfdryzchhbj30p60nimzj.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfds47vsmbj30od0x9147.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfdzr3hjekj31560og77b.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfe12iny8rj312c0oidiv.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfe148ktp3j30vm0oqgod.jpg">
+<meta property="article:published_time" content="2020-06-02T03:02:26.000Z">
+<meta property="article:modified_time" content="2020-06-02T08:48:43.046Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Web">
+<meta property="article:tag" content="Spring Boot">
+<meta property="article:tag" content="SPring Boot-基础01">
+<meta property="article:tag" content="Validation">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfdryzchhbj30p60nimzj.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-Web开发-SpringBoot参数校验Validation入门" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/06/02/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%8F%82%E6%95%B0%E6%A0%A1%E9%AA%8CValidation%E5%85%A5%E9%97%A8/" class="article-date">
+  <time datetime="2020-06-02T03:02:26.000Z" itemprop="datePublished">2020-06-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Web开发-SpringBoot参数校验Validation入门
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Spring-Boot-参数校验-Validation-入门"><a href="#Spring-Boot-参数校验-Validation-入门" class="headerlink" title="Spring Boot 参数校验 Validation 入门"></a>Spring Boot 参数校验 Validation 入门</h1><h2 id="1-Bean-Validation-定义的约束注解"><a href="#1-Bean-Validation-定义的约束注解" class="headerlink" title="1. Bean Validation 定义的约束注解"></a>1. Bean Validation 定义的约束注解</h2><p><a href="https://github.com/eclipse-ee4j/beanvalidation-api/tree/master/src/main/java/javax/validation/constraints" target="_blank" rel="noopener"><code>javax.validation.constraints</code></a> 包下，定义了一系列的约束( constraint )注解。如下</p>
+<ul>
+<li><p>空和非空检查</p>
+<ul>
+<li><p><code>@NotBlank</code> ：只能用于字符串不为 <code>null</code> ，并且字符串 <code>#trim()</code> 以后 length 要大于 0 。</p>
+</li>
+<li><p><code>@NotEmpty</code> ：集合对象的元素不为 0 ，即集合不为空，也可以用于字符串不为 <code>null</code> 。</p>
+</li>
+<li><p><code>@NotNull</code> ：不能为 <code>null</code> 。</p>
+</li>
+<li><p><code>@Null</code> ：必须为 <code>null</code> 。</p>
+</li>
+</ul>
+</li>
+<li><p>数值检查</p>
+<ul>
+<li><code>@DecimalMax(value)</code> ：被注释的元素必须是一个数字，其值必须小于等于指定的最大值。</li>
+<li><code>@DecimalMin(value)</code> ：被注释的元素必须是一个数字，其值必须大于等于指定的最小值。</li>
+<li><code>@Digits(integer, fraction)</code> ：被注释的元素必须是一个数字，其值必须在可接受的范围内。</li>
+<li><code>@Positive</code> ：判断正数。</li>
+<li><code>@PositiveOrZero</code> ：判断正数或 0 。</li>
+<li><code>@Max(value)</code> ：该字段的值只能小于或等于该值。</li>
+<li><code>@Min(value)</code> ：该字段的值只能大于或等于该值。</li>
+<li><code>@Negative</code> ：判断负数。</li>
+<li><code>@NegativeOrZero</code> ：判断负数或 0 。</li>
+</ul>
+</li>
+<li><p>Boolean 值检查</p>
+<ul>
+<li><code>@AssertFalse</code> ：被注释的元素必须为 <code>true</code> 。</li>
+<li><code>@AssertTrue</code> ：被注释的元素必须为 <code>false</code> 。</li>
+</ul>
+</li>
+<li><p>长度检查</p>
+<ul>
+<li><code>@Size(max, min)</code> ：检查该字段的 <code>size</code> 是否在 <code>min</code> 和 <code>max</code> 之间，可以是字符串、数组、集合、Map 等。</li>
+</ul>
+</li>
+<li><p>日期检查</p>
+<ul>
+<li><code>@Future</code> ：被注释的元素必须是一个将来的日期。</li>
+<li><code>@FutureOrPresent</code> ：判断日期是否是将来或现在日期。</li>
+<li><code>@Past</code> ：检查该字段的日期是在过去。</li>
+<li><code>@PastOrPresent</code> ：判断日期是否是过去或现在日期。</li>
+</ul>
+</li>
+<li><p>其它检查</p>
+<ul>
+<li><code>@Email</code> ：被注释的元素必须是电子邮箱地址。</li>
+<li><code>@Pattern(value)</code> ：被注释的元素必须符合指定的正则表达式。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-Hibernate-Validator-附加的约束注解"><a href="#2-Hibernate-Validator-附加的约束注解" class="headerlink" title="2. Hibernate Validator 附加的约束注解"></a>2. Hibernate Validator 附加的约束注解</h2><p><a href="https://github.com/hibernate/hibernate-validator/tree/master/engine/src/main/java/org/hibernate/validator/constraints" target="_blank" rel="noopener"><code>org.hibernate.validator.constraints</code></a> 包下，定义了一系列的约束( constraint )注解。如下：</p>
+<ul>
+<li><code>@Range(min=, max=)</code> ：被注释的元素必须在合适的范围内。</li>
+<li><code>@Length(min=, max=)</code> ：被注释的字符串的大小必须在指定的范围内。</li>
+<li><code>@URL(protocol=,host=,port=,regexp=,flags=)</code> ：被注释的字符串必须是一个有效的 URL 。</li>
+<li><code>@SafeHtml</code> ：判断提交的 HTML 是否安全。例如说，不能包含 javascript 脚本等等。</li>
+<li>… 等等，就不一一列举了。</li>
+</ul>
+<h2 id="3-Valid-和-Validated"><a href="#3-Valid-和-Validated" class="headerlink" title="3. @Valid 和 @Validated"></a>3. @Valid 和 @Validated</h2><p><a href="https://docs.oracle.com/javaee/7/api/javax/validation/Valid.html" target="_blank" rel="noopener"><code>@Valid</code></a> 注解，是 Bean Validation 所定义，可以添加在普通方法、构造方法、方法参数、方法返回、成员变量上，表示它们需要进行约束校验。</p>
+<p><a href="https://github.com/spring-projects/spring-framework/blob/master/spring-context/src/main/java/org/springframework/validation/annotation/Validated.java" target="_blank" rel="noopener"><code>@Validated</code></a> 注解，是 Spring Validation 锁定义，可以添加在类、方法参数、普通方法上，表示它们需要进行约束校验。同时，<code>@Validated</code> 有 <code>value</code> 属性，支持分组校验。属性如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Validated.java</span></span><br><span class="line"></span><br><span class="line">Class&lt;?&gt;[] value() <span class="keyword">default</span> &#123;&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><strong>① 声明式校验</strong></p>
+<p>Spring Validation <strong>仅</strong>对 <code>@Validated</code> 注解，实现声明式校验。</p>
+<p><strong>② 分组校验</strong></p>
+<p>Bean Validation 提供的 <code>@Valid</code> 注解，因为没有分组校验的属性，所以无法提供分组校验。此时，我们只能使用 <code>@Validated</code> 注解。</p>
+<p><strong>③ 嵌套校验</strong></p>
+<p>相比来说，<code>@Valid</code> 注解的地方，多了【成员变量】。这就导致，如果有嵌套对象的时候，只能使用 <code>@Valid</code> 注解。例如说：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// User.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> String id;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Valid</span></span><br><span class="line">    <span class="keyword">private</span> UserProfile profile;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// UserProfile.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserProfile</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@NotBlank</span></span><br><span class="line">    <span class="keyword">private</span> String nickname;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果不在 <code>User.profile</code> 属性上，添加 <code>@Valid</code> 注解，就会导致 <code>UserProfile.nickname</code> 属性，不会进行校验。</li>
+</ul>
+<p><strong>总结</strong></p>
+<p>总的来说，绝大多数场景下，使用 <code>@Validated</code> 注解即可。</p>
+<p>而在有嵌套校验的场景，使用 <code>@Valid</code> 注解添加到成员属性上。</p>
+<h3 id="3-1-示例"><a href="#3-1-示例" class="headerlink" title="3.1. 示例"></a>3.1. 示例</h3><p>在 Spring Boot 体系中，也提供了 <a href="https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation" target="_blank" rel="noopener"><code>spring-boot-starter-validation</code></a> 依赖。在这里，并没有引入。该依赖的目的，重点也是引入 <code>hibernate-validator</code> 依赖，这在 <code>spring-boot-starter-web</code> 已经引入，所以无需重复引入。</p>
+<p>创建 <a href="https://github.com/YunaiV/SpringBoot-Labs/blob/master/lab-22/lab-22-validation-01/src/main/java/cn/iocoder/springboot/lab22/validation/Application.java" target="_blank" rel="noopener"><code>Application.java</code></a> 类，配置 <code>@SpringBootApplication</code> 注解即可。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableAspectJAutoProxy</span>(exposeProxy = <span class="keyword">true</span>) <span class="comment">// http://www.voidcn.com/article/p-zddcuyii-bpt.html</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(Application<span class="class">.<span class="keyword">class</span>, <span class="title">args</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>添加 <code>@EnableAspectJAutoProxy</code> 注解，重点是配置 <code>exposeProxy = true</code> ，因为希望 Spring AOP 能将当前代理对象设置到 <a href="https://github.com/spring-projects/spring-framework/blob/master/spring-aop/src/main/java/org/springframework/aop/framework/AopContext.java" target="_blank" rel="noopener">AopContext</a> 中。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserAddDTO.java</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserAddDTO</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 账号</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@NotEmpty</span>(message = <span class="string">"登陆账号不能为空"</span>)</span><br><span class="line">    <span class="meta">@Length</span>(min = <span class="number">5</span>, max = <span class="number">16</span>, message = <span class="string">"账号长度为 5-16 位"</span>)</span><br><span class="line">    <span class="meta">@Pattern</span>(regexp = <span class="string">"^[A-Za-z0-9]+$"</span>, message = <span class="string">"账号格式为数字以及字母"</span>)</span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 密码</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@NotEmpty</span>(message = <span class="string">"密码不能为空"</span>)</span><br><span class="line">    <span class="meta">@Length</span>(min = <span class="number">4</span>, max = <span class="number">16</span>, message = <span class="string">"密码长度为 4-16 位"</span>)</span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ... 省略 setting/getting 方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserController.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/users"</span>)</span><br><span class="line"><span class="meta">@Validated</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Logger logger = LoggerFactory.getLogger(getClass());</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(<span class="string">"/get"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">get</span><span class="params">(@RequestParam(<span class="string">"id"</span>)</span> @<span class="title">Min</span><span class="params">(value = <span class="number">1</span>L, message = <span class="string">"编号必须大于 0"</span>)</span> Integer id) </span>&#123;</span><br><span class="line">        logger.info(<span class="string">"[get][id: &#123;&#125;]"</span>, id);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span>(<span class="string">"/add"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(@Valid UserAddDTO addDTO)</span> </span>&#123;</span><br><span class="line">        logger.info(<span class="string">"[add][addDTO: &#123;&#125;]"</span>, addDTO);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在类上，添加 <code>@Validated</code> 注解，表示 UserController 是所有接口都需要进行参数校验。</li>
+<li>对于 <code>#get(id)</code> 方法，我们在 <code>id</code> 参数上，添加了 <code>@Min</code> 注解，校验 <code>id</code> 必须大于 0 。校验不通过示例如下图：</li>
+</ul>
+<p>​       <img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfdryzchhbj30p60nimzj.jpg" alt="不通过示例 1"></p>
+<ul>
+<li>对于 <code>#add(addDTO)</code> 方法，我们在 <code>addDTO</code> 参数上，添加了 <code>@Valid</code> 注解，实现对该参数的校验。校验不通过示例如下图：</li>
+</ul>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfds47vsmbj30od0x9147.jpg" alt="image-20200602112244798"></p>
+<ul>
+<li><code>errors</code> 字段，参数错误明细<strong>数组</strong>。每一个数组元素，对应一个参数错误明细。这里，<code>username</code> 违背了长度不满足 <code>[5, 16]</code> 。</li>
+</ul>
+<p><strong>第一点</strong>，<code>#get(id)</code> 方法上，并没有给 <code>id</code> 添加 <code>@Valid</code> 注解，而 <code>#add(addDTO)</code> 方法上，给 <code>addDTO</code> 添加 <code>@Valid</code> 注解。这个差异，是为什么呢？</p>
+<p>​        因为 UserController 使用了 <code>@Validated</code> 注解，那么 Spring Validation 就会使用 AOP 进行切面，进行参数校验。而该切面的拦截器，使用的是 <a href="https://github.com/spring-projects/spring-framework/blob/master/spring-context/src/main/java/org/springframework/validation/beanvalidation/MethodValidationInterceptor.java" target="_blank" rel="noopener">MethodValidationInterceptor</a> 。</p>
+<ul>
+<li>对于 <code>#get(id)</code> 方法，需要校验的参数 <code>id</code> ，是<strong>平铺</strong>开的，所以无需添加 <code>@Valid</code> 注解。</li>
+<li>对于 <code>#add(addDTO)</code> 方法，需要校验的参数 <code>addDTO</code> ，实际相当于<strong>嵌套校验</strong>，要校验的参数的都在 <code>addDTO</code> 里面，所以需要添加 <code>@Valid</code> 注解。</li>
+</ul>
+<p><strong>第二点</strong>，<code>#get(id)</code> 方法的返回的结果是 <code>status = 500</code> ，而 <code>#add(addDTO)</code> 方法的返回的结果是 <code>status = 400</code> 。</p>
+<ul>
+<li>对于 <code>#get(id)</code> 方法，在 MethodValidationInterceptor 拦截器中，校验到参数不正确，会抛出 <a href="https://github.com/eclipse-ee4j/beanvalidation-api/blob/master/src/main/java/javax/validation/ConstraintViolationException.java" target="_blank" rel="noopener">ConstraintViolationException</a> 异常。</li>
+<li>对于 <code>#add(addDTO)</code> 方法，因为 <code>addDTO</code> 是个 POJO 对象，所以会走 SpringMVC 的 <a href="https://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/validation.html#validation-binder" target="_blank" rel="noopener">DataBinder</a> 机制，它会调用 <code>DataBinder#validate(Object... validationHints)</code> 方法，进行校验。在校验不通过时，会抛出 <a href="https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/validation/BindException.html" target="_blank" rel="noopener">BindException</a> 。</li>
+</ul>
+<p>在 SpringMVC 中，默认使用 <a href="https://hyrepo.com/tech/spring-mvc-error-handling/" target="_blank" rel="noopener">DefaultHandlerExceptionResolver</a> 处理异常。</p>
+<ul>
+<li>对于 BindException 异常，处理成 400 的状态码。</li>
+<li>对于 ConstraintViolationException 异常，没有特殊处理，所以处理成 500 的状态码。</li>
+</ul>
+<p>相比在 Controller 添加参数校验来说，在 Service 进行参数校验，会更加安全可靠。Controller 的参数校验可以不做，<strong>Service 的参数校验一定要做</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserService.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="meta">@Validated</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserService</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Logger logger = LoggerFactory.getLogger(getClass());</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">get</span><span class="params">(@Min(value = <span class="number">1</span>L, message = <span class="string">"编号必须大于 0"</span>)</span> Integer id) </span>&#123;</span><br><span class="line">        logger.info(<span class="string">"[get][id: &#123;&#125;]"</span>, id);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(@Valid UserAddDTO addDTO)</span> </span>&#123;</span><br><span class="line">        logger.info(<span class="string">"[add][addDTO: &#123;&#125;]"</span>, addDTO);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add01</span><span class="params">(UserAddDTO addDTO)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.add(addDTO);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add02</span><span class="params">(UserAddDTO addDTO)</span> </span>&#123;</span><br><span class="line">        self().add(addDTO);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> UserService <span class="title">self</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (UserService) AopContext.currentProxy();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserService.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@RunWith</span>(SpringRunner<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">@<span class="title">SpringBootTest</span>(<span class="title">classes</span> </span>= Application<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">class</span> <span class="title">UserServiceTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testGet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        userService.get(-<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAdd</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        UserAddDTO addDTO = <span class="keyword">new</span> UserAddDTO();</span><br><span class="line">        userService.add(addDTO);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAdd01</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        UserAddDTO addDTO = <span class="keyword">new</span> UserAddDTO();</span><br><span class="line">        userService.add01(addDTO);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAdd02</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        UserAddDTO addDTO = <span class="keyword">new</span> UserAddDTO();</span><br><span class="line">        userService.add02(addDTO);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>① <code>#testGet()</code> 测试方法</strong></p>
+<p>执行，抛出 ConstraintViolationException 异常。日志如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">javax.validation.ConstraintViolationException: get.id: 编号必须大于 <span class="number">0</span></span><br><span class="line"></span><br><span class="line">	at org.springframework.validation.beanvalidation.MethodValidationInterceptor.invoke(MethodValidationInterceptor.java:<span class="number">116</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>符合预期</li>
+</ul>
+<p><strong>② <code>#testAdd()</code> 测试方法</strong></p>
+<p>执行，抛出 ConstraintViolationException 异常。日志如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">javax.validation.ConstraintViolationException: add.addDTO.username: 登陆账号不能为空, add.addDTO.password: 密码不能为空</span><br><span class="line"></span><br><span class="line">	at org.springframework.validation.beanvalidation.MethodValidationInterceptor.invoke(MethodValidationInterceptor.java:<span class="number">116</span>)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>符合期望。不同于我们在调用 <code>UserController#add(addDTO)</code> 方法，这里被 MethodValidationInterceptor 拦截，进行参数校验，而不是 DataBinder 当中。</li>
+</ul>
+<p><strong>③ <code>#testAdd01()</code> 测试方法</strong></p>
+<p>执行，正常结束。因为进行 <code>this.add(addDTO)</code> 调用时，<code>this</code> 并不是 Spring AOP 代理对象，所以并不会被 MethodValidationInterceptor 所拦截。</p>
+<h2 id="5-自定义约束"><a href="#5-自定义约束" class="headerlink" title="5. 自定义约束"></a>5. 自定义约束</h2><p>开发自定义约束一共只要<strong>两步</strong>：1）编写自定义约束的<strong>注解</strong>；2）编写自定义的<strong>校验器 ConstraintValidator</strong> 。</p>
+<h3 id="5-1-示例"><a href="#5-1-示例" class="headerlink" title="5.1 示例"></a>5.1 示例</h3><p>创建 IntArrayValuable 接口，用于返回值数组。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// IntArrayValuable.java</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IntArrayValuable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> int 数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">int</span>[] array();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GenderEnum.java</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> GenderEnum implements IntArrayValuable &#123;</span><br><span class="line"></span><br><span class="line">    MALE(<span class="number">1</span>, <span class="string">"男"</span>),</span><br><span class="line">    FEMALE(<span class="number">2</span>, <span class="string">"女"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 值数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span>[] ARRAYS = Arrays.stream(values()).mapToInt(GenderEnum::getValue).toArray();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 性别值</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Integer value;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 性别名</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String name;</span><br><span class="line"></span><br><span class="line">    GenderEnum(Integer value, String name) &#123;</span><br><span class="line">        <span class="keyword">this</span>.value = value;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Integer <span class="title">getValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> value;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span>[] array() &#123;</span><br><span class="line">        <span class="keyword">return</span> ARRAYS;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>实现 IntArrayValuable 接口，返回值数组 <code>ARRAYS</code> 。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// InEnum.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Target</span>(&#123;METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE&#125;)</span><br><span class="line"><span class="meta">@Retention</span>(RetentionPolicy.RUNTIME)</span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Constraint</span>(validatedBy = InEnumValidator<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> @<span class="title">interface</span> <span class="title">InEnum</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 实现 IntArrayValuable 接口的</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    Class&lt;? extends IntArrayValuable&gt; value();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 提示内容</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">String <span class="title">message</span><span class="params">()</span> <span class="keyword">default</span> "必须在指定范围 </span>&#123;value&#125;<span class="string">";</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    /**</span></span><br><span class="line"><span class="string">     * @return 分组</span></span><br><span class="line"><span class="string">     */</span></span><br><span class="line"><span class="string">    Class&lt;?&gt;[] groups() default &#123;&#125;;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    /**</span></span><br><span class="line"><span class="string">     * @return Payload 数组</span></span><br><span class="line"><span class="string">     */</span></span><br><span class="line"><span class="string">    Class&lt;? extends Payload&gt;[] payload() default &#123;&#125;;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    /**</span></span><br><span class="line"><span class="string">     *  Defines several &#123;@code @InEnum&#125; constraints on the same element.</span></span><br><span class="line"><span class="string">     */</span></span><br><span class="line"><span class="string">    @Target(&#123;METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE&#125;)</span></span><br><span class="line"><span class="string">    @Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="string">    @Documented</span></span><br><span class="line"><span class="string">    @interface List &#123;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        InEnum[] value();</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在类上，添加 <code>@@Constraint(validatedBy = InEnumValidator.class)</code> 注解，设置使用的<strong>自定义约束的校验器</strong>。</li>
+<li><code>value()</code> 属性，设置实现 IntArrayValuable 接口的类。这样，就能获得参数需要校验的值数组。</li>
+<li><code>message()</code> 属性，设置提示内容。默认为 <code>&quot;必须在指定范围 {value}&quot;</code> 。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// InEnumValidator.java</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InEnumValidator</span> <span class="keyword">implements</span> <span class="title">ConstraintValidator</span>&lt;<span class="title">InEnum</span>, <span class="title">Integer</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 值数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> Set&lt;Integer&gt; values;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initialize</span><span class="params">(InEnum annotation)</span> </span>&#123;</span><br><span class="line">        IntArrayValuable[] values = annotation.value().getEnumConstants();</span><br><span class="line">        <span class="keyword">if</span> (values.length == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">this</span>.values = Collections.emptySet();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">this</span>.values = Arrays.stream(values[<span class="number">0</span>].array()).boxed().collect(Collectors.toSet());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isValid</span><span class="params">(Integer value, ConstraintValidatorContext context)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// &lt;2.1&gt; 校验通过</span></span><br><span class="line">        <span class="keyword">if</span> (values.contains(value)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// &lt;2.2.1&gt;校验不通过，自定义提示语句（因为，注解上的 value 是枚举类，无法获得枚举类的实际值）</span></span><br><span class="line">        context.disableDefaultConstraintViolation(); <span class="comment">// 禁用默认的 message 的值</span></span><br><span class="line">        context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate()</span><br><span class="line">                .replaceAll(<span class="string">"\\&#123;value&#125;"</span>, values.toString())).addConstraintViolation(); <span class="comment">// 重新添加错误提示语句      </span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>; <span class="comment">// &lt;2.2.2.&gt;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>实现 <a href="https://github.com/beanvalidation/beanvalidation-api/blob/master/src/main/java/javax/validation/ConstraintValidator.java" target="_blank" rel="noopener">ConstraintValidator</a> 接口<ul>
+<li>第一个泛型为 <code>A extends Annotation</code> ，设置对应的自定义约束的注解。例如说，这里设置了 <code>@InEnum</code> 注解。</li>
+<li>第二个泛型为 <code>T</code> ，设置对应的参数值的类型。例如说，这里设置了 Integer 类型。</li>
+</ul>
+</li>
+<li>实现 <code>#initialize(annotation)</code> 方法，获得 <code>@InEnum</code> 注解的 <code>values()</code> 属性，获得值数组，设置到 <code>values</code> 属性。</li>
+<li>实现 <code>#isValid(value, context)</code> 方法，实现校验参数值，是否在 <code>values</code> 范围内。<ul>
+<li><code>&lt;2.1&gt;</code> 处，校验参数值在范围内，直接返回 <code>true</code> ，校验通过。</li>
+<li><code>&lt;2.2.1&gt;</code> 处，校验不通过，自定义提示语句。</li>
+<li><code>&lt;2.2.2&gt;</code> 处，校验不通过，所以返回 <code>false</code> 。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserUpdateGenderDTO.java</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserUpdateGenderDTO</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 用户编号</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@NotNull</span>(message = <span class="string">"用户编号不能为空"</span>)</span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 性别</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@NotNull</span>(message = <span class="string">"性别不能为空"</span>)</span><br><span class="line">    <span class="meta">@InEnum</span>(value = GenderEnum<span class="class">.<span class="keyword">class</span>, <span class="title">message</span> </span>= <span class="string">"性别必须是 &#123;value&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> Integer gender;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ... 省略 set/get 方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在 <code>gender</code> 字段上，添加 <code>@InEnum(value = GenderEnum.class, message = &quot;性别必须是 {value}&quot;)</code> 注解，限制传入的参数值，必须在 GenderEnum 枚举范围内。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserController.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/update_gender"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateGender</span><span class="params">(@Valid UserUpdateGenderDTO updateGenderDTO)</span> </span>&#123;</span><br><span class="line">    logger.info(<span class="string">"[updateGender][updateGenderDTO: &#123;&#125;]"</span>, updateGenderDTO);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>模拟请求该 API 接口，响应结果如下：<img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfdzr3hjekj31560og77b.jpg" alt="响应结果"></p>
+<h2 id="6-分组校验"><a href="#6-分组校验" class="headerlink" title="6. 分组校验"></a>6. 分组校验</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserUpdateStatusDTO.java</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserUpdateStatusDTO</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 分组 01 ，要求状态必须为 true</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Group01</span> </span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 状态 02 ，要求状态必须为 false</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Group02</span> </span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 状态</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@AssertTrue</span>(message = <span class="string">"状态必须为 true"</span>, groups = Group01<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    @<span class="title">AssertFalse</span>(<span class="title">message</span> </span>= <span class="string">"状态必须为 false"</span>, groups = Group02<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    <span class="title">private</span> <span class="title">Boolean</span> <span class="title">status</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ... 省略 set/get 方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>创建了 Group01 和 Group02 接口，作为两个校验分组。不一定要定义在 UserUpdateStatusDTO 类中，这里仅仅是为了方便。</li>
+<li><code>status</code> 字段，在 Group01 校验分组时，必须为 <code>true</code> ；在 Group02 校验分组时，必须为 <code>false</code> 。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserController.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/update_status_true"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateStatusTrue</span><span class="params">(@Validated(UserUpdateStatusDTO.Group01.class)</span> UserUpdateStatusDTO updateStatusDTO) </span>&#123;</span><br><span class="line">    logger.info(<span class="string">"[updateStatusTrue][updateStatusDTO: &#123;&#125;]"</span>, updateStatusDTO);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@PostMapping</span>(<span class="string">"/update_status_false"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateStatusFalse</span><span class="params">(@Validated(UserUpdateStatusDTO.Group02.class)</span> UserUpdateStatusDTO updateStatusDTO) </span>&#123;</span><br><span class="line">    logger.info(<span class="string">"[updateStatusFalse][updateStatusDTO: &#123;&#125;]"</span>, updateStatusDTO);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>对于 <code>#updateStatusTrue(updateStatusDTO)</code> 方法，我们在 <code>updateStatusDTO</code> 参数上，添加了 <code>@Validated</code> 注解，并且设置校验分组为 Group01 。校验不通过示例如下图：<img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfe12iny8rj312c0oidiv.jpg" alt="不通过示例 1"></p>
+</li>
+<li><p>对于 <code>#updateStatusFalse(updateStatusDTO)</code> 方法，我们在 <code>updateStatusDTO</code> 参数上，添加了 <code>@Validated</code> 注解，并且设置校验分组为 Group02 。校验不通过示例如下图：<img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gfe148ktp3j30vm0oqgod.jpg" alt="不通过示例 2"></p>
+</li>
+</ul>
+<p>所以，使用分组校验，核心在于添加上 <code>@Validated</code> 注解，并设置对应的校验分组。</p>
+<h2 id="7-手动校验"><a href="#7-手动校验" class="headerlink" title="7. 手动校验"></a>7. 手动校验</h2><p>增加手动参数校验的示例。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// UserServiceTest.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Autowired</span> <span class="comment">// &lt;1.1&gt;</span></span><br><span class="line"><span class="keyword">private</span> Validator validator;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testValidator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 打印，查看 validator 的类型 // &lt;1.2&gt;</span></span><br><span class="line">    System.out.println(validator);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建 UserAddDTO 对象 // &lt;2&gt;</span></span><br><span class="line">    UserAddDTO addDTO = <span class="keyword">new</span> UserAddDTO();</span><br><span class="line">    <span class="comment">// 校验 // &lt;3&gt;</span></span><br><span class="line">    Set&lt;ConstraintViolation&lt;UserAddDTO&gt;&gt; result = validator.validate(addDTO);</span><br><span class="line">    <span class="comment">// 打印校验结果 // &lt;4&gt;</span></span><br><span class="line">    <span class="keyword">for</span> (ConstraintViolation&lt;UserAddDTO&gt; constraintViolation : result) &#123;</span><br><span class="line">        <span class="comment">// 属性:消息</span></span><br><span class="line">        System.out.println(constraintViolation.getPropertyPath() + <span class="string">":"</span> + constraintViolation.getMessage());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>&lt;1.1&gt;</code> 处，注入 Validator Bean 对象。</p>
+</li>
+<li><p><code>&lt;1.2&gt;</code> 处，打印 <code>validator</code> 的类型。输出如下：</p>
+<p><code>org.springframework.validation.beanvalidation.LocalValidatorFactoryBean@48c3205a</code></p>
+<ul>
+<li><code>validator</code> 的类型为 <a href="https://github.com/spring-projects/spring-framework/blob/master/spring-context/src/main/java/org/springframework/validation/beanvalidation/LocalValidatorFactoryBean.java" target="_blank" rel="noopener">LocalValidatorFactoryBean</a> 。LocalValidatorFactoryBean 提供 JSR-303、JSR-349 的支持，同时兼容 Hibernate Validator 。</li>
+<li>在 Spring Boot 体系中，使用 <a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/validation/ValidationAutoConfiguration.java" target="_blank" rel="noopener">ValidationAutoConfiguration</a> 自动化配置类，默认创建 LocalValidatorFactoryBean 作为 Validator Bean 。</li>
+</ul>
+</li>
+<li><p><code>&lt;2&gt;</code> 处，创建 UserAddDTO 对象。</p>
+</li>
+<li><p><code>&lt;3&gt;</code> 处，调用 <code>Validator#validate(T object, Class&lt;?&gt;... groups)</code> 方法，进行参数校验。</p>
+</li>
+<li><p><code>&lt;4&gt;</code> 处，打印校验结果。输出如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">username:登陆账号不能为空</span><br><span class="line">password:密码不能为空</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果校验通过，则返回的 <code>Set&lt;ConstraintViolation&lt;?&gt;&gt;</code> 集合为空。</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/06/02/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%8F%82%E6%95%B0%E6%A0%A1%E9%AA%8CValidation%E5%85%A5%E9%97%A8/" data-id="ckb0ntwn9001s1q074frrghpe" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SPring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">SPring Boot-基础01</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Validation/" rel="tag">Validation</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/" rel="tag">Web</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/06/02/Java%E5%9F%BA%E7%A1%80%E5%AE%B9%E5%99%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Java基础容器
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/06/01/Web%E5%BC%80%E5%8F%91-SpringBootAPI%E6%8E%A5%E5%8F%A3%E6%96%87%E6%A1%A3Swagger%E5%85%A5%E9%97%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Web开发-SpringBootAPI接口文档Swagger入门</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80-01/" rel="tag">Java 基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetty/" rel="tag">Jetty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SPring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">SPring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8002/" rel="tag">Spring Boot-基础02</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Swagger/" rel="tag">Swagger</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Undertow/" rel="tag">Undertow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Validation/" rel="tag">Validation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/" rel="tag">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebFlux/" rel="tag">WebFlux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebSocket/" rel="tag">WebSocket</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" rel="tag">基准测试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%B9%E5%99%A8/" rel="tag">容器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" rel="tag">线程池</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88/" rel="tag">集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Java/" style="font-size: 18px;">Java</a> <a href="/tags/Java-%E5%9F%BA%E7%A1%80-01/" style="font-size: 12px;">Java 基础-01</a> <a href="/tags/Jetty/" style="font-size: 10px;">Jetty</a> <a href="/tags/Redis/" style="font-size: 10px;">Redis</a> <a href="/tags/SPring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 10px;">SPring Boot-基础01</a> <a href="/tags/Spring-Boot/" style="font-size: 20px;">Spring Boot</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 14px;">Spring Boot-基础-01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 16px;">Spring Boot-基础01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8002/" style="font-size: 10px;">Spring Boot-基础02</a> <a href="/tags/Swagger/" style="font-size: 10px;">Swagger</a> <a href="/tags/Tomcat/" style="font-size: 10px;">Tomcat</a> <a href="/tags/Undertow/" style="font-size: 10px;">Undertow</a> <a href="/tags/Validation/" style="font-size: 10px;">Validation</a> <a href="/tags/Web/" style="font-size: 16px;">Web</a> <a href="/tags/WebFlux/" style="font-size: 10px;">WebFlux</a> <a href="/tags/WebSocket/" style="font-size: 10px;">WebSocket</a> <a href="/tags/%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" style="font-size: 10px;">基准测试</a> <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 10px;">基础知识</a> <a href="/tags/%E5%AE%B9%E5%99%A8/" style="font-size: 10px;">容器</a> <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" style="font-size: 10px;">线程池</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 12px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 10px;">集合</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/06/03/%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE-SpringBoot-Redis%E5%85%A5%E9%97%A8/">数据访问-SpringBoot-Redis入门</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/03/%E5%BF%AB%E9%80%9F%E6%95%99%E7%A8%8B-SpringBoot-WebFlux-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">快速教程-SpringBoot-WebFlux-快速入门</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/03/Web%E5%BC%80%E5%8F%91-SprintBoot-Tomcat-Jetty-Undertow-%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/">Web开发-SprintBoot-Tomcat-Jetty-Undertow-基准测试</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/03/Web%E5%BC%80%E5%8F%91-SpringBoot-WebSocket%E5%85%A5%E9%97%A8/">Web开发-SpringBoot-WebSocket入门</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/02/Java%E5%9F%BA%E7%A1%80%E5%AE%B9%E5%99%A8/">Java基础容器</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

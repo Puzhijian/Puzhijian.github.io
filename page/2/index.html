@@ -64,6 +64,410 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Java线程池" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/29/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/" class="article-date">
+  <time datetime="2020-05-29T07:41:46.000Z" itemprop="datePublished">2020-05-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/29/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/">Java线程池</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Java-线程池"><a href="#Java-线程池" class="headerlink" title="Java 线程池"></a>Java 线程池</h1><h2 id="1-线程池"><a href="#1-线程池" class="headerlink" title="1. 线程池"></a>1. 线程池</h2><p><code>java.util.concurrent.Executors</code> </p>
+<p>在代码的开头的注释上就写明了，它可以创建重复使用固定数量线程的线程池，如果在所有线程都处于活动状态时提交了其他任务，那么他们将在队列中等待线程可用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">(<span class="keyword">int</span> nThreads)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</span><br><span class="line">                                      <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                      <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>做Java的，当然知道线程池，我们在做开发的时候有时候需要做的任务慢慢的增多，复杂性也会变得越来越强，所以线程的个数就会一点点的往上增加，而对应的线程占用的资源也就越来越多，多个线程占用资源的释放与注销需要维护，这时候多个线程的管理就显得有尤为重要。针对这一情况，sun公司提供了线程池，对线程集合的管理工具。所以线程池就出现了</p>
+<h2 id="2-常见的线程池都有哪些-使用的场景是哪里呢？"><a href="#2-常见的线程池都有哪些-使用的场景是哪里呢？" class="headerlink" title="2.常见的线程池都有哪些,使用的场景是哪里呢？"></a>2.常见的线程池都有哪些,使用的场景是哪里呢？</h2><p>(1) newSingleThreadExecutor</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">单个线程的线程池，即线程池中每次只有一个线程工作，单线程串行执行任务</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                              <span class="keyword">int</span> maximumPoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                              <span class="keyword">long</span> keepAliveTime,</span></span></span><br><span class="line"><span class="function"><span class="params">                              TimeUnit unit,</span></span></span><br><span class="line"><span class="function"><span class="params">                              BlockingQueue&lt;Runnable&gt; workQueue,</span></span></span><br><span class="line"><span class="function"><span class="params">                              ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,</span><br><span class="line">             threadFactory, defaultHandler);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>(2)newFixedThreadPool</p>
+<p>下面的两个方法是这个方法的重载，而它的意思很明确，建立一个线程数量固定的线程池，规定的最大线程数量，超过这个数量之后进来的任务，会放到等待队列中，如果有空闲线程，则在等待队列中获取，遵循先进先出原则。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">(<span class="keyword">int</span> nThreads)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</span><br><span class="line">                                      <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                      <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">(<span class="keyword">int</span> nThreads)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</span><br><span class="line">                                      <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                      <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>(3)newCacheThreadExecutor</p>
+<p>缓存型线程池，这个线程池的意思是在核心线程达到最大值之前，如果继续有任务进来就会创建新的核心线程，并加入核心线程池，即使有空闲的线程，也不会复用。</p>
+<p>而达到最大核心线程数后，新任务进来，如果有空闲线程，则直接拿来使用，如果没有空闲线程，则新建临时线程.</p>
+<p>而缓存型的线程池使用的是<code>SynchronousQueue</code>作为等待队列，不保存任何的任务，新的任务加入进来之后，他会创建临时线程来进行使用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newCachedThreadPool</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, Integer.MAX_VALUE,</span><br><span class="line">                                      <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">                                      <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;());</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>(4)newScheduledThreadPool</p>
+<p>计划型线程池,在它的注释中给出的很明确的解释，创建一个线程池，该线程池可以计划在给定的延迟，或周期性地执行。</p>
+<p>也就是说，在新任务到达的时候，我们看到底有没有空闲线程，如果有，直接拿来使用，如果没有，则新建线程加入池。而这里面使用的就是DelayedWorkQueue作为等待队列，中间进行了一定的等待，等待时间过后，继续执行任务。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title">newScheduledThreadPool</span><span class="params">(<span class="keyword">int</span> corePoolSize)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> ScheduledThreadPoolExecutor(corePoolSize);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ScheduledExecutorService <span class="title">newScheduledThreadPool</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">                <span class="keyword">int</span> corePoolSize, ThreadFactory threadFactory)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> ScheduledThreadPoolExecutor(corePoolSize, threadFactory);</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3-阿里巴巴开发手册"><a href="#3-阿里巴巴开发手册" class="headerlink" title="3.阿里巴巴开发手册"></a>3.阿里巴巴开发手册</h2><p><code>ExecutorService cachedThreadPool=Executors.newFixedThreadPool();</code></p>
+<p>阿里巴巴说，强制线程池不允许使用 Executors 去创建</p>
+<p><img src="https://tva1.sinaimg.cn/large/007S8ZIlgy1gf9dotncfuj30ii055go5.jpg" alt="image-20200529160114147"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ThreadPoolExecutor</span><span class="params">(<span class="keyword">int</span> corePoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                              <span class="keyword">int</span> maximumPoolSize,</span></span></span><br><span class="line"><span class="function"><span class="params">                              <span class="keyword">long</span> keepAliveTime,</span></span></span><br><span class="line"><span class="function"><span class="params">                              TimeUnit unit,</span></span></span><br><span class="line"><span class="function"><span class="params">                              BlockingQueue&lt;Runnable&gt; workQueue)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue,</span><br><span class="line">             Executors.defaultThreadFactory(), defaultHandler);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个方法里面有几个参数</p>
+<ul>
+<li>corePoolSize 要保留在池中的线程数，也就是线程池核心池的大小</li>
+<li>maximumPoolSize 最大线程数</li>
+<li>keepAliveTime 当线程数大于核心时，此为终止前多余的空闲线程等待新任务的最长时间。</li>
+<li>unit keepAliveTime 参数的时间单位</li>
+<li>workQueue 用来储存等待执行任务的队列。</li>
+<li>threadFactory 线程工厂</li>
+<li>handler 默认的拒绝执行处理程序</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/29/Java%E7%BA%BF%E7%A8%8B%E6%B1%A0/" data-id="ckbg9kubp00052r07hkyqewbr" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" rel="tag">线程池</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Java基础知识-JavaGuide" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/28/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-JavaGuide/" class="article-date">
+  <time datetime="2020-05-28T08:17:17.000Z" itemprop="datePublished">2020-05-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/28/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-JavaGuide/">Java基础知识-JavaGuide</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Java-基础知识"><a href="#Java-基础知识" class="headerlink" title="Java 基础知识"></a>Java 基础知识</h1><ul>
+<li><p>Constructor 不能被 override（重写）,但是可以 overload（重载）,所以你可以看到一个类中有多个构造函数的情况。</p>
+</li>
+<li><p>重载：发生在同一个类中，方法名必须相同，参数类型不同、个数不同、顺序不同，方法返回值和访问修饰符可以不同</p>
+</li>
+<li><table>
+<thead>
+<tr>
+<th>区别点</th>
+<th>重载方法</th>
+<th>重写方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>发生范围</td>
+<td>同一个类</td>
+<td>子类 中</td>
+</tr>
+<tr>
+<td>参数列表</td>
+<td>必须修改</td>
+<td>一定不能修改</td>
+</tr>
+<tr>
+<td>返回类型</td>
+<td>可修改</td>
+<td>一定不能修改</td>
+</tr>
+<tr>
+<td>异常</td>
+<td>可修改</td>
+<td>可以减少或删除，一定不能抛出新的或者更广的异常</td>
+</tr>
+<tr>
+<td>访问修饰符</td>
+<td>可修改</td>
+<td>一定不能做更严格的限制（可以降低限制）</td>
+</tr>
+<tr>
+<td>发生阶段</td>
+<td>编译期</td>
+<td>运行期</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<h2 id="String-StringBuffer-StringBuilder"><a href="#String-StringBuffer-StringBuilder" class="headerlink" title="String StringBuffer StringBuilder"></a>String StringBuffer StringBuilder</h2><ul>
+<li><p><strong>线程安全性</strong></p>
+<p>String 中的对象是不可变的，也就可以理解为常量，线程安全。AbstractStringBuilder 是 StringBuilder 与 StringBuffer 的公共父类，定义了一些字符串的基本操作，如 expandCapacity、append、insert、indexOf 等公共方法。StringBuffer 对方法加了同步锁或者对调用的方法加了同步锁，所以是线程安全的。StringBuilder 并没有对方法进行加同步锁，所以是非线程安全的。</p>
+</li>
+<li><p><strong>性能</strong></p>
+<p>每次对 String 类型进行改变的时候，都会生成一个新的 String 对象，然后将指针指向新的 String 对象。StringBuffer 每次都会对 StringBuffer 对象本身进行操作，而不是生成新的对象并改变对象引用。相同情况下使用 StringBuilder 相比使用 StringBuffer 仅能获得 10%~15% 左右的性能提升，但却要冒多线程不安全的风险。</p>
+</li>
+<li><p><strong>对于三者使用的总结：</strong></p>
+<ol>
+<li>操作少量的数据: 适用 String</li>
+<li>单线程操作字符串缓冲区下操作大量数据: 适用 StringBuilder</li>
+<li>多线程操作字符串缓冲区下操作大量数据: 适用 StringBuffer</li>
+</ol>
+</li>
+<li><p>Java 程序在执行子类的构造方法之前，如果没有用 <code>super()</code>来调用父类特定的构造方法，则会调用父类中“没有参数的构造方法”。因此，如果父类中只定义了有参数的构造方法，而在子类的构造方法中又没有用 <code>super()</code>来调用父类中特定的构造方法，则编译时将发生错误，因为 Java 程序在父类中找不到没有参数的构造方法可供执行。解决办法是在父类里加上一个不做事且没有参数的构造方法。</p>
+</li>
+</ul>
+<h2 id="接口和抽象类的区别"><a href="#接口和抽象类的区别" class="headerlink" title="接口和抽象类的区别"></a>接口和抽象类的区别</h2><ol>
+<li>接口的方法默认是 public，所有方法在接口中不能有实现(Java 8 开始接口方法可以有默认实现），而抽象类可以有非抽象的方法。</li>
+<li>接口中除了 static、final 变量，不能有其他变量，而抽象类中则不一定。</li>
+<li>一个类可以实现多个接口，但只能实现一个抽象类。接口自己本身可以通过 extends 关键字扩展多个接口。</li>
+<li>接口方法默认修饰符是 public，抽象方法可以有 public、protected 和 default 这些修饰符（抽象方法就是为了被重写所以不能使用 private 关键字修饰！）。</li>
+<li>从设计层面来说，抽象是对类的抽象，是一种模板设计，而接口是对行为的抽象，是一种行为的规范。</li>
+</ol>
+<ol>
+<li>在 jdk 7 或更早版本中，接口里面只能有常量变量和抽象方法。这些接口方法必须由选择实现接口的类实现。</li>
+<li>jdk8 的时候接口可以有默认方法和静态方法功能。</li>
+<li>Jdk 9 在接口中引入了私有方法和私有静态方法。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/28/Java%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86-JavaGuide/" data-id="ckbg9kubo00042r07end88bjq" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-Web开发-SpringBoot分布式Session入门" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/05/28/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%88%86%E5%B8%83%E5%BC%8FSession%E5%85%A5%E9%97%A8/" class="article-date">
+  <time datetime="2020-05-28T06:03:09.000Z" itemprop="datePublished">2020-05-28</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/05/28/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%88%86%E5%B8%83%E5%BC%8FSession%E5%85%A5%E9%97%A8/">Web开发-SpringBoot分布式Session入门</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Spring-Boot-分布式-Session-入门"><a href="#Spring-Boot-分布式-Session-入门" class="headerlink" title="Spring Boot 分布式 Session 入门"></a>Spring Boot 分布式 Session 入门</h1><h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h2><p><strong>在考虑高性能之前，一定要做高可用</strong></p>
+<p>在部署生产环境下的 Tomcat 等 Web 容器的时候，<strong>一定是需要部署多个节点</strong>。此时，Session 的<strong>一致性</strong>就成为一个问题</p>
+<p><em>Session 的一致性，简单来理解，就是相同 sessionid 在多个 Web 容器下，Session 的数据要一致。</em></p>
+<p>先以用户使用浏览器，Web 服务器为<strong>单台</strong> TomcatA 举例子。</p>
+<ul>
+<li>浏览器在第一次访问 Web 服务器 TomcatA 时，TomcatA 会发现请求的 Cookie 中<strong>不</strong>存在 sessionid ，所以创建一个 sessionid 为 X 的 Session ，同时将该 sessionid 写回给浏览器的 Cookie 中。</li>
+<li>浏览器在下一次访问 Web 服务器 TomcatA 时，TomcatA 会发现请求的 Cookie 中<strong>已</strong>存在 sessionid 为 X ，则直接获得 X 对应的 Session 。</li>
+</ul>
+<p><em>友情提示，Tomcat 产生的 sessionid 为 jsessionid 。</em></p>
+<p>再以用户使用浏览器，Web 服务器为<strong>两台</strong> TomcatA、TomcatB 举例子。</p>
+<ul>
+<li>接上述例子，浏览器已经访问 TomcatA ，获得 sessionid 为 X 。同时，在多台 Tomcat 的情况下，我们需要采用 Nginx 做负载均衡。</li>
+<li>浏览器又发起一次请求访问 Web 服务器，Nginx 负载均衡转发请求到 TomcatB 上。TomcatB 会发现请求的 Cookie 中<strong>已</strong>存在 sessionid 为 X ，则直接获得 X 对应的 Session 。结果呢，找不到 X 对应的 Session ，只好创建一个 sessionid 为 X 的 Session 。</li>
+<li>此时，虽然说浏览器的 sessionid 是 X ，但是对应到两个 Tomcat 中两个 Session 。那么，如果在 TomcatA 上做的 Session 修改，TomcatB 的 Session 还是原样，这样就会出现 <strong>Session 不一致</strong>的问题。</li>
+</ul>
+<p>有三种方案保证 session 一致：</p>
+<p><strong>第一种，Session 黏连</strong>。</p>
+<p>使用 Nginx 实现会话黏连，将相同 sessionid 的浏览器所发起的请求，转发到同一台服务器。这样，就不会存在多个 Web 服务器创建多个 Session 的情况，也就不会发生 Session 不一致的问题。</p>
+<p>不过，这种方式目前基本不被采用。因为，如果一台服务器重启，那么会导致转发到这个服务器上的 Session 全部丢失。</p>
+<p><strong>第二种，Session 复制</strong>。</p>
+<p>Web 服务器之间，进行 Session 复制同步。仅仅适用于实现 Session 复制的 Web 容器，例如说 Tomcat 、Weblogic 等等。</p>
+<p>不过，这种方式目前基本也不被采用。试想一下，如果我们有 5 台 Web 服务器，所有的 Session 都要同步到每一个节点上，一个是效率低，一个是浪费内存。</p>
+<p><strong>第三种，Session 外部化存储</strong>。</p>
+<p>将 Session 存储外部化，持久化到 MySQL、Redis、MongoDB 等等数据库中</p>
+<p>实现 Session 外部化存储有两种方式：</p>
+<p>① 基于 Tomcat、Jetty 等 Web 容器<strong>自带的拓展</strong>，使用读取外部存储器的 Session 管理器。例如说：</p>
+<ul>
+<li><a href="https://github.com/redisson/redisson/wiki/14.-第三方框架整合#146-spring-session会话管理器" target="_blank" rel="noopener">《Redisson Tomcat会话管理器（Tomcat Session Manager）》</a> ，实现将 Tomcat 使用 Redis 存储 Session 。</li>
+<li><a href="https://blog.csdn.net/xiao__gui/article/details/43271509" target="_blank" rel="noopener">《Jetty 集群配置 Session 存储到 MySQL、MongoDB》</a> ，实现 Jetty 使用 MySQL、MongoDB 存储 Session 。</li>
+</ul>
+<p>② 基于应用层封装 <a href="https://github.com/javaee/servlet-spec/blob/master/src/main/java/javax/servlet/http/HttpServletRequest.java" target="_blank" rel="noopener">HttpServletRequest</a> 请求对象，包装成自己的 RequestWrapper 对象，从而让实现调用 <a href="https://github.com/javaee/servlet-spec/blob/master/src/main/java/javax/servlet/http/HttpServletRequest.java#L542-L581" target="_blank" rel="noopener"><code>HttpServletRequest#getSession()</code></a> 方法时，获得读写外部存储器的 SessionWrapper 对象</p>
+<ul>
+<li>Spring Session 提供了 <a href="https://github.com/spring-projects/spring-session/blob/master/spring-session-core/src/main/java/org/springframework/session/web/http/SessionRepositoryFilter.java" target="_blank" rel="noopener">SessionRepositoryFilter</a> 过滤器，它会过滤请求时，将请求 HttpServletRequest 对象包装成 <a href="https://github.com/spring-projects/spring-session/blob/master/spring-session-core/src/main/java/org/springframework/session/web/http/SessionRepositoryFilter.java#L192-L418" target="_blank" rel="noopener">SessionRepositoryRequestWrapper</a> 对象。代码如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SessionRepositoryFilter.java</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doFilterInternal</span><span class="params">(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">    <span class="comment">// sessionRepository 是访问外部数据源的操作类，例如说访问 Redis、MySQL 等等</span></span><br><span class="line">    request.setAttribute(SESSION_REPOSITORY_ATTR, <span class="keyword">this</span>.sessionRepository);</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">    <span class="comment">// 将请求和响应进行包装成 SessionRepositoryRequestWrapper 和 SessionRepositoryResponseWrapper 对象</span></span><br><span class="line">    SessionRepositoryFilter&lt;S&gt;.SessionRepositoryRequestWrapper wrappedRequest = <span class="keyword">new</span> SessionRepositoryFilter.SessionRepositoryRequestWrapper(request, response, <span class="keyword">this</span>.servletContext);</span><br><span class="line">    SessionRepositoryFilter.SessionRepositoryResponseWrapper wrappedResponse = <span class="keyword">new</span> SessionRepositoryFilter.SessionRepositoryResponseWrapper(wrappedRequest, response);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 继续执行下一个过滤器</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        filterChain.doFilter(wrappedRequest, wrappedResponse);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="comment">// 请求结束，提交 Session 到外部数据源</span></span><br><span class="line">        wrappedRequest.commitSession();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>调用 <a href="https://github.com/spring-projects/spring-session/blob/master/spring-session-core/src/main/java/org/springframework/session/web/http/SessionRepositoryFilter.java#L325-L328" target="_blank" rel="noopener"><code>SessionRepositoryRequestWrapper#getSession()</code></a> 方法时，返回的是自己封装的 <a href="https://github.com/spring-projects/spring-session/blob/master/spring-session-core/src/main/java/org/springframework/session/web/http/SessionRepositoryFilter.java#L375-L390" target="_blank" rel="noopener">HttpSessionWrapper</a> 对象。代码如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SessionRepositoryFilter#SessionRepositoryRequestWrapper.java</span></span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> HttpSessionWrapper <span class="title">getSession</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> getSession(<span class="keyword">true</span>);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>后续，调用 HttpSessionWrapper 的方法，例如说 <code>HttpSessionWrapper#setAttribute(String name, Object value)</code> 方法，访问的就是外部数据源，而不是内存中。</li>
+</ul>
+<h2 id="2-Spring-Session"><a href="#2-Spring-Session" class="headerlink" title="2. Spring Session"></a>2. Spring Session</h2><p>Spring Session 使支持集群会话变得非常简单，无需绑定到特定于应用程序容器的解决方案。它还提供了透明的集成:</p>
+<ul>
+<li><code>HttpSession</code> - 允许以中立通用的方式替换应用程序容器(即 Tomcat)中的 HttpSession ，并支持在请求头(Header)中提供 sessionid ，方便提供 RESTful API 。</li>
+<li><code>WebSocket</code> - 提供在接收 WebSocket 消息时保持 HttpSession 活跃的能力。</li>
+<li><code>WebSession</code> - 允许以与应用程序容器无关的方式替换 Spring WebFlux 的 WebSession 。</li>
+</ul>
+<ul>
+<li>可以使用 Redis、JDBC（访问 MySQL、Oracle 等数据库）、Hazelcast 作为 Session 存储的数据源。</li>
+<li>同时 Spring Session 也另外提供了 <a href="https://spring.io/projects/spring-session-data-mongodb" target="_blank" rel="noopener">Spring Session MongoDB</a> ，实现使用 MongoDB 作为 Session 存储的数据源</li>
+</ul>
+<h2 id="3-快速入门-Spring-Session-Redis"><a href="#3-快速入门-Spring-Session-Redis" class="headerlink" title="3. 快速入门 Spring Session + Redis"></a>3. 快速入门 Spring Session + Redis</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 实现对 Spring Session 使用 Redis 作为数据源的自动化配置 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.session<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-session-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">&lt;!-- 实现对 Spring Data Redis 的自动化配置 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br><span class="line">                <span class="comment">&lt;!-- 去掉对 Lettuce 的依赖，因为 Spring Boot 优先使用 Lettuce 作为 Redis 客户端 --&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.lettuce<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lettuce-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 引入 Jedis 的依赖，这样 Spring Boot 实现对 Jedis 的自动化配置 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>redis.clients<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jedis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="comment"># 对应 RedisProperties 类</span></span><br><span class="line">  <span class="attr">redis:</span></span><br><span class="line">    <span class="attr">host:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">6379</span></span><br><span class="line">    <span class="attr">password:</span> <span class="comment"># Redis 服务器密码，默认为空。生产中，一定要设置 Redis 密码！</span></span><br><span class="line">    <span class="attr">database:</span> <span class="number">0</span> <span class="comment"># Redis 数据库号，默认为 0 。</span></span><br><span class="line">    <span class="attr">timeout:</span> <span class="number">0</span> <span class="comment"># Redis 连接超时时间，单位：毫秒。</span></span><br><span class="line">    <span class="comment"># 对应 RedisProperties.Jedis 内部类</span></span><br><span class="line">    <span class="attr">jedis:</span></span><br><span class="line">      <span class="attr">pool:</span></span><br><span class="line">        <span class="attr">max-active:</span> <span class="number">8</span> <span class="comment"># 连接池最大连接数，默认为 8 。使用负数表示没有限制。</span></span><br><span class="line">        <span class="attr">max-idle:</span> <span class="number">8</span> <span class="comment"># 默认连接数最大空闲的连接数，默认为 8 。使用负数表示没有限制。</span></span><br><span class="line">        <span class="attr">min-idle:</span> <span class="number">0</span> <span class="comment"># 默认连接池最小空闲的连接数，默认为 0 。允许设置 0 和 正数。</span></span><br><span class="line">        <span class="attr">max-wait:</span> <span class="number">-1</span> <span class="comment"># 连接池最大阻塞等待时间，单位：毫秒。默认为 -1 ，表示不限制。</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SessionConfiguration.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableRedisHttpSession</span> <span class="comment">// 自动化配置 Spring Session 使用 Redis 作为数据源</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SessionConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 创建 &#123;<span class="doctag">@link</span> RedisOperationsSessionRepository&#125; 使用的 RedisSerializer Bean 。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * 具体可以看看 &#123;<span class="doctag">@link</span> RedisHttpSessionConfiguration#setDefaultRedisSerializer(RedisSerializer)&#125; 方法，</span></span><br><span class="line"><span class="comment">     * 它会引入名字为 "springSessionDefaultRedisSerializer" 的 Bean 。</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> RedisSerializer Bean</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Bean</span>(name = <span class="string">"springSessionDefaultRedisSerializer"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> RedisSerializer <span class="title">springSessionDefaultRedisSerializer</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> RedisSerializer.json();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在类上，添加 <a href="https://github.com/spring-projects/spring-session/blob/master/spring-session-data-redis/src/main/java/org/springframework/session/data/redis/config/annotation/web/http/EnableRedisHttpSession.java" target="_blank" rel="noopener"><code>@EnableRedisHttpSession</code></a> 注解，开启自动化配置 Spring Session 使用 Redis 作为数据源。该注解有如下属性：<ul>
+<li>maxInactiveIntervalInSeconds` 属性，Session 不活跃后的过期时间，默认为 1800 秒。</li>
+<li><code>redisNamespace</code> 属性，在 Redis 的 key 的统一前缀，默认为 <code>&quot;spring:session&quot;</code> 。</li>
+<li><code>redisFlushMode</code> 属性，Redis 会话刷新模式(<a href="https://github.com/spring-projects/spring-session/blob/master/spring-session-data-redis/src/main/java/org/springframework/session/data/redis/RedisFlushMode.java" target="_blank" rel="noopener">RedisFlushMode</a>)。目前有两种，默认为 <code>RedisFlushMode.ON_SAVE</code> 。<ul>
+<li><code>RedisFlushMode.ON_SAVE</code> ，在请求执行完成时，统一写入 Redis 存储。</li>
+<li><code>RedisFlushMode.IMMEDIATE</code> ，在每次修改 Session 时，立即写入 Redis 存储。</li>
+</ul>
+</li>
+<li><code>cleanupCron</code> 属性，清理 Redis Session 会话过期的任务执行 CRON 表达式，默认为 <code>&quot;0 * * * * *&quot;</code> 每分钟执行一次。虽然说，Redis 自带了 key 的过期，但是惰性删除策略，实际过期的 Session 还在 Redis 中占用内存。所以，Spring Session 通过定时任务，删除 Redis 中过期的 Session ，尽快释放 Redis 的内存。</li>
+</ul>
+</li>
+<li>在 <code>#springSessionDefaultRedisSerializer()</code> 方法，定义了一个 Bean 名字为 <code>&quot;springSessionDefaultRedisSerializer&quot;</code> 的 RedisSerializer Bean ，采用 JSON 序列化方式</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 假设，我们已经在 redis-cli 中</span><br><span class="line"></span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; scan <span class="number">0</span></span><br><span class="line"><span class="number">1</span>) <span class="string">"0"</span></span><br><span class="line"><span class="number">2</span>) <span class="number">1</span>) <span class="string">"spring:session:sessions:expires:bea153af-3b36-451e-bbc9-2637bcdc5b37"</span></span><br><span class="line">   <span class="number">2</span>) <span class="string">"spring:session:expirations:1574493180000"</span></span><br><span class="line">   <span class="number">3</span>) <span class="string">"spring:session:sessions:bea153af-3b36-451e-bbc9-2637bcdc5b37"</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>每一个 Session 对应 Redis 三个 key-value 键值对。<ul>
+<li>开头：以 <code>spring:session</code> 开头，可以通过 <code>@EnableRedisHttpSession</code> 注解的 <code>redisNamespace</code> 属性配置。</li>
+<li>结尾：以对应 Session 的 sessionid 结尾。</li>
+<li>中间：中间分别是 <code>&quot;session&quot;</code>、<code>&quot;expirations&quot;</code>、<code>sessions:expires</code> 。<strong>一般情况下，我们只需要关注中间为 <code>&quot;session&quot;</code> 的 key-value 键值对即可，它负责真正存储 Session 数据。</strong>对于中间为 <code>&quot;sessions:expires&quot;</code> 和 <code>&quot;expirations&quot;</code> 的两个来说，主要为了实现主动删除 Redis 过期的 Session 会话，解决 Redis 惰性删除的“问题”。</li>
+</ul>
+</li>
+</ul>
+<p>查看下 <code>&quot;spring:session:sessions:bea153af-3b36-451e-bbc9-2637bcdc5b37&quot;</code> 的内容。它是一个 Redis <strong>hash</strong> 数据结构。结果如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; HGETALL spring:session:sessions:bea153af<span class="number">-3</span>b36<span class="number">-451</span>e-bbc9<span class="number">-2637</span>bcdc5b37</span><br><span class="line">1) "lastAccessedTime" # 最后访问时间</span><br><span class="line"><span class="number">2</span>) <span class="string">"1574491333155"</span></span><br><span class="line">3) "maxInactiveInterval" # Session 允许最大不活跃时长，单位：秒。</span><br><span class="line"><span class="number">4</span>) <span class="string">"1800"</span></span><br><span class="line">5) "creationTime" # 创建时间</span><br><span class="line"><span class="number">6</span>) <span class="string">"1574491333107"</span></span><br><span class="line"></span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; ttl spring:session:sessions:bea153af<span class="number">-3</span>b36<span class="number">-451</span>e-bbc9<span class="number">-2637</span>bcdc5b37</span><br><span class="line">(integer) 1089 # 虽然说，Spring Session Redis 实现了主动删除，但是并不妨碍这里也使用 Redis 自动过期策略。</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-快速入门-Spring-Session-MongoDB"><a href="#4-快速入门-Spring-Session-MongoDB" class="headerlink" title="4. 快速入门 Spring Session + MongoDB"></a>4. 快速入门 Spring Session + MongoDB</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 实现对 Spring Session 使用 MongoDB 作为数据源的自动化配置 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.session<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-session-data-mongodb<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">&lt;!-- 自动化配置 Spring Data Mongodb --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-mongodb<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">data:</span></span><br><span class="line">    <span class="comment"># MongoDB 配置项，对应 MongoProperties 类</span></span><br><span class="line">    <span class="attr">mongodb:</span></span><br><span class="line">      <span class="attr">host:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">27017</span></span><br><span class="line">      <span class="attr">database:</span> <span class="string">yourdatabase</span></span><br><span class="line">      <span class="attr">username:</span> <span class="string">test01</span></span><br><span class="line">      <span class="attr">password:</span> <span class="string">password01</span></span><br><span class="line">      <span class="comment"># 上述属性，也可以只配置 uri</span></span><br><span class="line"></span><br><span class="line"><span class="attr">logging:</span></span><br><span class="line">  <span class="attr">level:</span></span><br><span class="line">    <span class="attr">org:</span></span><br><span class="line">      <span class="attr">springframework:</span></span><br><span class="line">        <span class="attr">data:</span></span><br><span class="line">          <span class="attr">mongodb:</span></span><br><span class="line">            <span class="attr">core:</span> <span class="string">DEBUG</span> <span class="comment"># 打印 mongodb 操作的具体语句。生产环境下，不建议开启。</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableMongoHttpSession</span> <span class="comment">// 自动化配置 Spring Session 使用 MongoDB 作为数据源</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SessionConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> AbstractMongoSessionConverter <span class="title">mongoSessionConverter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> JacksonMongoSessionConverter();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在类上，添加 <a href="https://github.com/spring-projects/spring-session-data-mongodb/blob/master/src/main/java/org/springframework/session/data/mongo/config/annotation/web/http/EnableMongoHttpSession.java" target="_blank" rel="noopener">@EnableMongoHttpSession</a> 注解，开启自动化配置 Spring Session 使用 MongoDB 作为数据源。该注解有如下属性：<ul>
+<li><code>maxInactiveIntervalInSeconds</code> 属性，Session 不活跃后的过期时间，默认为 1800 秒。</li>
+<li><code>collectionName</code> 属性，在 MongoDB 中，存储 Session 的集合名，默认为 <code>&quot;sessions&quot;</code> 。</li>
+</ul>
+</li>
+<li>在 <code>#mongoSessionConverter()</code> 方法，创建了 JacksonMongoSessionConverter Bean 对象，采用 JSON 序列化</li>
+</ul>
+<p>目前，Spring Session MongoDB 基于 <strong>MongoDB 自动过期删除过期数据</strong>的机制，实现 Session 的自动过期。因为 MongoDB 的自动过期机制，并不是像 Redis 是惰性删除，所以无需实现定时任务，主动删除来释放内存。</p>
+<p>查看下 <code>sessions</code> 集合的内容。结果如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123; </span><br><span class="line">    <span class="attr">"_id"</span> : <span class="string">"5a6e9b28-7740-422e-8d1c-50a4b2781d7a"</span>, </span><br><span class="line">    <span class="attr">"@class"</span> : <span class="string">"org.springframework.session.data.mongo.MongoSession"</span>, </span><br><span class="line">    <span class="attr">"createdMillis"</span> : NumberLong(<span class="number">1574501001259</span>), </span><br><span class="line">    <span class="attr">"accessedMillis"</span> : NumberLong(<span class="number">1574501010539</span>), </span><br><span class="line">    <span class="attr">"intervalSeconds"</span> : NumberInt(<span class="number">1800</span>), </span><br><span class="line">    <span class="attr">"expireAt"</span> : ISODate(<span class="string">"2019-11-23T17:53:30.539+0800"</span>), </span><br><span class="line">    <span class="attr">"attrs"</span> : &#123;</span><br><span class="line">        <span class="attr">"@class"</span> : <span class="string">"java.util.HashMap"</span>, </span><br><span class="line">        <span class="attr">"author"</span> : <span class="string">"nainai"</span>, </span><br><span class="line">        <span class="attr">"who"</span> : <span class="string">"yudaoyuanma"</span></span><br><span class="line">    &#125;, </span><br><span class="line">    <span class="attr">"principal"</span> : <span class="literal">null</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>每个 Session 对应一条 <code>sessions</code> 集合的记录。对应到实体类是 <a href="https://github.com/spring-projects/spring-session-data-mongodb/blob/master/src/main/java/org/springframework/session/data/mongo/MongoSession.java" target="_blank" rel="noopener">MongoSession</a> 。代码如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// MongoSession.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MongoSession</span> <span class="keyword">implements</span> <span class="title">Session</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String id;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> createdMillis;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> accessedMillis;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> intervalSeconds;</span><br><span class="line">    <span class="keyword">private</span> Date expireAt;</span><br><span class="line">    <span class="keyword">private</span> Map&lt;String, Object&gt; attrs;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// ... 省略方法</span></span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>_id</code> 字段，sessionid 。</p>
+</li>
+<li><p><code>@class</code> 字段，记录对应的实体类，就是我们提到的 MongoSession 。</p>
+</li>
+<li><p><code>createdMillis</code> 字段，Session 创建时间戳。</p>
+</li>
+<li><p><code>accessedMillis</code> 字段，Session 最后访问时间戳。</p>
+</li>
+<li><p><code>intervalSeconds</code> 字段，Session 允许最大不活跃时长，单位：秒。</p>
+</li>
+<li><p><code>expireAt</code> 字段，Session 过期时间。在该字段上，我们创建了 <code>expireAt</code> 所以， 用于实现过期 Session 记录的自动删除。索引信息如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123; </span><br><span class="line">    <span class="attr">"v"</span> : <span class="number">2</span>, </span><br><span class="line">    <span class="attr">"name"</span> : <span class="string">"expireAt"</span>, </span><br><span class="line">    <span class="attr">"ns"</span> : <span class="string">"yourdatabase.sessions"</span>, </span><br><span class="line">    <span class="attr">"expireAfterSeconds"</span> : <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>attrs</code> 字段，Session 的 attribute 属性们。</p>
+</li>
+<li><p><code>principal</code> 字段，用户主体，和用户身份认证相关。</p>
+</li>
+</ul>
+<h2 id="5-整合-Spring-Security"><a href="#5-整合-Spring-Security" class="headerlink" title="5. 整合 Spring Security"></a>5. 整合 Spring Security</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 实现对 Spring Security 的自动化配置 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-security<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="comment"># 对应 RedisProperties 类</span></span><br><span class="line">  <span class="attr">redis:</span></span><br><span class="line">    <span class="attr">host:</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">6379</span></span><br><span class="line">    <span class="attr">password:</span> <span class="comment"># Redis 服务器密码，默认为空。生产中，一定要设置 Redis 密码！</span></span><br><span class="line">    <span class="attr">database:</span> <span class="number">0</span> <span class="comment"># Redis 数据库号，默认为 0 。</span></span><br><span class="line">    <span class="attr">timeout:</span> <span class="number">0</span> <span class="comment"># Redis 连接超时时间，单位：毫秒。</span></span><br><span class="line">    <span class="comment"># 对应 RedisProperties.Jedis 内部类</span></span><br><span class="line">    <span class="attr">jedis:</span></span><br><span class="line">      <span class="attr">pool:</span></span><br><span class="line">        <span class="attr">max-active:</span> <span class="number">8</span> <span class="comment"># 连接池最大连接数，默认为 8 。使用负数表示没有限制。</span></span><br><span class="line">        <span class="attr">max-idle:</span> <span class="number">8</span> <span class="comment"># 默认连接数最大空闲的连接数，默认为 8 。使用负数表示没有限制。</span></span><br><span class="line">        <span class="attr">min-idle:</span> <span class="number">0</span> <span class="comment"># 默认连接池最小空闲的连接数，默认为 0 。允许设置 0 和 正数。</span></span><br><span class="line">        <span class="attr">max-wait:</span> <span class="number">-1</span> <span class="comment"># 连接池最大阻塞等待时间，单位：毫秒。默认为 -1 ，表示不限制。</span></span><br><span class="line">  <span class="comment"># 对应 SecurityProperties 类</span></span><br><span class="line">  <span class="attr">security:</span></span><br><span class="line">    <span class="attr">user:</span> <span class="comment"># 配置内存中，可登陆的用户名和密码</span></span><br><span class="line">      <span class="attr">name:</span> <span class="string">yudaoyuanma</span></span><br><span class="line">      <span class="attr">password:</span> <span class="string">nicai</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// SessionConfiguration.java</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableRedisHttpSession</span> <span class="comment">// 自动化配置 Spring Session 使用 Redis 作为数据源</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SessionConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>去掉了自定义的 <strong>JSON</strong> RedisSerializer Bean 的配置。原因是，HttpSession 的 attributes 属性，是 <code>Map&lt;String, Object&gt;</code> 类型。</p>
+<ul>
+<li>在序列化 Session 到 Redis 中时，不存在问题。</li>
+<li>在反序列化 Redis 的 key-value 键值对成 Session 时，如果 attributes 的 value 存在 POJO 对象的时候，因为不知道该 value 是什么 POJO 对象，导致无法反序列化错误。</li>
+</ul>
+<p><strong>因此，在使用 Spring Session 时，先老实使用 Java 序列化方式吧</strong>。</p>
+<p>访问 <code>&quot;http://127.0.0.1:8080/&quot;</code> 地址，因为 使用了 Spring Security ，所以会被自动拦截重定向到 <code>&quot;http://127.0.0.1:8080/login&quot;</code></p>
+<p>① 终端执行 <code>redis-cli</code> 命令，连接到 Redis 中，查看是否创建了一个 Session 。过程如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"># 确实创建了一个 sessionid 为 f65a475e-8550-49a4-b71d-0320c8cf887f 的 Session 。</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; scan <span class="number">0</span></span><br><span class="line"><span class="number">1</span>) <span class="string">"0"</span></span><br><span class="line"><span class="number">2</span>) <span class="number">1</span>) <span class="string">"spring:session:sessions:f65a475e-8550-49a4-b71d-0320c8cf887f"</span></span><br><span class="line">   <span class="number">2</span>) <span class="string">"spring:session:sessions:expires:f65a475e-8550-49a4-b71d-0320c8cf887f"</span></span><br><span class="line">   <span class="number">3</span>) <span class="string">"spring:session:expirations:1574437980000"</span></span><br><span class="line">   </span><br><span class="line"># 查看 spring:session:sessions:f65a475e-8550-49a4-b71d-0320c8cf887f 存储的 value 。</span><br><span class="line"># 因为使用 Java 序列化方式，所以 hash 中的每个 key 对应的 value ，都无法直接读懂。不过大概啥意思，我们应该是明白的。</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; HGETALL spring:session:sessions:f65a475e<span class="number">-8550</span><span class="number">-49</span>a4-b71d<span class="number">-0320</span>c8cf887f</span><br><span class="line"> <span class="number">1</span>) <span class="string">"lastAccessedTime"</span></span><br><span class="line"> <span class="number">2</span>) <span class="string">"\xac\xed\x00\x05sr\x00\x0ejava.lang.Long;\x8b\xe4\x90\xcc\x8f#\xdf\x02\x00\x01J\x00\x05valuexr\x00\x10java.lang.Number\x86\xac\x95\x1d\x0b\x94\xe0\x8b\x02\x00\x00xp\x00\x00\x01n\x93\xb5\x80\xf6"</span></span><br><span class="line"> <span class="number">3</span>) <span class="string">"creationTime"</span></span><br><span class="line"> <span class="number">4</span>) <span class="string">"\xac\xed\x00\x05sr\x00\x0ejava.lang.Long;\x8b\xe4\x90\xcc\x8f#\xdf\x02\x00\x01J\x00\x05valuexr\x00\x10java.lang.Number\x86\xac\x95\x1d\x0b\x94\xe0\x8b\x02\x00\x00xp\x00\x00\x01n\x93\xb5\x80x"</span></span><br><span class="line"> <span class="number">5</span>) <span class="string">"sessionAttr:SPRING_SECURITY_SAVED_REQUEST"</span></span><br><span class="line"> <span class="number">6</span>) <span class="string">"\xac\xed\x00\x05sr\x00Aorg.springframework.security.web.savedrequest.DefaultSavedRequest\x1e@HD\xf96d\x94\x02\x00\x0eI\x00\nserverPortL\x00\x0bcontextPatht\x00\x12Ljava/lang/String;L\x00\acookiest\x00\x15Ljava/util/ArrayList;L\x00\aheaderst\x00\x0fLjava/util/Map;L\x00\alocalesq\x00~\x00\x02L\x00\x06methodq\x00~\x00\x01L\x00\nparametersq\x00~\x00\x03L\x00\bpathInfoq\x00~\x00\x01L\x00\x0bqueryStringq\x00~\x00\x01L\x00\nrequestURIq\x00~\x00\x01L\x00\nrequestURLq\x00~\x00\x01L\x00\x06schemeq\x00~\x00\x01L\x00\nserverNameq\x00~\x00\x01L\x00\x0bservletPathq\x00~\x00\x01xp\x00\x00\x1f\x90t\x00\x00sr\x00\x13java.util.ArrayListx\x81\xd2\x1d\x99\xc7a\x9d\x03\x00\x01I\x00\x04sizexp\x00\x00\x00\x01w\x04\x00\x00\x00\x01sr\x009org.springframework.security.web.savedrequest.SavedCookie\x03@+\x82\x9f\xc0\xb4f\x02\x00\bI\x00\x06maxAgeZ\x00\x06secureI\x00\aversionL\x00\acommentq\x00~\x00\x01L\x00\x06domainq\x00~\x00\x01L\x00\x04nameq\x00~\x00\x01L\x00\x04pathq\x00~\x00\x01L\x00\x05valueq\x00~\x00\x01xp\xff\xff\xff\xff\x00\x00\x00\x00\x00ppt\x00\aSESSIONpt\x000MDZhYjJiYTUtYzA2Ny00YmNhLWFiNWItODUyYmRmM2QwMGE1xsr\x00\x11java.util.TreeMap\x0c\xc1\xf6&gt;-%j\xe6\x03\x00\x01L\x00\ncomparatort\x00\x16Ljava/util/Comparator;xpsr\x00*java.lang.String$CaseInsensitiveComparatorw\x03\\&#125;\\P\xe5\xce\x02\x00\x00xpw\x04\x00\x00\x00\x0bt\x00\x06acceptsq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00vtext/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3xt\x00\x0faccept-encodingsq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00\x11gzip, deflate, brxt\x00\x0faccept-languagesq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00#zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7xt\x00\nconnectionsq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00\nkeep-alivext\x00\x06cookiesq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x008SESSION=MDZhYjJiYTUtYzA2Ny00YmNhLWFiNWItODUyYmRmM2QwMGE1xt\x00\x04hostsq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00\x0e127.0.0.1:8080xt\x00\x0esec-fetch-modesq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00\bnavigatext\x00\x0esec-fetch-sitesq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00\x04nonext\x00\x0esec-fetch-usersq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00\x02?1xt\x00\x19upgrade-insecure-requestssq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00\x011xt\x00\nuser-agentsq\x00~\x00\x06\x00\x00\x00\x01w\x04\x00\x00\x00\x01t\x00xMozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36xxsq\x00~\x00\x06\x00\x00\x00\x04w\x04\x00\x00\x00\x04sr\x00\x10java.util.Locale~\xf8\x11`\x9c0\xf9\xec\x03\x00\x06I\x00\bhashcodeL\x00\acountryq\x00~\x00\x01L\x00\nextensionsq\x00~\x00\x01L\x00\blanguageq\x00~\x00\x01L\x00\x06scriptq\x00~\x00\x01L\x00\avariantq\x00~\x00\x01xp\xff\xff\xff\xfft\x00\x02CNq\x00~\x00\x05t\x00\x02zhq\x00~\x00\x05q\x00~\x00\x05xsq\x00~\x003\xff\xff\xff\xffq\x00~\x00\x05q\x00~\x00\x05q\x00~\x006q\x00~\x00\x05q\x00~\x00\x05xsq\x00~\x003\xff\xff\xff\xfft\x00\x02USq\x00~\x00\x05t\x00\x02enq\x00~\x00\x05q\x00~\x00\x05xsq\x00~\x003\xff\xff\xff\xffq\x00~\x00\x05q\x00~\x00\x05q\x00~\x00:q\x00~\x00\x05q\x00~\x00\x05xxt\x00\x03GETsq\x00~\x00\x0cpw\x04\x00\x00\x00\x00xppt\x00\x01/t\x00\x16http://127.0.0.1:8080/t\x00\x04httpt\x00\t127.0.0.1t\x00\x01/"</span></span><br><span class="line"> <span class="number">7</span>) <span class="string">"maxInactiveInterval"</span></span><br><span class="line"> <span class="number">8</span>) <span class="string">"\xac\xed\x00\x05sr\x00\x11java.lang.Integer\x12\xe2\xa0\xa4\xf7\x81\x878\x02\x00\x01I\x00\x05valuexr\x00\x10java.lang.Number\x86\xac\x95\x1d\x0b\x94\xe0\x8b\x02\x00\x00xp\x00\x00\a\b"</span></span><br><span class="line"> <span class="number">9</span>) <span class="string">"sessionAttr:org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository.CSRF_TOKEN"</span></span><br><span class="line"><span class="number">10</span>) <span class="string">"\xac\xed\x00\x05sr\x006org.springframework.security.web.csrf.DefaultCsrfTokenZ\xef\xb7\xc8/\xa2\xfb\xd5\x02\x00\x03L\x00\nheaderNamet\x00\x12Ljava/lang/String;L\x00\rparameterNameq\x00~\x00\x01L\x00\x05tokenq\x00~\x00\x01xpt\x00\x0cX-CSRF-TOKENt\x00\x05_csrft\x00$582ef040-9a9f-43be-9708-e5b94394e338"</span></span><br></pre></td></tr></table></figure>
+
+<p>② 输入账号密码，并点击「Sign in」按钮，进行登录。登录成功后，跳转回 <code>&quot;http://127.0.0.1:8080/&quot;</code> 地址</p>
+<p>在 Redis 的终端中，查看此时该 Session 的变化。过程如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 相比来说，多了一条 "spring:session:index:org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME:yudaoyuanma"</span><br><span class="line"># 它代表的，就是我们刚登陆的用户名，注意结尾是 "yudaoyuanma" 。</span><br><span class="line"></span><br><span class="line"># 并且，比较神奇的是，原 sessionid="f65a475e-8550-49a4-b71d-0320c8cf887f" 的 Session 被删除。</span><br><span class="line"># 同时，一个新的 sessionid="127c5c93-1e57-4984-9780-5530a4bf9d0b" 的 Session 被创建</span><br><span class="line"># 原因可见 https://www.jianshu.com/p/057fcf061b94 文章的「Spring Security 固定 Session 的保护」。</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; scan <span class="number">0</span></span><br><span class="line"><span class="number">1</span>) <span class="string">"0"</span></span><br><span class="line"><span class="number">2</span>) <span class="number">1</span>) <span class="string">"spring:session:sessions:expires:127c5c93-1e57-4984-9780-5530a4bf9d0b"</span></span><br><span class="line">   <span class="number">2</span>) <span class="string">"spring:session:expirations:1574438340000"</span></span><br><span class="line">   <span class="number">3</span>) <span class="string">"spring:session:index:org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME:yudaoyuanma"</span></span><br><span class="line">   <span class="number">4</span>) <span class="string">"spring:session:sessions:127c5c93-1e57-4984-9780-5530a4bf9d0b"</span></span><br><span class="line">  </span><br><span class="line"># 该 key 是 Redis Set 数据结构，存储了该用户名对应的所有 sessionid 集合。</span><br><span class="line"># 所以，通过该 key ，我们可以获取到指定用户名，登陆的所有 sessionid 集合</span><br><span class="line"># 具体怎么操作，我们在 「5.6 FindByIndexNameSessionRepository」小节来看。</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; SMEMBERS spring:session:index:org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME:yudaoyuanma</span><br><span class="line"><span class="number">1</span>) <span class="string">"\xac\xed\x00\x05t\x00$127c5c93-1e57-4984-9780-5530a4bf9d0b"</span></span><br></pre></td></tr></table></figure>
+
+<p>③ 点击「Log Out」按钮，完成用户的登出操作。完成后，自动重定向到 <code>&quot;http://127.0.0.1:8080/login&quot;</code> 登陆地址</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 用户退出后，"spring:session:index:org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME:yudaoyuanma" 被删除</span><br><span class="line"># 因为，该用户已经退出。</span><br><span class="line"></span><br><span class="line"># 用户退出后，新的 sessionid="1288372b-1ed3-417f-86ed-10c113a10783" 的 Session 被创建。</span><br><span class="line"></span><br><span class="line"># 神奇的是，老的 sessionid="127c5c93-1e57-4984-9780-5530a4bf9d0b" 的 Session 并未被删除，这是为什么呢？</span><br><span class="line"># Spring Session 在失效删除 Session 时，会保留该 sessionid 300 秒。对应源码为 RedisSessionExpirationPolicy#onExpirationUpdated(...) 方法的最后一行。</span><br><span class="line"># 具体原因，是为了实现 Session 过期的通知。</span><br><span class="line"># 详细的，可以看 《从 Spring-Session 源码看 Session 机制的实现细节》 http://www.iocoder.cn/Spring-Session/laoxu/spring-session-4/?self</span><br><span class="line"><span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">6379</span>&gt; scan <span class="number">0</span></span><br><span class="line"><span class="number">1</span>) <span class="string">"0"</span></span><br><span class="line"><span class="number">2</span>) <span class="number">1</span>) <span class="string">"spring:session:expirations:1574439000000"</span></span><br><span class="line">   <span class="number">2</span>) <span class="string">"spring:session:expirations:1574437140000"</span></span><br><span class="line">   <span class="number">3</span>) <span class="string">"spring:session:expirations:1574438340000"</span></span><br><span class="line">   <span class="number">4</span>) <span class="string">"spring:session:sessions:expires:1288372b-1ed3-417f-86ed-10c113a10783"</span></span><br><span class="line">   <span class="number">5</span>) <span class="string">"spring:session:sessions:1288372b-1ed3-417f-86ed-10c113a10783"</span></span><br><span class="line">   <span class="number">6</span>) <span class="string">"spring:session:expirations:1574438940000"</span></span><br><span class="line">   <span class="number">7</span>) <span class="string">"spring:session:sessions:127c5c93-1e57-4984-9780-5530a4bf9d0b"</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>Spring Session 定义了 <a href="https://github.com/spring-projects/spring-session/blob/master/spring-session-core/src/main/java/org/springframework/session/FindByIndexNameSessionRepository.java" target="_blank" rel="noopener"><code>org.springframework.session.FindByIndexNameSessionRepository</code></a> 接口，定义了根据用户名，查询登陆的所有 Session 信息。代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// FindByIndexNameSessionRepository.java</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FindByIndexNameSessionRepository</span>&lt;<span class="title">S</span> <span class="keyword">extends</span> <span class="title">Session</span>&gt;</span></span><br><span class="line"><span class="class">		<span class="keyword">extends</span> <span class="title">SessionRepository</span>&lt;<span class="title">S</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">	String PRINCIPAL_NAME_INDEX_NAME = FindByIndexNameSessionRepository<span class="class">.<span class="keyword">class</span>.<span class="title">getName</span>()</span></span><br><span class="line">			.concat(".PRINCIPAL_NAME_INDEX_NAME");</span><br><span class="line"></span><br><span class="line">	<span class="function">Map&lt;String, S&gt; <span class="title">findByIndexNameAndIndexValue</span><span class="params">(String indexName, String indexValue)</span></span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">default</span> Map&lt;String, S&gt; <span class="title">findByPrincipalName</span><span class="params">(String principalName)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> findByIndexNameAndIndexValue(PRINCIPAL_NAME_INDEX_NAME, principalName);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>#findByPrincipalName(principalName)</code> 方法，根据用户名，查询登陆的所有 Session 信息。因为用户可以多点登陆，所以一个用户名会对应多个 Session 信息。而返回的 Map 对象，其 key 为 sessionid 。</li>
+<li><code>#findByPrincipalName(String principalName)</code> 方法的内部，会调用 <code>#findByIndexNameAndIndexValue(indexName, indexValue)</code> 方法，查询指定 <code>indexName</code> 的 value 等于 <code>indexValue</code> 的所有 Session 信息。这里，传入的是 <code>indexName</code> 为 <code>PRINCIPAL_NAME_INDEX_NAME</code> ，<code>indexValue</code> 为用户名。<code>&quot;spring:session:index:org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME:yudaoyuanma&quot;</code> 这个 Redis key 。分解如下：<ul>
+<li>第一部分，<code>&quot;spring:session:index&quot;</code> 为 index 固定前缀。</li>
+<li>第二部分，<code>&quot;org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME&quot;</code> 为 <code>indexName</code> 。</li>
+<li>第三部分，<code>&quot;yudaoyuanma&quot;</code> 为 <code>indexValue</code> 用户名。</li>
+<li>这样，在 <code>#findByIndexNameAndIndexValue(indexName, indexValue)</code> 方法的内部实现，会将三个部分拼接在一起，成为 <code>&quot;spring:session:index:org.springframework.session.FindByIndexNameSessionRepository.PRINCIPAL_NAME_INDEX_NAME:yudaoyuanma&quot;</code> 字符串，最终去 Redis 查询。也就是说，<code>&quot;spring:session:index&quot;</code> 的目的，是实现<strong>索引</strong>。在这里，就是<strong>索引</strong>用户登陆的多个 sessionid ，从而最终查询到所有 Session 信息。</li>
+</ul>
+</li>
+</ul>
+<p>在两个浏览器中，登陆用户名为 <code>&quot;yudaoyuanma&quot;</code> 的用户。<br>然后，浏览器访问 <code>&quot;http://127.0.0.1:8080/session/list?username=yudaoyuanma&quot;</code> 接口，查询用户名为 <code>&quot;yudaoyuanma&quot;</code> 的所有 Session 信息。响应结果如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">   <span class="string">"f8ef73b0-a911-4921-9df9-056b4e18ce09"</span>:&#123;</span><br><span class="line">      <span class="string">"lastAccessedTime"</span>:<span class="string">"2019-11-22T17:37:36.331Z"</span>,</span><br><span class="line">      <span class="string">"expired"</span>:<span class="keyword">false</span>,</span><br><span class="line">      <span class="string">"maxInactiveInterval"</span>:<span class="string">"PT30M"</span>,</span><br><span class="line">      <span class="string">"new"</span>:<span class="keyword">false</span>,</span><br><span class="line">      <span class="string">"creationTime"</span>:<span class="string">"2019-11-22T17:09:01.157Z"</span>,</span><br><span class="line">      <span class="string">"attributeNames"</span>:[</span><br><span class="line">         <span class="string">"SPRING_SECURITY_CONTEXT"</span></span><br><span class="line">      ],</span><br><span class="line">      <span class="string">"id"</span>:<span class="string">"f8ef73b0-a911-4921-9df9-056b4e18ce09"</span></span><br><span class="line">   &#125;,</span><br><span class="line">   <span class="string">"ea037f98-112a-43c2-a337-d0d3d5a74a16"</span>:&#123;</span><br><span class="line">      <span class="string">"lastAccessedTime"</span>:<span class="string">"2019-11-22T17:37:27.631Z"</span>,</span><br><span class="line">      <span class="string">"expired"</span>:<span class="keyword">false</span>,</span><br><span class="line">      <span class="string">"maxInactiveInterval"</span>:<span class="string">"PT30M"</span>,</span><br><span class="line">      <span class="string">"new"</span>:<span class="keyword">false</span>,</span><br><span class="line">      <span class="string">"creationTime"</span>:<span class="string">"2019-11-22T17:37:21.915Z"</span>,</span><br><span class="line">      <span class="string">"attributeNames"</span>:[</span><br><span class="line">         <span class="string">"SPRING_SECURITY_CONTEXT"</span></span><br><span class="line">      ],</span><br><span class="line">      <span class="string">"id"</span>:<span class="string">"ea037f98-112a-43c2-a337-d0d3d5a74a16"</span></span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>可以看到我们在两个浏览器上，登陆的两个 Session 。</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/05/28/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%88%86%E5%B8%83%E5%BC%8FSession%E5%85%A5%E9%97%A8/" data-id="ckbg9kucs00192r078tzq7wvp" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/" rel="tag">Web</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-Java实践推荐" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/05/28/Java%E5%AE%9E%E8%B7%B5%E6%8E%A8%E8%8D%90/" class="article-date">
@@ -157,7 +561,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/28/Java%E5%AE%9E%E8%B7%B5%E6%8E%A8%E8%8D%90/" data-id="ckb0ntwn2001m1q079075ff9l" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/28/Java%E5%AE%9E%E8%B7%B5%E6%8E%A8%E8%8D%90/" data-id="ckbg9kubt00082r075x36dpy3" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
@@ -359,7 +763,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/27/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%93%8D%E5%BA%94%E5%BC%8FWebFlux%E5%85%A5%E9%97%A8/" data-id="ckb0ntwna001u1q07aixhbfqo" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/27/Web%E5%BC%80%E5%8F%91-SpringBoot%E5%93%8D%E5%BA%94%E5%BC%8FWebFlux%E5%85%A5%E9%97%A8/" data-id="ckbg9kuco00102r077zob9vad" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/" rel="tag">Web</a></li></ul>
@@ -625,7 +1029,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/26/Java%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/" data-id="ckb0ntwnl002c1q076sz32rkd" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/26/Java%E9%9B%86%E5%90%88%E6%A1%86%E6%9E%B6/" data-id="ckbg9kuci000u2r0777x99h97" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%9B%86%E5%90%88/" rel="tag">集合</a></li></ul>
@@ -709,7 +1113,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/26/Java%E5%A4%84%E7%90%86Exception%E7%9A%849%E4%B8%AA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" data-id="ckb0ntwmc000d1q071jswcn1a" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/26/Java%E5%A4%84%E7%90%86Exception%E7%9A%849%E4%B8%AA%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" data-id="ckbg9kubc00002r074mhl7fp9" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
@@ -822,7 +1226,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%AE%9E%E6%88%98%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/" data-id="ckb0ntwn3001n1q075fyidfbc" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/25/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%9A%E5%AE%9E%E6%88%98%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95%E6%A8%A1%E5%BC%8F/" data-id="ckbg9kud3001q2r0700ab3adn" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
@@ -1130,7 +1534,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/25/Web%E5%BC%80%E5%8F%91-SpringBoot-SpringMVC%E5%85%A5%E9%97%A8/" data-id="ckb0ntwnv002r1q075yp03abs" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/25/Web%E5%BC%80%E5%8F%91-SpringBoot-SpringMVC%E5%85%A5%E9%97%A8/" data-id="ckbg9kucs00182r078r6yayam" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li></ul>
@@ -1220,231 +1624,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/25/SpringBoot-MapStruct/" data-id="ckb0ntwmi000l1q0727co79xu" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-SpringBoot之Lombok" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/05/25/SpringBoot%E4%B9%8BLombok/" class="article-date">
-  <time datetime="2020-05-25T07:20:08.000Z" itemprop="datePublished">2020-05-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/05/25/SpringBoot%E4%B9%8BLombok/">SpringBoot之Lombok</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="Spring-Boot-消除冗余代码-Lombok-入门"><a href="#Spring-Boot-消除冗余代码-Lombok-入门" class="headerlink" title="Spring Boot 消除冗余代码 Lombok 入门"></a>Spring Boot 消除冗余代码 Lombok 入门</h2><p>Lombok 注解:</p>
-<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Getter.java" target="_blank" rel="noopener"><code>@Getter</code></a> 注解，添加在<strong>类</strong>或<strong>属性</strong>上，生成对应的 get 方法。</p>
-<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Setting.java" target="_blank" rel="noopener"><code>@Setter</code></a> 注解，添加在<strong>类</strong>或<strong>属性</strong>上，生成对应的 set 方法。</p>
-<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/ToString.java" target="_blank" rel="noopener"><code>@ToString</code></a> 注解，添加在<strong>类</strong>上，生成 toString 方法。</p>
-<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/EqualsAndHashCode.java" target="_blank" rel="noopener"><code>@EqualsAndHashCode</code></a> 注解，添加在<strong>类</strong>上，生成 equals 和 hashCode 方法。</p>
-<p><code>@AllArgsConstructor</code>、<code>@RequiredArgsConstructor</code>、<code>@NoArgsConstructor</code> 注解，添加在<strong>类</strong>上，为类自动生成对应参数的构造方法。</p>
-<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Data.java" target="_blank" rel="noopener"><code>@Data</code></a> 注解，添加在<strong>类</strong>上，是 5 个 Lombok 注解的组合。</p>
-<ul>
-<li>为所有属性，添加 <code>@Getter</code>、<code>@ToString</code>、<code>@EqualsAndHashCode</code> 注解的效果</li>
-<li>为非 <code>final</code> 修饰的属性，添加 <code>@Setter</code> 注解的效果</li>
-<li>为 <code>final</code> 修改的属性，添加 <code>@RequiredArgsConstructor</code> 注解的效果</li>
-</ul>
-<p><code>@Value</code> 注解，添加在<strong>类</strong>上，和 <code>@Data</code> 注解类似，区别在于它会把所有属性默认定义为 <code>private final</code> 修饰，所以不会生成 set 方法。</p>
-<p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/apachecommons/CommonsLog.java" target="_blank" rel="noopener"><code>@CommonsLog</code></a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/flogger/Flogger.java" target="_blank" rel="noopener"><code>@Flogger</code></a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/java/Log.java" target="_blank" rel="noopener"><code>@Log</code></a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/jbosslog/JBossLog.java" target="_blank" rel="noopener"><code>@JBossLog</code></a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/log4j/Log4j.java" target="_blank" rel="noopener">@Log4j</a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/extern/log4j/Log4j2.java" target="_blank" rel="noopener">@Log4j2</a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Slf4j.java" target="_blank" rel="noopener">@Slf4j</a>、<a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Slf4jX.java" target="_blank" rel="noopener">@Slf4jX</a> 注解，添加在<strong>类</strong>上，自动为类添加对应的日志支持。</p>
-<p><code>@NonNull</code> 注解，添加在<strong>方法参数</strong>、<strong>类属性</strong>上，用于自动生成 <code>null</code> 参数检查。若确实是 <code>null</code> 时，抛出 NullPointerException 异常。</p>
-<p><code>@Cleanup</code> 注解，添加在方法中的<strong>局部变量</strong>上，在作用域结束时会自动调用 <code>#close()</code> 方法，来释放资源。例如说，使用在 Java IO 流操作的时候。</p>
-<p><code>@Builder</code> 注解，添加在<strong>类</strong>上，给该类加个构造者模式 Builder 内部类。</p>
-<p><code>@Synchronized</code> 注解，添加在<strong>方法</strong>上，添加同步锁。</p>
-<p><code>@SneakyThrows</code> 注解，添加在<strong>方法</strong>上，给该方法添加 <code>try catch</code> 代码块。</p>
-<p><code>@Accessors</code> 注解，添加在<strong>方法</strong>或<strong>属性</strong>上，并设置 <code>chain = true</code>，实现链式编程。</p>
-<h3 id="Data-注解"><a href="#Data-注解" class="headerlink" title="@Data 注解"></a>@Data 注解</h3><p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Data.java" target="_blank" rel="noopener"><code>@Data</code></a> 注解，添加在<strong>类</strong>上，是 5 个 Lombok 注解的组合。</p>
-<ul>
-<li>为所有属性，添加 <code>@Getter</code>、<code>@ToString</code>、<code>@EqualsAndHashCode</code> 注解的效果</li>
-<li>为非 <code>final</code> 修饰的属性，添加 <code>@Setter</code> 注解的效果</li>
-<li>为 <code>final</code> 修改的属性，添加 <code>@RequiredArgsConstructor</code> 注解的效果</li>
-</ul>
-<p>如果使用 <code>@Data</code> 注解的类，继承了其它父类的属性，最好额外添加 <code>@ToString(callSuper = true)</code> 和 <code>@EqualsAndHashCode(callSuper = true)</code> 注解。</p>
-<ul>
-<li>因为默认情况下，<code>@Data</code> 注解不会处理父类的属性。所以需要通过 <code>callSuper = true</code> 属性，声明需要调用父类对应的方法。</li>
-<li>这个情况非常常见，例如说在实体类中，可能会声明一个抽象父类 AbstractEntity，而该类里有一个 <code>id</code> 编号属性。</li>
-</ul>
-<h3 id="Slf4j-注解"><a href="#Slf4j-注解" class="headerlink" title="@Slf4j 注解"></a>@Slf4j 注解</h3><p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/Slf4j.java" target="_blank" rel="noopener"><code>@Slf4j</code></a> 注解，添加在<strong>类</strong>上，给该类创建 Slf4j Logger <strong>静态</strong>属性。</p>
-<h3 id="NonNull-注解"><a href="#NonNull-注解" class="headerlink" title="@NonNull 注解"></a>@NonNull 注解</h3><p><a href="https://github.com/rzwitserloot/lombok/blob/master/src/core/lombok/NonNull.java" target="_blank" rel="noopener"><code>@NonNull</code></a> 注解，添加在<strong>方法参数</strong>、<strong>类属性</strong>上，用于自动生成 <code>null</code> 参数检查。若确实是 <code>null</code> 时，抛出 NullPointerException 异常。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/25/SpringBoot%E4%B9%8BLombok/" data-id="ckb0ntwmf000h1q079w9y37bc" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-常用设计模式系列之——享元模式" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/05/25/%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97%E4%B9%8B%E2%80%94%E2%80%94%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/" class="article-date">
-  <time datetime="2020-05-25T05:34:49.000Z" itemprop="datePublished">2020-05-25</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/05/25/%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97%E4%B9%8B%E2%80%94%E2%80%94%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/">常用设计模式系列之——享元模式</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="常用设计模式系列之——享元模式"><a href="#常用设计模式系列之——享元模式" class="headerlink" title="常用设计模式系列之——享元模式"></a>常用设计模式系列之——享元模式</h2><h3 id="享元模式"><a href="#享元模式" class="headerlink" title="享元模式"></a>享元模式</h3><p><strong>享元模式（英语：Flyweight Pattern）是一种软件设计模式。它使用共享物件，用来尽可能减少内存使用量以及分享资讯给尽可能多的相似物件；它适合用于当大量物件只是重复因而导致无法令人接受的使用大量内存。通常物件中的部分状态是可以分享。常见做法是把它们放在外部数据结构，当需要使用时再将它们传递给享元。</strong></p>
-<p>关键字：缺少内存，共享物件，外部资源</p>
-<p>一批对象中既有相同的内容也有不同的内容，相同的内容采用共享的方式，不同的内容通过动态传递的方式，来尽量减少对象的产生。</p>
-<h3 id="享元模式使用场景"><a href="#享元模式使用场景" class="headerlink" title="享元模式使用场景"></a>享元模式使用场景</h3><p>最常见的一个场景就是 Java JDK 里面的 String 字符串类，因为 JVM 中有常量池，常量池的实现就是一种享元模式，避免多个相同对象的存在</p>
-<ol>
-<li>抽象享元类：通常是一个接口，主要对外提供修改内部数据的接口</li>
-<li>具体享元类：享元的实现类，通常存储在内存中，便于使用</li>
-<li>享元工厂类：对外创建具体享元类</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/25/%E5%B8%B8%E7%94%A8%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B3%BB%E5%88%97%E4%B9%8B%E2%80%94%E2%80%94%E4%BA%AB%E5%85%83%E6%A8%A1%E5%BC%8F/" data-id="ckb0ntwmn000r1q070ojg3fvz" class="article-share-link">Share</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-SpringBoot2-0基础" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/05/22/SpringBoot2-0%E5%9F%BA%E7%A1%80/" class="article-date">
-  <time datetime="2020-05-22T07:44:34.000Z" itemprop="datePublished">2020-05-22</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/05/22/SpringBoot2-0%E5%9F%BA%E7%A1%80/">SpringBoot2.0基础</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="1-1-自动配置入门"><a href="#1-1-自动配置入门" class="headerlink" title="1-1 自动配置入门"></a>1-1 自动配置入门</h2><h3 id="1-概述"><a href="#1-概述" class="headerlink" title="1. 概述"></a>1. 概述</h3><ul>
-<li>通过在类上加 @Configuration 注解，声明这是一个 Spring 配置类</li>
-<li>通过在方法上加 @Bean 注解，声明该方法创建一个 Spring Bean</li>
-</ul>
-<p><strong>配置类</strong></p>
-<ul>
-<li>TomcatWebServerFactoryCustomizerConfiguration 配置类，负责创建 <a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/web/embedded/TomcatWebServerFactoryCustomizer.java" target="_blank" rel="noopener">TomcatWebServerFactoryCustomizer</a> Bean，从而初始化内嵌的 Tomcat 并进行启动</li>
-<li>JettyWebServerFactoryCustomizer 配置类，负责创建 <a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/web/embedded/JettyWebServerFactoryCustomizer.java" target="_blank" rel="noopener">JettyWebServerFactoryCustomizer</a> Bean，从而初始化内嵌的 Jetty 并进行启动。</li>
-</ul>
-<p><strong>条件注解</strong></p>
-<p>在类上添加了 <a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/condition/ConditionalOnWebApplication.java" target="_blank" rel="noopener"><code>@ConditionalOnWebApplication</code></a> 条件注解，表示当前配置类需要在当前项目是 Web 项目的条件下，才能生效</p>
-<ul>
-<li>TomcatWebServerFactoryCustomizerConfiguration 配置类，需要有 <a href="https://mvnrepository.com/search?q=tomcat-embed-core" target="_blank" rel="noopener"><code>tomcat-embed-core</code></a> 依赖提供的 Tomcat、UpgradeProtocol 依赖类，才能创建内嵌的 Tomcat 服务器。</li>
-<li>JettyWebServerFactoryCustomizer 配置类，需要有 <a href="https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server" target="_blank" rel="noopener"><code>jetty-server</code></a> 依赖提供的 Server、Loader、WebAppContext 类，才能创建内嵌的 Jetty 服务器。</li>
-</ul>
-<p><strong>配置属性</strong></p>
-<p>使用 <a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/context/properties/EnableConfigurationProperties.java" target="_blank" rel="noopener"><code>@EnableConfigurationProperties</code></a> 注解，让配置类生效</p>
-<p>在 Spring Boot 定义了 <a href="https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/context/properties/ConfigurationProperties.java" target="_blank" rel="noopener"><code>@ConfigurationProperties</code></a> 注解，用于声明配置属性类，将指定前缀的配置项批量注入到该类中</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ConfigurationProperties</span>(prefix = <span class="string">"server"</span>, ignoreUnknownFields = <span class="keyword">true</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServerProperties</span></span></span><br><span class="line"><span class="class">		<span class="keyword">implements</span> <span class="title">EmbeddedServletContainerCustomizer</span>, <span class="title">EnvironmentAware</span>, <span class="title">Ordered</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Server HTTP port.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">private</span> Integer port;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Context path of the application.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">private</span> String contextPath;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// ... 省略其它属性</span></span><br><span class="line">	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>通过 <code>@ConfigurationProperties</code> 注解，声明将 <code>server</code> 前缀的配置项，设置到 ServerProperties 配置属性类中。</li>
-</ul>
-<h3 id="2-自动配置类"><a href="#2-自动配置类" class="headerlink" title="2. 自动配置类"></a>2. 自动配置类</h3><h3 id="3-条件注解"><a href="#3-条件注解" class="headerlink" title="3. 条件注解"></a>3. 条件注解</h3><p><a href="https://github.com/spring-projects/spring-framework/blob/master/spring-context/src/main/java/org/springframework/context/annotation/Profile.java" target="_blank" rel="noopener"><code>@Profile</code></a> 注解</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DataSourceConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@Profile</span>(<span class="string">"DEV"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> DataSource <span class="title">devDataSource</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ... 单机 MySQL</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@Profile</span>(<span class="string">"PROD"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> DataSource <span class="title">prodDataSource</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ... 集群 MySQL</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>在测试环境下，我们注册单机 MySQL 的 DataSource Bean。</li>
-<li>在生产环境下，我们注册集群 MySQL 的 DataSource Bean。</li>
-</ul>
-<p><a href="https://github.com/spring-projects/spring-framework/blob/master/spring-context/src/main/java/org/springframework/context/annotation/Conditional.java" target="_blank" rel="noopener"><code>@Conditional</code></a> 注解，用于声明在配置类或者创建 Bean 的方法上，表示需要满足指定条件才能生效</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestConfiguration</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@Conditional</span>(XXXCondition<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">    <span class="title">public</span> <span class="title">Object</span> <span class="title">xxxObject</span>() </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Object();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Spring Boot 提供了常用的条件注解：</p>
-<ul>
-<li><code>@ConditionalOnBean</code>：当容器里有指定 Bean 的条件下</li>
-<li><code>@ConditionalOnMissingBean</code>：当容器里没有指定 Bean 的情况下</li>
-<li><code>@ConditionalOnSingleCandidate</code>：当指定 Bean 在容器中只有一个，或者虽然有多个但是指定首选 Bean</li>
-<li><code>@ConditionalOnClass</code>：当类路径下有指定类的条件下</li>
-<li><code>@ConditionalOnMissingClass</code>：当类路径下没有指定类的条件下</li>
-<li><code>@ConditionalOnProperty</code>：指定的属性是否有指定的值</li>
-<li><code>@ConditionalOnResource</code>：类路径是否有指定的值</li>
-<li><code>@ConditionalOnExpression</code>：基于 SpEL 表达式作为判断条件</li>
-<li><code>@ConditionalOnJava</code>：基于 Java 版本作为判断条件</li>
-<li><code>@ConditionalOnJndi</code>：在 JNDI 存在的条件下差在指定的位置</li>
-<li><code>@ConditionalOnNotWebApplication</code>：当前项目不是 Web 项目的条件下</li>
-<li><code>@ConditionalOnWebApplication</code>：当前项目是 Web项 目的条件下</li>
-</ul>
-<h3 id="4-自定义-Starter"><a href="#4-自定义-Starter" class="headerlink" title="4. 自定义 Starter"></a>4. 自定义 Starter</h3><p> Spring Boot Starter 的<strong>命名规则</strong>:</p>
-<table>
-<thead>
-<tr>
-<th>场景</th>
-<th>命名规则</th>
-<th>示例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>Spring Boot 内置 Starter</td>
-<td>Spring-boot-starter-{框架}</td>
-<td>spring-boot-starter-web</td>
-</tr>
-<tr>
-<td>框架 自定义 Starter</td>
-<td>{框架}-spring-boot-starter</td>
-<td>Mybatis-spring-boot-starter</td>
-</tr>
-</tbody></table>
-<h2 id="2-1-Spring-Boot-热部署入门"><a href="#2-1-Spring-Boot-热部署入门" class="headerlink" title="2-1 Spring Boot 热部署入门"></a>2-1 Spring Boot 热部署入门</h2>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://yoursite.com/2020/05/22/SpringBoot2-0%E5%9F%BA%E7%A1%80/" data-id="ckb0ntwmh000k1q07bscw5bzt" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2020/05/25/SpringBoot-MapStruct/" data-id="ckbg9kucp00132r0700nvfrfj" class="article-share-link">Share</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li></ul>
@@ -1474,7 +1654,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80-01/" rel="tag">Java 基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetty/" rel="tag">Jetty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SPring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">SPring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8002/" rel="tag">Spring Boot-基础02</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Swagger/" rel="tag">Swagger</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Undertow/" rel="tag">Undertow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Validation/" rel="tag">Validation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/" rel="tag">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebFlux/" rel="tag">WebFlux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebSocket/" rel="tag">WebSocket</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" rel="tag">基准测试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%B9%E5%99%A8/" rel="tag">容器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" rel="tag">线程池</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88/" rel="tag">集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Cache/" rel="tag">Cache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-%E5%9F%BA%E7%A1%80-01/" rel="tag">Java 基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Jetty/" rel="tag">Jetty</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MyBatis/" rel="tag">MyBatis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Redis/" rel="tag">Redis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SPring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">SPring Boot-基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot/" rel="tag">Spring Boot</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" rel="tag">Spring Boot-基础-01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-02/" rel="tag">Spring Boot-基础-02</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" rel="tag">Spring Boot-基础01</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Swagger/" rel="tag">Swagger</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tomcat/" rel="tag">Tomcat</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Undertow/" rel="tag">Undertow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Validation/" rel="tag">Validation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Web/" rel="tag">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebFlux/" rel="tag">WebFlux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WebSocket/" rel="tag">WebSocket</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" rel="tag">基准测试</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" rel="tag">基础知识</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%AE%B9%E5%99%A8/" rel="tag">容器</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" rel="tag">数据库</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/" rel="tag">数据库连接池</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE/" rel="tag">数据访问</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" rel="tag">线程池</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%93%E5%AD%98/" rel="tag">缓存</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9B%86%E5%90%88/" rel="tag">集合</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag">面试</a></li></ul>
     </div>
   </div>
 
@@ -1484,7 +1664,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/Java/" style="font-size: 18px;">Java</a> <a href="/tags/Java-%E5%9F%BA%E7%A1%80-01/" style="font-size: 12px;">Java 基础-01</a> <a href="/tags/Jetty/" style="font-size: 10px;">Jetty</a> <a href="/tags/Redis/" style="font-size: 10px;">Redis</a> <a href="/tags/SPring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 10px;">SPring Boot-基础01</a> <a href="/tags/Spring-Boot/" style="font-size: 20px;">Spring Boot</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 14px;">Spring Boot-基础-01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 16px;">Spring Boot-基础01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8002/" style="font-size: 10px;">Spring Boot-基础02</a> <a href="/tags/Swagger/" style="font-size: 10px;">Swagger</a> <a href="/tags/Tomcat/" style="font-size: 10px;">Tomcat</a> <a href="/tags/Undertow/" style="font-size: 10px;">Undertow</a> <a href="/tags/Validation/" style="font-size: 10px;">Validation</a> <a href="/tags/Web/" style="font-size: 16px;">Web</a> <a href="/tags/WebFlux/" style="font-size: 10px;">WebFlux</a> <a href="/tags/WebSocket/" style="font-size: 10px;">WebSocket</a> <a href="/tags/%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" style="font-size: 10px;">基准测试</a> <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 10px;">基础知识</a> <a href="/tags/%E5%AE%B9%E5%99%A8/" style="font-size: 10px;">容器</a> <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" style="font-size: 10px;">线程池</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 12px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 10px;">集合</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a>
+      <a href="/tags/Cache/" style="font-size: 10px;">Cache</a> <a href="/tags/Java/" style="font-size: 18px;">Java</a> <a href="/tags/Java-%E5%9F%BA%E7%A1%80-01/" style="font-size: 12px;">Java 基础-01</a> <a href="/tags/Jetty/" style="font-size: 10px;">Jetty</a> <a href="/tags/MyBatis/" style="font-size: 10px;">MyBatis</a> <a href="/tags/Redis/" style="font-size: 10px;">Redis</a> <a href="/tags/SPring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 10px;">SPring Boot-基础-01</a> <a href="/tags/Spring-Boot/" style="font-size: 20px;">Spring Boot</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-01/" style="font-size: 16px;">Spring Boot-基础-01</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%80-02/" style="font-size: 10px;">Spring Boot-基础-02</a> <a href="/tags/Spring-Boot-%E5%9F%BA%E7%A1%8001/" style="font-size: 14px;">Spring Boot-基础01</a> <a href="/tags/Swagger/" style="font-size: 10px;">Swagger</a> <a href="/tags/Tomcat/" style="font-size: 10px;">Tomcat</a> <a href="/tags/Undertow/" style="font-size: 10px;">Undertow</a> <a href="/tags/Validation/" style="font-size: 10px;">Validation</a> <a href="/tags/Web/" style="font-size: 14px;">Web</a> <a href="/tags/WebFlux/" style="font-size: 10px;">WebFlux</a> <a href="/tags/WebSocket/" style="font-size: 10px;">WebSocket</a> <a href="/tags/%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/" style="font-size: 10px;">基准测试</a> <a href="/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" style="font-size: 10px;">基础知识</a> <a href="/tags/%E5%AE%B9%E5%99%A8/" style="font-size: 10px;">容器</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 10px;">数据库</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0/" style="font-size: 10px;">数据库连接池</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE/" style="font-size: 12px;">数据访问</a> <a href="/tags/%E7%BA%BF%E7%A8%8B%E6%B1%A0/" style="font-size: 10px;">线程池</a> <a href="/tags/%E7%BC%93%E5%AD%98/" style="font-size: 10px;">缓存</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 12px;">设计模式</a> <a href="/tags/%E9%9B%86%E5%90%88/" style="font-size: 10px;">集合</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 10px;">面试</a>
     </div>
   </div>
 
@@ -1506,23 +1686,23 @@
       <ul>
         
           <li>
+            <a href="/2020/06/11/%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE-SpringBoot-MyBatis%E5%85%A5%E9%97%A8/">数据访问-SpringBoot-MyBatis入门</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/10/%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE-SpringBoot-%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5%E6%B1%A0%E5%85%A5%E9%97%A8/">数据访问-SpringBoot-数据库连接池入门</a>
+          </li>
+        
+          <li>
+            <a href="/2020/06/08/%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE-SpringBoot-%E7%BC%93%E5%AD%98Cache%E5%85%A5%E9%97%A8/">数据访问-SpringBoot-缓存Cache入门</a>
+          </li>
+        
+          <li>
             <a href="/2020/06/03/%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE-SpringBoot-Redis%E5%85%A5%E9%97%A8/">数据访问-SpringBoot-Redis入门</a>
           </li>
         
           <li>
             <a href="/2020/06/03/%E5%BF%AB%E9%80%9F%E6%95%99%E7%A8%8B-SpringBoot-WebFlux-%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">快速教程-SpringBoot-WebFlux-快速入门</a>
-          </li>
-        
-          <li>
-            <a href="/2020/06/03/Web%E5%BC%80%E5%8F%91-SprintBoot-Tomcat-Jetty-Undertow-%E5%9F%BA%E5%87%86%E6%B5%8B%E8%AF%95/">Web开发-SprintBoot-Tomcat-Jetty-Undertow-基准测试</a>
-          </li>
-        
-          <li>
-            <a href="/2020/06/03/Web%E5%BC%80%E5%8F%91-SpringBoot-WebSocket%E5%85%A5%E9%97%A8/">Web开发-SpringBoot-WebSocket入门</a>
-          </li>
-        
-          <li>
-            <a href="/2020/06/02/Java%E5%9F%BA%E7%A1%80%E5%AE%B9%E5%99%A8/">Java基础容器</a>
           </li>
         
       </ul>
